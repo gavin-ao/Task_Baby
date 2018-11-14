@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/decorators">
+    <excludes>
+        <pattern>/static/*</pattern>
+    </excludes>
+
+    <!--<decorator name="normalDecorator" page="normalDecorator.vm">-->
+        <!--<pattern>/wechat/total/manage</pattern>-->
+        <!--<pattern>/wechat/total/dataStatistics</pattern>-->
+    <!--</decorator>-->
+</decorators>

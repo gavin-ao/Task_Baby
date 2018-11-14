@@ -1,0 +1,229 @@
+
+/*#page-wrapper{*/
+    /*max-width: 1366px;*/
+    /*margin: 0 auto;*/
+/*}*/
+
+
+/*.header-left {*/
+    /*width: 100%;*/
+    /*background-color: #555C78;*/
+    /*height: 80px;*/
+    /*line-height: 80px;*/
+    /*padding: 0 10px;*/
+    /*!*height: 100%;*!*/
+/*}*/
+
+/*.header-left > div {*/
+    /*display: inline-block;*/
+/*}*/
+
+/*.header-left .logo img {*/
+    /*cursor: pointer;*/
+    /*width: 40px;*/
+/*}*/
+
+/*.header-left .logo_title {*/
+    /*font-size: 18px;*/
+    /*color: #fff;*/
+    /*!*margin-left: 10px;*!*/
+/*}*/
+
+/*#main-menu {*/
+    /*width: 100%;*/
+/*}*/
+/*#main-menu li {*/
+    /*text-align: center;*/
+    /*line-height: 80px;*/
+    /*cursor: pointer;*/
+    /*color: #fff;*/
+    /*!*color: #219DEF;*!*/
+/*}*/
+
+/*#main-menu li.bgStyle {*/
+    /*background-color: #EEF4F9;*/
+    /*color: #219DEF;*/
+/*}*/
+
+/*#user_manage {*/
+    /*width: 100%;*/
+    /*!*margin-left: 220px;*!*/
+/*}*/
+
+/*.contain_head {*/
+    /*height: 80px;*/
+    /*width: 100%;*/
+    /*line-height: 80px;*/
+    /*background-color: #fff;*/
+/*}*/
+
+/*.contain_head_left {*/
+    /*float: left;*/
+    /*height: 80px;*/
+/*}*/
+
+/*.contain_head .dropdown {*/
+    /*height: 36px;*/
+    /*margin-left: 20px;*/
+/*}*/
+
+/*.dropdown .dropdown-menu {*/
+    /*min-width: 50px;*/
+    /*top: 56px;*/
+/*}*/
+
+/*.btn-default:hover, .btn-default:focus, .btn-default.focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {*/
+    /*color: #333;*/
+    /*background-color: #fff;*/
+    /*border-color: #ccc;*/
+/*}*/
+
+/*.contain_head_right {*/
+    /*float: right;*/
+/*}*/
+
+/*.contain_main {*/
+    /*width: 100%;*/
+    /*height: calc(100% - 40px);*/
+    /*padding: 20px 20px;*/
+    /*background-color: #EEF4F9*/
+/*}*/
+
+.contain_main_head {
+    padding: 0 30px;
+    padding-bottom: 20px;
+}
+
+.contain_main_head > div {
+    display: inline-block;
+    margin-right: 25px;
+    cursor: pointer;
+}
+.contain_main_head > div.refreshData {
+    float: right;
+    color:#219DEF;
+    font-size: 20px;
+    margin-right: -15px;
+}
+.contain_main_head > div input {
+    margin-right: 5px;
+}
+
+.contain_main_content {
+    /*margin: 10px 20px;*/
+    width: 100%;
+    min-height: 300px;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.contain_main_title .title {
+    font-size: 16px;
+    color: #666;
+    font-weight: 600;
+    padding-right: 10px;
+}
+
+.contain_main_title .time {
+    font-size: 14px;
+    color: #666;
+    font-weight: 200;
+}
+
+.contain_main_data {
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.contain_main_data > div {
+    width: 19%;
+    height: 120px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding-top: 30px;
+    color: #999;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.contain_main_data > div .activitySum {
+    color: #333;
+}
+
+.contain_main_data > div.selectData {
+    background-color: rgba(33, 157, 239, 1);
+    color: #fff;
+    border: 0;
+}
+
+.contain_main_data > div.selectData .activitySum {
+    color: #fff;
+}
+
+.contain_main_chart {
+    /*height: 350px;*/
+    margin-bottom: 20px;
+}
+
+.contain_main_chart > div {
+    /*float: left;*/
+    display: inline-block;
+    height: 100%;
+    font-size: 16px;
+    /*width: 100%;*/
+}
+
+.contain_main_chart > div > div {
+    height:300px;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+.contain_main_chart .contain_main_line {
+    width: 64%;
+}
+
+.contain_main_chart .contain_main_pie {
+    width: 35%;
+    float: right;
+}
+
+.datePicker {
+    margin-top: -50px;
+    margin-left: 360px;
+    padding-bottom: 15px;
+    display: none;
+}
+
+.demo-input {
+    padding-left: 10px;
+    height: 38px;
+    min-width: 262px;
+    line-height: 38px;
+    border: 1px solid #e6e6e6;
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+.contain_main_graph {
+    width: 100%;
+    /*height: 600px;*/
+    font-size: 16px;
+    margin-top: 20px;
+}
+.contain_main_graph > div{
+    height: calc(100% - 40px);
+    border: 1px solid #ccc;
+}
+#mainGraph,#mainGraphs
+{
+    float: right;color:#219DEF;font-size: 20px;margin-right: -15px;cursor: pointer;
+}/*}*/
+/*#main_graph{*/
+    /*height: calc(100% - 40px);*/
+    /*border: 1px solid #ccc;*/
+/*}*/
+

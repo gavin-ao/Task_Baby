@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>景观</title>
+    </head>
+    <body>
+        <div>景区名称：$!{scenicSpot.scenicSpotName}</div>
+        #foreach($item in $sceneryList)
+            <div class="parentSpan">
+                <div>景观名称：$!{item.sceneryName}</div>
+                <div>景观图片：<img src="$!{pathHead}$!{item.filePath}"/></div>
+                <div>景观介绍：$!{item.sceneryIntroduce}</div>
+            </div>
+        #end
+    </body>
+</html>

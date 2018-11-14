@@ -1,0 +1,70 @@
+#macro(pagingUnique $page $function)
+	#if($!{page.result.size()} > 0)
+    <div id="uniquePageDivId" style="text-align:right">
+        <script>
+            function changePageUnique(pageNo) {
+                if(pageNo == -1){
+                    pageNo = $("#changeToPageNumUnique").val();
+                }
+                if($.trim(pageNo) == ""){
+                    alert("跳转的页码为空!");
+                    return;
+                }
+                pageNo = $.trim(pageNo);
+                var re = /^[0-9]+$/ ;
+                var isInt = re.test(pageNo);
+                if(!isInt){
+                    alert("跳转的页码非法!");
+                    return;
+                }
+
+                if(pageNo * 1 > $!{page.pageBean.totalPage}){
+                    alert("跳转的页码大于总共的页码数!");
+                    return;
+                }
+
+                $("#uniquePageNo").val(pageNo);
+				$!{function}();
+            }
+        </script>
+        <input type="hidden" id="uniquePageNo" value="$!{page.pageBean.pageNo}"/>
+        第$!{page.pageBean.pageNo}页，共$!{page.pageBean.totalPage}页   共$!{page.pageBean.totalNum}条
+		#if($!{page.pageBean.hasPreviousPage})
+			#set($previousPageNum = ($!{page.pageBean.pageNo} + (-1)))
+            <a href="javascript:changePageUnique($!{previousPageNum})">上一页</a>
+		#end
+
+		#if($!{page.pageBean.totalPage} < 7)
+			#foreach($pages in [1..$!{page.pageBean.totalPage}])
+				#if($pages == $!{page.pageBean.pageNo})
+					$!{pages}
+				#else
+                    <a href="javascript:changePageUnique($!{pages})">$pages</a>
+				#end
+
+			#end
+		#else
+			#foreach($pages in [1..$!{page.pageBean.totalPage}])
+				#if($pages <= 5 || $pages >= $!{page.pageBean.totalPage} - 1)
+					#if($pages == $!{page.pageBean.pageNo})
+						$!{pages}
+					#else
+                        <a href="javascript:changePageUnique($!{pages})">$pages</a>
+					#end
+				#elseif($pages == 6)
+                    ..
+				#end
+			#end
+		#end
+
+
+		#if($!{page.pageBean.hasNextPage})
+			#set($nextPageNum = ($!{page.pageBean.pageNo} + 1))
+            <a href="javascript:changePageUnique($!{nextPageNum})">下一页</a>
+		#end
+
+        <input type="text" id="changeToPageNumUnique" style="width: 50px"/>
+        <a href="javascript:changePageUnique(-1)">转到</a>
+    </div>
+	#end
+#end

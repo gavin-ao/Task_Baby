@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <form method="POST" enctype="multipart/form-data" action="/system/file/upload">
+            <p>文件1：<input type="file" name="file"/></p>
+            <p>文件2：<input type="file" name="file"/></p>
+            <p>文件3：<input type="file" name="file"/></p>
+            <p><input type="submit" value="上传"/></p>
+        </form>
+    </body>
+</html>

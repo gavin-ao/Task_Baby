@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>第三方平台</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Cache" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="x-ua-compatible" content="IE=Edge, chrome=1"/>
+##    <link rel="stylesheet" href="/static/plugins/css/bootstrap.min.css">
+##    <link rel="stylesheet" href="/static/plugins/css/font-awesome.min.css">
+</head>
+<script src="/static/plugins/jquery.min.js"></script>
+<script src="/static/plugins/md5.js"></script>
+<script src="/static/service/login.js"></script>
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        padding: 0px;
+        margin: 0px;
+        overflow: hidden;
+        font-family: "Microsoft YaHei";
+    }
+
+
+    input::-webkit-input-placeholder {
+        color: #536173;
+        font-size: 14px;
+    }
+
+    input::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color: #536173;
+        font-size: 14px;
+    }
+
+    input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color: #536173;
+        font-size: 14px;
+    }
+
+    input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: #536173;
+        font-size: 14px;
+    }
+
+    /*input:-webkit-autofill {*/
+    /*background-color: red;*/
+    /*background-image: none;*/
+    /*}*/
+    #loginbtn {
+        width: 60%;
+        color: #fff;
+        height: 40px;
+        border-radius: 3px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        background-image: linear-gradient(90deg, RGBA(8, 183, 255, 1), RGBA(14, 145, 205, 0.8), RGBA(14, 145, 205, 1));
+    }
+
+    input[type=checkbox] {
+        visibility: hidden;
+    }
+
+</style>
+<body>
+    <input type="button" id="loginbtn" value="第三方授权"/>
+</body>
+</html>

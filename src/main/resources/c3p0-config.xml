@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<c3p0-config>
+	<!-- 数据库配置 -->
+	<named-config name="mysqlServer">
+
+		<property name="driverClass">com.mysql.jdbc.Driver</property>
+		<!--<property name="driverClass">com.mysql.cj.jdbc.Driver</property>-->
+
+		<!--&lt;!&ndash;aliyun正式环境&ndash;&gt;-->
+		<!--<property name="jdbcUrl">jdbc:mysql://rm-2ze3je9fdk20d823r.mysql.rds.aliyuncs.com:3306/cm-service?characterEncoding=utf-8&amp;useSSL=true</property>-->
+		<!--<property name="user">user_online</property>-->
+		<!--<property name="password">AOyg123!@#</property>-->
+
+		<!--aliyun测试环境-->
+		<!--<property name="jdbcUrl">jdbc:mysql://rm-2ze3je9fdk20d823r.mysql.rds.aliyuncs.com:3306/cm-service-test?characterEncoding=utf-8&amp;useSSL=true</property>-->
+		<!--<property name="user">user_test</property>-->
+		<!--<property name="password">AOyg123!@#</property>-->
+
+		<!--aliyun测试数据库外网环境- 本地启动使用 -->
+		<property name="jdbcUrl">jdbc:mysql://rm-2ze3je9fdk20d823rqo.mysql.rds.aliyuncs.com:3306/cm-service-test?characterEncoding=utf-8&amp;useSSL=true</property>
+		<property name="user">user_test</property>
+		<property name="password">AOyg123!@#</property>
+
+		<!--<property name="jdbcUrl">jdbc:mysql://127.0.0.1:3306/dd-cm?characterEncoding=utf-8&amp;useSSL=false</property>-->
+		<!--<property name="user">root</property>-->
+		<!--<property name="password"></property>-->
+
+		<property name="acquireIncrement">5</property><!-- 如果池中数据连接不够时一次增长多少个 -->
+		<property name="initialPoolSize">10</property>
+		<property name="minPoolSize">10</property>
+		<property name="maxPoolSize">100</property>
+		<property name="maxStatements">0</property>
+		<property name="maxStatementsPerConnection">10</property>
+        <!-- 如果在设置的时间范围连接没有被使用，则丢弃该连接，mysql的wait_timeout默认是28800，这里必须比mysql的wait_timeout小 -->
+        <property name="maxIdleTime">8000</property>
+	</named-config>
+
+</c3p0-config>

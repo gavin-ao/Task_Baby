@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <form method="POST" enctype="multipart/form-data" action="/tourism/travels/uploadTravels">
+            <p>文件1：<input type="file" name="file"/></p>
+            <p>文件2：<input type="file" name="file"/></p>
+            <p>文件3：<input type="file" name="file"/></p>
+            <input type="hidden" name="travelsJsonStr" value='{"wechatUser" : "hejinkai","scenicSpotId" : "5b17a536a9cbc1463ca666f2","sceneryId" : "5b17a5f3a9cbc145ac5e0197","travelsText" : ["好看","很好看","非常好看"]}' />
+            <p><input type="submit" value="上传"/></p>
+        </form>
+    </body>
+</html>

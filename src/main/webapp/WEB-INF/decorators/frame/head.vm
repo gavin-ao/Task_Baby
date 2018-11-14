@@ -1,0 +1,30 @@
+<div class="contain_head" style="">
+    <div class="contain_head_left" style="" id="contain_head_left">
+        <div class="dropdown" style="">
+            <button class="btn btn-default dropdown-toggle" type="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="selectIndex"> 老板看板</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" id="contain_head_left_ul" aria-labelledby="dropdownMenu1">
+                <li data-appInfoId="1" data-appid="1" data-secret="1"><a href="javascript:void(0)">老板看板</a></li>
+                <li data-appInfoId="2" data-appid="2" data-secret="2"><a href="javascript:void(0)">销售业绩报表</a></li>
+                <li data-appInfoId="3" data-appid="3" data-secret="3"><a href="javascript:void(0)">小程序流量分析</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="contain_head_right">
+        <div class="dropdown" style="">
+            <button class="btn btn-default dropdown-toggle" type="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="selectIndex"> 请选择</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" id="contain_head_left_ul" aria-labelledby="dropdownMenu2">
+                <li data-appInfoId="1" data-appid="1" data-secret="1"><a  href="/wechat/total/personalCenter" target="_blank">个人中心</a></li>
+            </ul>
+        </div>
+        <div id="loginOut" style="margin-right: 20px;font-size: 20px; cursor: pointer;">退出</div>
+    </div>
+
+</div>

@@ -1,0 +1,324 @@
+###parse("../decorators/frame/left.vm")
+<link href="/static/plugins/imgareaselect/css/imgareaselect-default.css" rel="stylesheet">
+<link href="/static/plugins/activity-manage/manage.css" rel="stylesheet">
+<script src="/static/plugins/imgareaselect/scripts/jquery.imgareaselect.js"></script>
+<script src="/static/plugins/activity-manage/manage.js"></script>
+
+<div class="manageAdd" id="manageAdd">
+    <div class="manangeAddCon">
+    ##                            <div class="closeBtn" id="closeBtn">✖</div>
+        <div class="formContain">
+            <form id="formsearch">
+                <p>
+                    <span class="text">活动id:</span>
+                    <a  class="anchorss" onclick="anchorss('storeId')">
+                        <input type="number" name="storeId" class="form-control" min="0" onblur="exitId(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">活动标题:</span>
+                    <a class="anchorss" onclick="anchorss('storeTitle')">
+                        <input type="text" name="storeTitle" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">活动类型:</span>
+                    <a  class="anchorss" onclick="anchorss('activityType')">
+                        <span class="radios"><input type="radio" name="activityType" id="helps" value="1"
+                                                    checked="checked"/><label for="helps">助力</label></span>
+                        <span class="radios"><input type="radio" name="activityType" id="collages" value="2"
+                                                    disabled="disabled"/><label for="collages">拼团</label></span>
+                        <span class="radios"><input type="radio" name="activityType" id="cutDownPrice" value="3"
+                                                    disabled="disabled"/><label for="cutDownPrice">砍价</label></span>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">海报图片:</span>
+                    <a class="anchorss" onclick="anchorss('posterImage')">
+                        <span class="upImage form-control" id="upImage">上传图片</span>
+                        <input id="file" type="file" class="btn btn-primary"
+                               accept="image/gif,image/jpeg,image/jpg,image/png,image/svg" name="uploadPicture"
+                               value="上传图片" onchange="changepic(this)"/>
+                    </a>
+                    <span style="display: inline-block;">
+                                <img src="" id="show" height="200">
+                            </span>
+                </p>
+                <p>
+                    <span class="text">邀请按钮:</span>
+                    <a class="anchorss" onclick="anchorss('invitingButton')">
+                        <input type="text" name="invitingButton" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">助力按钮:</span>
+                    <a class="anchorss" onclick="anchorss('helpButton')">
+                        <input type="text" name="helpButton" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">已助力按钮:</span>
+                    <a class="anchorss" onclick="anchorss('boosterButton')">
+                        <input type="text" name="boosterButton" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">助力已满按钮:</span>
+                    <a class="anchorss" onclick="anchorss('fullHelpButton')">
+                        <input type="text" name="fullHelpButton" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">参加活动按钮:</span>
+                    <a class="anchorss" onclick="anchorss('partsActivity')">
+                        <input type="text" name="partsActivity" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">海报文案:</span>
+                    <a class="anchorss" onclick="anchorss('posterCopywriting')">
+                        <input type="text" name="posterCopywriting" class="form-control"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">活动规则:</span>
+                    <a class="anchorss" onclick="anchorss('activityRules')">
+                                <textarea name="" id="" name="activityRules"></textarea>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">活动时间:</span>
+                    <a class="anchorss actTimes" onclick="anchorss('activityTimes')">
+                        <input type="text" name="startTimes" class="form-control" placeholder="开始时间" id="startTime"/>
+                        至 <input type="text" name="endTimes" class="form-control" placeholder="结束时间" id="endTime"/>
+                    </a>
+                </p>
+                <p>
+                    <span class="text">分享标题:</span>
+                    <a class="anchorss" onclick="anchorss('shareTitle')">
+                        <input type="text" name="shareTitle" class="form-control" onblur="fieldLength(this)"/>
+                    </a>
+                </p>
+
+                <p>
+                    <span class="text">助力人数:</span>
+                    <a class="anchorss" onclick="anchorss('helpNumber')">
+                        <input type="number" name="helpNumber" min="1" class="form-control"/>
+                    </a>
+                </p>
+                <div class="modal-footer" style="text-align: center;border: 0px;">
+                    <button type="button" class="btn btn-primary" id="submitBtn">提 交</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="closeBtn">取 消
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="explainInfos">
+            <div class="" style="">
+            ##                        <div>
+            ##                            <a href="javascript:void(0)" id="storeId">活动id</a>
+            ##                            <img src="/static/service/images/login/backgroung.png" alt="">
+            ##                        </div>
+                <div>
+                    <a href="javascript:void(0)" id="storeTitle">活动标题</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="activityType">活动类型</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="posterImage">海报图片</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="invitingButton">邀请按钮</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+
+                <div>
+                    <a href="javascript:void(0)" id="helpButton">助力按钮</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="boosterButton">已助力按钮</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="fullHelpButton">助力已满按钮</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="partsActivity">参加活动按钮</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="posterCopywriting">海报文案</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="activityRules">活动规则</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="activityTimes">活动时间</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+                <div>
+                    <a href="javascript:void(0)" id="shareTitle">分享标题</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+
+                <div>
+                    <a href="javascript:void(0)" id="helpNumber">助力人数</a>
+                    <img src="/static/service/images/login/backgroung.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="width: 100%;height: 100%;">
+    <div class="addAccount" id="addAccount">添加账号</div>
+    <div style="background-color: #fff;">
+        <table id="example" class="display" style="width:100%">
+            <thead>
+            <tr>
+                <th>门店账号</th>
+                <th>门店密码</th>
+                <th>门店地址</th>
+                <th>Age</th>
+                <th>Start date</th>
+                <th>时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Tiger Nixon</td>
+                <td>System Architect</td>
+                <td>Edinburgh</td>
+                <td>61</td>
+                <td>2011/04/25</td>
+                <td>$320,800</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Garrett Winters</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>63</td>
+                <td>2011/07/25</td>
+                <td>$170,750</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Ashton Cox</td>
+                <td>Junior Technical Author</td>
+                <td>San Francisco</td>
+                <td>66</td>
+                <td>2009/01/12</td>
+                <td>$86,000</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Cedric Kelly</td>
+                <td>Senior Javascript Developer</td>
+                <td>Edinburgh</td>
+                <td>22</td>
+                <td>2012/03/29</td>
+                <td>$433,060</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Airi Satou</td>
+                <td>Accountant</td>
+                <td>Tokyo</td>
+                <td>33</td>
+                <td>2008/11/28</td>
+                <td>$162,700</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Brielle Williamson</td>
+                <td>Integration Specialist</td>
+                <td>New York</td>
+                <td>61</td>
+                <td>2012/12/02</td>
+                <td>$372,000</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Herrod Chandler</td>
+                <td>Sales Assistant</td>
+                <td>San Francisco</td>
+                <td>59</td>
+                <td>2012/08/06</td>
+                <td>$137,500</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Rhona Davidson</td>
+                <td>Integration Specialist</td>
+                <td>Tokyo</td>
+                <td>55</td>
+                <td>2010/10/14</td>
+                <td>$327,900</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Colleen Hurst</td>
+                <td>Javascript Developer</td>
+                <td>San Francisco</td>
+                <td>39</td>
+                <td>2009/09/15</td>
+                <td>$205,500</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Sonya Frost</td>
+                <td>Software Engineer</td>
+                <td>Edinburgh</td>
+                <td>23</td>
+                <td>2008/12/13</td>
+                <td>$103,600</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Jena Gaines</td>
+                <td>Office Manager</td>
+                <td>London</td>
+                <td>30</td>
+                <td>2008/12/19</td>
+                <td>$90,560</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Quinn Flynn</td>
+                <td>Support Lead</td>
+                <td>Edinburgh</td>
+                <td>22</td>
+                <td>2013/03/03</td>
+                <td>$342,000</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Charde Marshall</td>
+                <td>Regional Director</td>
+                <td>San Francisco</td>
+                <td>36</td>
+                <td>2008/10/16</td>
+                <td>$470,600</td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+
+
+
+
+

@@ -1,0 +1,108 @@
+
+#page-wrapper{
+    max-width: 1366px;
+    margin: 0 auto;
+}
+input::-webkit-input-placeholder,textarea::-webkit-input-placeholder{font-size: 12px;}
+input:-moz-placeholder,textarea:-moz-placeholder{font-size: 12px;}
+input::-moz-placeholder,textarea::-moz-placeholder{font-size: 12px;}
+input:-ms-input-placeholder,textarea:-ms-input-placeholder{font-size: 12px;}
+button,input,textarea,select{outline:none;box-shadow:none;}
+a{
+    color: #000;
+}
+a:hover,a:active,a:link{
+    text-decoration:none;
+    color: #000;
+}
+.header-left {
+    width: 100%;
+    background-color: #555C78;
+    height: 80px;
+    line-height: 80px;
+    padding: 0 10px;
+    /*height: 100%;*/
+}
+
+.header-left > div {
+    display: inline-block;
+}
+
+.header-left .logo img {
+    cursor: pointer;
+    width: 40px;
+}
+
+.header-left .logo_title {
+    font-size: 18px;
+    color: #fff;
+    /*margin-left: 10px;*/
+}
+
+#main-menu {
+    width: 100%;
+}
+#main-menu li {
+    text-align: center;
+    line-height: 80px;
+    cursor: pointer;
+    color: #fff;
+    /*color: #219DEF;*/
+}
+
+#main-menu li.bgStyle {
+    background-color: #EEF4F9;
+    color: #219DEF;
+}
+
+#user_manage {
+    width: 100%;
+    height: 100%;
+    /*margin-left: 220px;*/
+}
+.contain_head {
+    height: 80px;
+    width: 100%;
+    line-height: 80px;
+    background-color: #fff;
+}
+
+.contain_head_left {
+    float: left;
+    height: 80px;
+}
+
+.contain_head .dropdown {
+    height: 36px;
+    margin-left: 20px;
+}
+
+.dropdown .dropdown-menu {
+    min-width: 50px;
+    top: 56px;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default.focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.contain_head_right {
+    float: right;
+}
+.contain_head_right>div{
+    display: inline-block;
+}
+.contain_head_right>div:nth-child(1){
+    margin-right: 10px;
+}
+
+.contain_main {
+    width: 100%;
+    height: calc(100% - 40px);
+    padding: 20px 20px;
+    background-color: #EEF4F9
+}
+
+

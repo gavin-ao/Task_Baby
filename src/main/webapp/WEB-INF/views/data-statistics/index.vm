@@ -1,0 +1,81 @@
+<link href="/static/service/css/style.css" rel="stylesheet">
+<div id="user_manage">
+    <div class="contain_head" style="">
+        <div class="contain_head_left" style="" id="contain_head_left">
+            <div class="dropdown" style="">
+                <button class="btn btn-default dropdown-toggle" type="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="selectIndex"> 请选择</span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" id = "contain_head_left_ul" aria-labelledby="dropdownMenu1">
+
+                </ul>
+            </div>
+
+        </div>
+        <div class="contain_head_right">
+            <div id="loginOut" style="margin-right: 20px;font-size: 20px; cursor: pointer;">退出</div>
+        </div>
+
+    </div>
+    <div class="contain_main">
+        <div class="contain_main_head" style="" id="contain_main_head">
+            <div class="dateSelect">
+                <input type="radio" name="chose" class="todayTime"> 今日
+            </div>
+            <div class="dateSelect">
+                <input type="radio" name="chose"  class="yesterdayTime"> 昨日
+            </div>
+            <div class="dateSelect">
+                <input type="radio" name="chose" class="Nearly7days"> 近7日
+            </div>
+            <div class="dateSelect">
+                <input type="radio" name="chose" class="userdefined"> 自定义
+            </div>
+            <div class="refreshData" id="refreshData">
+                刷新数据
+            </div>
+        </div>
+
+        <div class="datePicker">
+            <input type="text" class="demo-input" placeholder="开始时间" id="startTime">至 <input type="text"
+                                                                                             class="demo-input"
+                                                                                             placeholder="结束时间"
+                                                                                             id="endTime">
+        </div>
+        <div class="contain_main_content"   style="overflow-y: scroll;height: calc(100% - 80px)">
+            <div class="contain_main_title">
+                <span class="title">核心数据</span><span><span  class="time1">2018-07-02</span>至<span class="time2">2017-07-02</span>数据</span>
+            </div>
+            <div class="contain_main_data" id="contain_main_data">
+
+            </div>
+            <div class="contain_main_chart">
+                <div class="contain_main_line">
+                    <span>数据走势</span>
+                    <div id="main_line"></div>
+                </div>
+                <div class="contain_main_pie">
+                    <span>新老用户占比</span>
+                    <div id="main_pie"></div>
+                </div>
+            </div>
+            <div class="contain_main_graph" style="height: 600px;">
+                <span>漏斗图</span>
+                <div id="main_funnel"></div>
+            </div>
+            <div class="contain_main_graph">
+                <span>助力轨迹</span><span id="mainGraph">展示数据</span>
+                <div id="main_graph"></div>
+            </div>
+            <div class="contain_main_graph">
+                <span>传播轨迹</span><span id="mainGraphs">展示数据</span>
+                <div id="main_graphs"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+###parse("../decorators/frame/bottom.vm")
+<script src="/static/plugins/common/data-statistics.js"></script>

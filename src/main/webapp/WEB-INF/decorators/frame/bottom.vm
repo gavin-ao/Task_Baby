@@ -1,0 +1,21 @@
+<script type="text/javascript" src="/static/plugins/jquery.min.js"></script>
+<script type="text/javascript" src="/static/plugins/jquery.validate.min.js"></script>
+<script type="text/javascript" src="/static/plugins/messages_zh.js"></script>
+<script type="text/javascript" src="/static/plugins/md5.js"></script>
+<script type="text/javascript" src="/static/plugins/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/plugins/jquery-confirm.js"></script>
+<script type="text/javascript" src="/static/plugins/jquery-ui.min.js"></script>
+##<script type="text/javascript" src="/static/plugins/baidu-statistics.js"></script>
+##<script type="text/javascript" src="/static/common/js/application-common.js?v=20170703154841"></script>
+##<script type="text/javascript" src="/static/plugins/common.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+##<script src="/static/plugins/bootstrap.min.js"></script>
+##<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+<script src="/static/plugins/laydate/laydate.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts.min.js"></script>
+##<script src="/static/plugins/echarts.min.js"></script>
+<script src="/static/plugins/common/d3.js"></script>
+<script src="/static/service/login.js"></script>
+<script src="/static/plugins/dataTables/datatables.js"></script>
+##<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="/static/plugins/common/navCommon.js"></script>
