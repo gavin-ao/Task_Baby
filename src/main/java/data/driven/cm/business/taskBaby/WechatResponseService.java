@@ -6,7 +6,7 @@ import java.util.Map;
  * 活动接口
  *
  */
-public interface ActivityService {
+public interface WechatResponseService {
 
     /**
      * 微信通知，将微信发送的xml转成map传进来
