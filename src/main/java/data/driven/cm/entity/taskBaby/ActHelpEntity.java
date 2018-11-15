@@ -28,7 +28,7 @@ public class ActHelpEntity {
     /**
      * 公众号原始ID
      */
-    private String originalId;
+    private String wechatAccount;
 
     /**
      * 助力状态,0 未助力 1 已助力
@@ -74,14 +74,6 @@ public class ActHelpEntity {
         this.actId = actId;
     }
 
-    public String getOriginalId() {
-        return originalId;
-    }
-
-    public void setOriginalId(String originalId) {
-        this.originalId = originalId;
-    }
-
     public Integer getHelpStatus() {
         return helpStatus;
     }
@@ -112,5 +104,13 @@ public class ActHelpEntity {
 
     public void setHelpAt(Date helpAt) {
         this.helpAt = helpAt;
+    }
+
+    public String getWechatAccount() {
+        return wechatAccount;
+    }
+
+    public void setWechatAccount(String wechatAccount) {
+        this.wechatAccount = wechatAccount;
     }
 }
