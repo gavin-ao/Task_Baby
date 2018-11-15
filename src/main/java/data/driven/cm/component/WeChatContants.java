@@ -6,12 +6,12 @@ package data.driven.cm.component;
  * @Date: 2018/11/12 19:23
  * @Version 1.0
  */
-public class WeChatContant {
+public class WeChatContants {
 
     /** 公众号APPID **/
-    public static final String APPID = "wx99ab70b860fd745b";
+    public static final String APPID = "APPID";
     /** 公众号签名appsecret **/
-    public static final String SECRET = "e69553204ed744041f449d8fc29b4622";
+    public static final String SECRET = "SECRET";
 
     // Token
     public static final String TOKEN = "lxl";
