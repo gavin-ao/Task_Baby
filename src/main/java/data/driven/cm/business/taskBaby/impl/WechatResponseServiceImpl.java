@@ -1,9 +1,7 @@
 package data.driven.cm.business.taskBaby.impl;
 
-import data.driven.cm.business.taskBaby.PosterService;
-import data.driven.cm.business.taskBaby.WechatPublicService;
-import data.driven.cm.business.taskBaby.WechatResponseService;
-import data.driven.cm.business.taskBaby.WechatUserInfoService;
+import data.driven.cm.business.taskBaby.*;
+import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
@@ -31,6 +29,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private PosterService posterService;
     @Autowired
     private WechatPublicService wechatPublicService;
+    @Autowired
+    private ActivityService activityService;
     @Override
     public String notify(Map wechatEventMap) {
         if(checkActive(wechatEventMap)) {
@@ -101,6 +101,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
          String openId = wechatEventMap.get(WeChatConstant.FromUserName);
          String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
+         String keyWord = wechatEventMap.get(WeChatConstant.Content);
          if(StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)){
              return "";
          }
@@ -110,13 +111,23 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         String appId = wechatPublicEntity.getAppid();
         String secretCode = wechatPublicEntity.getSecret();
-        Map<String,String> userPersonalInfo = WeChatUtil.getUserInfo(openId,appId,secretCode);
-        //TODO: 调用带参数的二维码生成接口,返回带参数二维码的url
-//         String posterUrl ="";//TODO:获取用户原始的海报url
-//         userPersonalInfo.put("posterUrl",posterUrl);
+        //获取粉丝个人信息存入到userPersonalInfoMap
+        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId,appId,secretCode);
 
+        //获取带参数的二维码
+        String activityId = activityService.getMatActivityId(wechatAccount,keyWord,null);
+        StringBuilder sceneStrBuilder = new StringBuilder();
+        sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
+                WeChatUtil.QR_MAX_EXPIREDTIME,WeChatUtil.QR_SCENE_NAME_STR,sceneStrBuilder.toString(),appId,secretCode);
 
-//         String url = posterService.getCombinedCustomiedPosterFilePath(posterUrl,userPersonalInfo.get(""))
+        //将二维码url put到userPersonalInfoMap中
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_RL,qrCodeUrl);
+        //将活动的原始海报的url放入到userPersonalInfoMap中
+        String posterUrl ="";//TODO:获取用户原始的海报url
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL,posterUrl);
+        String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+
          //TODO:发送文本消息：活动内容介绍
         //TODO：发送海报图片信息
         //TODO：记录fans_Join表

@@ -41,6 +41,11 @@ public class WeChatUtil {
     /**获取二维码**/
     private static final String showqr_url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     private static final String qrcode_url1 = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    public static final String QR_TYPE_TEMPORARY ="1";//临时码
+    public static final String QR_TYPE_PERMANENT ="2";//永久码；
+    public static final int QR_MAX_EXPIREDTIME = 2592000; //临时二维码最大过期时间，单位是秒，30天
+    public static final String QR_SCENE_NAME_ID = "QR_SCENE";
+    public static final String QR_SCENE_NAME_STR = "QR_STR_SCENE";
     //用户个人信息的key；
     public static final String KEY_HEADIMG_URL="headimgurl";
     public static final String KEY_NICKNAME="nickname";
@@ -54,6 +59,7 @@ public class WeChatUtil {
      * @param signature
      * @param timestamp
      * @param nonce
+     *
      * @return
      */
     public static boolean checkSignature(String signature, String timestamp, String nonce) {

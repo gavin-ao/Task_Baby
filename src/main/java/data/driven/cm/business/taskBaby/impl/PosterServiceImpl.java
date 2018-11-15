@@ -47,24 +47,24 @@ public class PosterServiceImpl implements PosterService {
         String headImgUrl = personalInfo.get(WeChatUtil.KEY_HEADIMG_URL);
         String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_RL);
         String nickName = personalInfo.get(WeChatUtil.KEY_NICKNAME);
-        return null;
+        return getCombinedCustomiedPosterFilePath(OriginlPosterUrl,headImgUrl,qrCodeUrl,nickName);
     }
 
     /**
      * TODO:暂时返回带参数的二维码的文件名便于测试，后面要改成合成之后的海报
      * @param OriginlPosterUrl
      * @param headImgUrl
-     * @param QRCodeUrl
+     * @param qrCodeUrl
      * @param nickName
      * @return
      */
     @Override
-    public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String QRCodeUrl, String nickName) {
+    public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
         if(StringUtils.isEmpty(OriginlPosterUrl)||StringUtils.isEmpty(headImgUrl)||
-                StringUtils.isEmpty(QRCodeUrl)||StringUtils.isEmpty(nickName)){
+                StringUtils.isEmpty(qrCodeUrl)||StringUtils.isEmpty(nickName)){
             return null;
         }
-        return getTempImgFilePathByUrl(QRCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
+        return getTempImgFilePathByUrl(qrCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 
 
