@@ -13,7 +13,7 @@ public class WechatUserInfoEntity {
     /**
      * 微信用户表id主键
      */
-    private String wechatUerId;
+    private String wechatUserId;
 
     /**
      * 是否订阅公众号,1 是 0 否
@@ -102,4 +102,153 @@ public class WechatUserInfoEntity {
      * 二维码扫码场景描述
      */
     private String qrSceneStr;
+
+    /**
+     * 用户的标识，对当前公众号唯一
+     */
+    private String openid;
+
+    public String getWechatUserId() {
+        return wechatUserId;
+    }
+
+    public void setWechatUserId(String wechatUserId) {
+        this.wechatUserId = wechatUserId;
+    }
+
+    public Integer getSubscribe() {
+        return subscribe;
+    }
+
+    public void setSubscribe(Integer subscribe) {
+        this.subscribe = subscribe;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getHeadimgurl() {
+        return headimgurl;
+    }
+
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl;
+    }
+
+    public String getUnionid() {
+        return unionid;
+    }
+
+    public void setUnionid(String unionid) {
+        this.unionid = unionid;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getSubscribeScene() {
+        return subscribeScene;
+    }
+
+    public void setSubscribeScene(String subscribeScene) {
+        this.subscribeScene = subscribeScene;
+    }
+
+    public String getWechatAccount() {
+        return wechatAccount;
+    }
+
+    public void setWechatAccount(String wechatAccount) {
+        this.wechatAccount = wechatAccount;
+    }
+
+    public Integer getSubscribeTime() {
+        return subscribeTime;
+    }
+
+    public void setSubscribeTime(Integer subscribeTime) {
+        this.subscribeTime = subscribeTime;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Integer getQrScene() {
+        return qrScene;
+    }
+
+    public void setQrScene(Integer qrScene) {
+        this.qrScene = qrScene;
+    }
+
+    public String getQrSceneStr() {
+        return qrSceneStr;
+    }
+
+    public void setQrSceneStr(String qrSceneStr) {
+        this.qrSceneStr = qrSceneStr;
+    }
+
+    public String getOpenid() {
+        return openid;
+    }
+
+    public void setOpenid(String openid) {
+        this.openid = openid;
+    }
 }
