@@ -1,6 +1,12 @@
 package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.ActivityService;
+import data.driven.cm.business.taskBaby.WechatUserInfoService;
+import data.driven.cm.component.WeChatContant;
+import data.driven.cm.dao.JDBCBaseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -13,6 +19,9 @@ import java.util.Map;
  **/
 @Service
 public class ActivityServiceImpl implements ActivityService {
+    private static final Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
+    @Autowired
+    private WechatUserInfoService wechatUserInfoService;
 
     @Override
     public String notify(Map wechatEventMap) {
@@ -34,7 +43,11 @@ public class ActivityServiceImpl implements ActivityService {
      * @param wechatEventMap 传进来的微信时间消息
      * @return 返回处理后的消息
      */
-    private String dispatherAndReturn(Map wechatEventMap){
+    private String dispatherAndReturn(Map<String,String> wechatEventMap){
+       String eventName = wechatEventMap.get(WeChatContant.Event);
+//       switch (eventName) {
+//           case WeChatContant.EVENT_TYPE_SUBSCRIBE: fansSubScribe()
+//       }
 
         return "success";
 
@@ -47,6 +60,17 @@ public class ActivityServiceImpl implements ActivityService {
      * @return
      */
     private String keyWordReply(Map wechatEventMap){
+
+
+         String openId = "";//TODO：获取当前的OpenID
+         String activityId ="";//TODO:获取当前的activityId
+        //TODO: 调用带参数的二维码生成接口,返回带参数二维码的url
+         Map<String,String> userPersonalInfo = null;//TODO:调用获取用户基本信息的接口
+         String posterUrl ="";//TODO:获取用户原始的海报url
+         userPersonalInfo.put("posterUrl",posterUrl);
+         String url = getCombinedPosterUrl(userPersonalInfo);
+         //TODO:发送模版消息：活动内容介绍
+        //TODO：发送海报图片信息
         return "success";
     }
 
@@ -56,7 +80,7 @@ public class ActivityServiceImpl implements ActivityService {
      * @return
      */
 
-    private String  getOriginPoster(String activityId){
+    private String  getOriginPosterUrl(String activityId){
 
 
         return "";
@@ -82,5 +106,25 @@ public class ActivityServiceImpl implements ActivityService {
     private String getCombinedPosterUrl(Map<String,String> personalInfoMap){
         return "";
     }
+
+    /**
+     *
+     * @param wechatAccount 微信公众号的账号id
+     * @param fansOpenId 粉丝的OpenId
+     * @return
+     */
+    private boolean fansSubScribe(String wechatAccount, String fansOpenId){
+            Map<String, String> userInfoMap = null;//TODO: 调用微信api获取用户基本信息的接口，返回给userInfoMap；
+
+            //TODO:根据userInfoMap 如果是新来的粉丝，调用数据库接口插入粉丝数据，如果是之前关注过的，就更新关注状态
+        return true;
+
+    }
+
+    private boolean fansUnsubscribe(String wechatAccount,String fansOpenId){
+        //TODO:根据用户的openid和微信账号，将粉丝的关注状态置为未关注
+        return true;
+    }
+
 }
 
