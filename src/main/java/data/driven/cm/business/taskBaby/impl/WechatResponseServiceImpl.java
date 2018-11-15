@@ -2,7 +2,7 @@ package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.WechatResponseService;
 import data.driven.cm.business.taskBaby.WechatUserInfoService;
-import data.driven.cm.component.WeChatContant;
+import data.driven.cm.component.WeChatContants;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,14 +46,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return 返回处理后的消息
      */
     private String dispatherAndReturn(Map<String,String> wechatEventMap){
-       String eventName = wechatEventMap.get(WeChatContant.Event);
-       String toUserName = wechatEventMap.get(WeChatContant.ToUserName);
-       String fromUserName = wechatEventMap.get(WeChatContant.FromUserName);
-       String msgType = wechatEventMap.get(WeChatContant.MsgType);
-       String msgContent =wechatEventMap.get(WeChatContant.Content);
+       String eventName = wechatEventMap.get(WeChatContants.Event);
+       String toUserName = wechatEventMap.get(WeChatContants.ToUserName);
+       String fromUserName = wechatEventMap.get(WeChatContants.FromUserName);
+       String msgType = wechatEventMap.get(WeChatContants.MsgType);
+       String msgContent =wechatEventMap.get(WeChatContants.Content);
        //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
         if(StringUtils.isNotEmpty(msgType) &&
-                msgType == WeChatContant.RESP_MESSAGE_TYPE_TEXT){
+                msgType == WeChatContants.RESP_MESSAGE_TYPE_TEXT){
             if(StringUtils.isNotEmpty(msgContent) && StringUtils.isNotEmpty(fromUserName) &&
                     StringUtils.isNotEmpty(toUserName) && StringUtils.isNotEmpty(msgContent) &&
                     matchKeyWord(msgContent,toUserName)){
@@ -61,8 +61,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             }
         }
         //2.用户扫描海报二维码，有eventKey，并且可以是以qrscene_开头的
-        String eventKey = wechatEventMap.get(WeChatContant.EventKey);
-        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatContant.QREventKeyPrefix)){
+        String eventKey = wechatEventMap.get(WeChatContants.EventKey);
+        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatContants.QREventKeyPrefix)){
             int helpCount = activityHelp(wechatEventMap);
             sendActivtyStateMsg(wechatEventMap,helpCount);//发送模版消息提示助力状态
         }
