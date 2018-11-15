@@ -1,9 +1,10 @@
 package data.driven.cm.business.taskBaby.impl;
 
-import data.driven.cm.business.taskBaby.ActivityService;
+import data.driven.cm.business.taskBaby.WechatResponseService;
 import data.driven.cm.business.taskBaby.WechatUserInfoService;
 import data.driven.cm.component.WeChatContant;
-import data.driven.cm.dao.JDBCBaseDao;
+import data.driven.cm.entity.taskBaby.MatActivityEntity;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ import java.util.Map;
  * @create: 2018-11-14 17:51
  **/
 @Service
-public class ActivityServiceImpl implements ActivityService {
-    private static final Logger logger = LoggerFactory.getLogger(ActivityServiceImpl.class);
+public class WechatResponseServiceImpl implements WechatResponseService {
+    private static final Logger logger = LoggerFactory.getLogger(WechatResponseServiceImpl.class);
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
 
@@ -45,6 +46,10 @@ public class ActivityServiceImpl implements ActivityService {
      */
     private String dispatherAndReturn(Map<String,String> wechatEventMap){
        String eventName = wechatEventMap.get(WeChatContant.Event);
+       String toUserName = wechatEventMap.get(WeChatContant.ToUserName);
+       String fromUserName = wechatEventMap.get(WeChatContant.FromUserName);
+       //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
+//        if(StringUtils.isNotEmpty(eventName) && eventName == WeChatContant.RESP_MESSAGE_TYPE_TEXT)
 //       switch (eventName) {
 //           case WeChatContant.EVENT_TYPE_SUBSCRIBE: fansSubScribe()
 //       }
@@ -53,6 +58,18 @@ public class ActivityServiceImpl implements ActivityService {
 
     }
 
+    /**
+     * 根据微信公众号和关键字匹配激活的活动
+     * @return
+     */
+     private boolean matchKeyWord(String keyWord, String wechatAccount){
+         MatActivityEntity activityEntity = null;
+         //TODO:根据根据关键字和微信账号,获取活动信息返回给activityEntity；
+         if(activityEntity!=null){
+             return  true;
+         }
+         return false;
+     }
 
     /**
      *
@@ -69,7 +86,7 @@ public class ActivityServiceImpl implements ActivityService {
          String posterUrl ="";//TODO:获取用户原始的海报url
          userPersonalInfo.put("posterUrl",posterUrl);
          String url = getCombinedPosterUrl(userPersonalInfo);
-         //TODO:发送模版消息：活动内容介绍
+         //TODO:发送文本消息：活动内容介绍
         //TODO：发送海报图片信息
         return "success";
     }
