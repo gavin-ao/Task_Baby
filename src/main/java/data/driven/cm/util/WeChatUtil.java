@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import data.driven.cm.component.WeChatContants;
+import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -41,6 +41,9 @@ public class WeChatUtil {
     /**获取二维码**/
     private static final String showqr_url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     private static final String qrcode_url1 = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    //用户个人信息的key；
+    public static final String KEY_HEADIMG_URL="headimgurl";
+    public static final String KEY_NICKNAME="nickname";
 
 
 
@@ -54,7 +57,7 @@ public class WeChatUtil {
      * @return
      */
     public static boolean checkSignature(String signature, String timestamp, String nonce) {
-        String[] arr = new String[] { WeChatContants.TOKEN, timestamp, nonce };
+        String[] arr = new String[] { WeChatConstant.TOKEN, timestamp, nonce };
         // 将token、timestamp、nonce三个参数进行字典序排序
         // Arrays.sort(arr);
         sort(arr);
@@ -210,11 +213,11 @@ public class WeChatUtil {
     public static String sendTextMsg(Map<String,String> requestMap){
 
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatContants.FromUserName));
-        map.put("FromUserName",  requestMap.get(WeChatContants.ToUserName));
-        map.put("MsgType", WeChatContants.RESP_MESSAGE_TYPE_TEXT);
+        map.put("ToUserName", requestMap.get(WeChatConstant.FromUserName));
+        map.put("FromUserName",  requestMap.get(WeChatConstant.ToUserName));
+        map.put("MsgType", WeChatConstant.RESP_MESSAGE_TYPE_TEXT);
         map.put("CreateTime", new Date().getTime());
-        map.put("Content", requestMap.get(WeChatContants.Content));
+        map.put("Content", requestMap.get(WeChatConstant.Content));
         return  mapToXML(map);
 //        return "<xml><Content><![CDATA[你谁阿]]></Content><CreateTime>1542034822929</CreateTime><ToUserName><![CDATA[oH1q_0bt1c9GXWzdx3l9fRKRE6rk]]></ToUserName><FromUserName><![CDATA[gh_2d2266631fa7]]></FromUserName><MsgType><![CDATA[text]]></MsgType></xml>";
     }
@@ -230,11 +233,11 @@ public class WeChatUtil {
      */
     public static String sendImageMsg(Map<String,String> requestMap){
         Map<String,Object> map = new HashMap<>();
-        map.put("ToUserName",requestMap.get(WeChatContants.FromUserName));
-        map.put("FromUserName",requestMap.get(WeChatContants.ToUserName));
-        map.put("MsgType", WeChatContants.REQ_MESSAGE_TYPE_IMAGE);
+        map.put("ToUserName",requestMap.get(WeChatConstant.FromUserName));
+        map.put("FromUserName",requestMap.get(WeChatConstant.ToUserName));
+        map.put("MsgType", WeChatConstant.REQ_MESSAGE_TYPE_IMAGE);
         Map<String,Object> mediaId = new HashMap<>();
-        mediaId.put("MediaId",requestMap.get(WeChatContants.MediaId));
+        mediaId.put("MediaId",requestMap.get(WeChatConstant.MediaId));
         map.put("Image",mediaId);
         map.put("CreateTime", new Date().getTime());
         return mapToXML(map);
@@ -252,8 +255,8 @@ public class WeChatUtil {
             return "";
         }
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatContants.FromUserName));
-        map.put("FromUserName", requestMap.get(WeChatContants.ToUserName));
+        map.put("ToUserName", requestMap.get(WeChatConstant.FromUserName));
+        map.put("FromUserName", requestMap.get(WeChatConstant.ToUserName));
         map.put("MsgType", "news");
         map.put("CreateTime", new Date().getTime());
         List<Map<String,Object>> Articles=new ArrayList<Map<String,Object>>();

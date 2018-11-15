@@ -2,7 +2,7 @@ package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.WeChatService;
 import data.driven.cm.business.taskBaby.WechatPublicService;
-import data.driven.cm.component.WeChatContants;
+import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
@@ -48,15 +48,15 @@ public class WeChatServiceImpl  implements WeChatService {
                 System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             }
             // 消息类型
-            String msgType =  requestMap.get(WeChatContants.MsgType);
+            String msgType =  requestMap.get(WeChatConstant.MsgType);
             System.out.println(msgType);
-            System.out.println(requestMap.get(WeChatContants.Content));
+            System.out.println(requestMap.get(WeChatConstant.Content));
 
             String mes = null;
 
             // 文本消息
-            if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_TEXT)) {
-                mes =requestMap.get(WeChatContants.Content).toString();
+            if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_TEXT)) {
+                mes =requestMap.get(WeChatConstant.Content).toString();
                 //调用王总的文本接口
                 //return new String(respXml.getBytes(),"ISO-8859-1");
 
@@ -73,7 +73,7 @@ public class WeChatServiceImpl  implements WeChatService {
                 }
                 else if("我的信息".equals(mes)){
                     WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount("gh_2d2266631fa7");
-                    Map<String, String> userInfo = WeChatUtil.getUserInfo(requestMap.get(WeChatContants.FromUserName),wechatPublicEntity.getAppid(), wechatPublicEntity.getSecret());
+                    Map<String, String> userInfo = WeChatUtil.getUserInfo(requestMap.get(WeChatConstant.FromUserName),wechatPublicEntity.getAppid(), wechatPublicEntity.getSecret());
                     System.out.println(userInfo.toString());
                     List<ArticleItem> items = new ArrayList<>();
                     if ("true".equals(userInfo.get("success"))){
@@ -96,64 +96,64 @@ public class WeChatServiceImpl  implements WeChatService {
                         respXml = WeChatUtil.sendTextMsg(requestMap);
                     }
                 }else if ("二维码".equals(mes)){
-//                    WeChatUtil.getWXPublicQRCode("1",2592000,"QR_STR_SCENE","oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456",requestMap.get("FromUserName"),WeChatContants.APPID,WeChatContants.SECRET);
-                    String codeUrl = WeChatUtil.getWXPublicQRCode("1",2592000,"QR_STR_SCENE","oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456", WeChatContants.APPID, WeChatContants.SECRET);
+//                    WeChatUtil.getWXPublicQRCode("1",2592000,"QR_STR_SCENE","oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456",requestMap.get("FromUserName"),WeChatConstant.APPID,WeChatConstant.SECRET);
+                    String codeUrl = WeChatUtil.getWXPublicQRCode("1",2592000,"QR_STR_SCENE","oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456", WeChatConstant.APPID, WeChatConstant.SECRET);
                     System.out.println("临时二维码URL "+codeUrl);
-                    requestMap.put(WeChatContants.Content,"已生成二维码，请找刘晓磊同学索要");
+                    requestMap.put(WeChatConstant.Content,"已生成二维码，请找刘晓磊同学索要");
                     respXml = WeChatUtil.sendTextMsg(requestMap);
 
                 }else if("加图片".equals(mes)){
-                    Map<String,Object> map = WeChatUtil.UploadMeida("image","dd", WeChatContants.APPID, WeChatContants.SECRET);
+                    Map<String,Object> map = WeChatUtil.UploadMeida("image","dd", WeChatConstant.APPID, WeChatConstant.SECRET);
                     System.out.println("type "+map.get("type"));
                     System.out.println(map.get("media_id"));
                     System.out.println(map.get("created_at"));
                 }else if("图片".equals(mes)){
 //                    Map<String,Object> map = new HashMap<>();
-//                    map.put("ToUserName",requestMap.get(WeChatContants.FromUserName));
-//                    map.put("FromUserNam",requestMap.get(WeChatContants.ToUserName));
+//                    map.put("ToUserName",requestMap.get(WeChatConstant.FromUserName));
+//                    map.put("FromUserNam",requestMap.get(WeChatConstant.ToUserName));
                     requestMap.put("MediaId","N11YRmZ_2SBJtA306ft9DProkxYU3aY-28Lq_G8KA_JYyQtVLA46UF5X5Gm01yvZ");
                     respXml = WeChatUtil.sendImageMsg(requestMap);
                 }
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_IMAGE)) { // 图片消息
-                requestMap.put(WeChatContants.Content,"您发送的是图片消息！");
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_IMAGE)) { // 图片消息
+                requestMap.put(WeChatConstant.Content,"您发送的是图片消息！");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_VOICE)) { // 语音消息
-                requestMap.put(WeChatContants.Content,"您发送的是语音消息！");
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_VOICE)) { // 语音消息
+                requestMap.put(WeChatConstant.Content,"您发送的是语音消息！");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_VIDEO)) { // 视频消息
-                requestMap.put(WeChatContants.Content,"您发送的是视频消息！");
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_VIDEO)) { // 视频消息
+                requestMap.put(WeChatConstant.Content,"您发送的是视频消息！");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_LOCATION)) { // 地理位置消息
-                requestMap.put(WeChatContants.Content,"您发送的是地理位置消息！");
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_LOCATION)) { // 地理位置消息
+                requestMap.put(WeChatConstant.Content,"您发送的是地理位置消息！");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_LINK)) { // 链接消息
-                requestMap.put(WeChatContants.Content,"您发送的是链接消息！");
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_LINK)) { // 链接消息
+                requestMap.put(WeChatConstant.Content,"您发送的是链接消息！");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
-            } else if (msgType.equals(WeChatContants.REQ_MESSAGE_TYPE_EVENT)) { // 事件推送
+            } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_EVENT)) { // 事件推送
                 // 事件类型
-                String eventType =  requestMap.get(WeChatContants.Event);
-                if (eventType.equals(WeChatContants.EVENT_TYPE_SUBSCRIBE)) { // 关注
+                String eventType =  requestMap.get(WeChatConstant.Event);
+                if (eventType.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE)) { // 关注
                     // 关注的时间默认返回活动信息,不用输入关键词
-                    requestMap.put(WeChatContants.Content,"谢谢您的关注！");
+                    requestMap.put(WeChatConstant.Content,"谢谢您的关注！");
                     respXml = WeChatUtil.sendTextMsg(requestMap);
-                } else if (eventType.equals(WeChatContants.EVENT_TYPE_UNSUBSCRIBE)) { // 取消关注
+                } else if (eventType.equals(WeChatConstant.EVENT_TYPE_UNSUBSCRIBE)) { // 取消关注
                     //取消关注时需要修改用户关注状态
                     System.out.println("用户已取消关注");
                     // TODO 取消订阅后用户不会再收到公众账号发送的消息，因此不需要回复
-                } else if (eventType.equals(WeChatContants.EVENT_TYPE_SCAN)) { // 扫描带参数二维码
+                } else if (eventType.equals(WeChatConstant.EVENT_TYPE_SCAN)) { // 扫描带参数二维码
                     System.out.println("通过二维码关注");
-                    requestMap.put(WeChatContants.Content,"谢谢您的关注！");
+                    requestMap.put(WeChatConstant.Content,"谢谢您的关注！");
                     respXml = WeChatUtil.sendTextMsg(requestMap);
                     // TODO 处理扫描带参数二维码事件
-                } else if (eventType.equals(WeChatContants.EVENT_TYPE_LOCATION)) { // 上报地理位置
+                } else if (eventType.equals(WeChatConstant.EVENT_TYPE_LOCATION)) { // 上报地理位置
                     // TODO 处理上报地理位置事件
-                } else if (eventType.equals(WeChatContants.EVENT_TYPE_CLICK)) { // 自定义菜单
+                } else if (eventType.equals(WeChatConstant.EVENT_TYPE_CLICK)) { // 自定义菜单
                     // TODO 处理菜单点击事件
                 }
             }
             mes = mes == null ? "不知道你在干嘛" : mes;
             if(respXml == null){
-                requestMap.put(WeChatContants.Content,mes);
+                requestMap.put(WeChatConstant.Content,mes);
                 respXml = WeChatUtil.sendTextMsg(requestMap);
             }
             System.out.println(respXml);

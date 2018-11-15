@@ -10,6 +10,7 @@ import data.driven.cm.entity.taskBaby.WechatPublicEntity;
  */
 public interface WechatPublicService {
 
+
     /**
      * 通过 wechatAccount(原始Id)得到微信公众号实体类
      * @param wechatAccount wechatAccount(原始Id)

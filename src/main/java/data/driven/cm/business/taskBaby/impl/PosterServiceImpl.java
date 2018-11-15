@@ -2,7 +2,10 @@ package data.driven.cm.business.taskBaby.impl;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import data.driven.cm.business.taskBaby.PosterService;
+import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.util.UUIDUtil;
+import data.driven.cm.util.WeChatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +15,13 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 /**
  * @program: Task_Baby
  * @description: 海报服务
  * @author: Logan
  * @create: 2018-11-15 12:01
- * TODO
  **/
 @Service
 public class PosterServiceImpl implements PosterService {
@@ -38,6 +41,15 @@ public class PosterServiceImpl implements PosterService {
         return null;
     }
 
+    @Override
+    public String getCombinedCustomiedPosterFilePath(Map<String, String> personalInfo) {
+        String OriginlPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
+        String headImgUrl = personalInfo.get(WeChatUtil.KEY_HEADIMG_URL);
+        String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_RL);
+        String nickName = personalInfo.get(WeChatUtil.KEY_NICKNAME);
+        return null;
+    }
+
     /**
      * TODO:暂时返回带参数的二维码的文件名便于测试，后面要改成合成之后的海报
      * @param OriginlPosterUrl
@@ -48,6 +60,10 @@ public class PosterServiceImpl implements PosterService {
      */
     @Override
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String QRCodeUrl, String nickName) {
+        if(StringUtils.isEmpty(OriginlPosterUrl)||StringUtils.isEmpty(headImgUrl)||
+                StringUtils.isEmpty(QRCodeUrl)||StringUtils.isEmpty(nickName)){
+            return null;
+        }
         return getTempImgFilePathByUrl(QRCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 

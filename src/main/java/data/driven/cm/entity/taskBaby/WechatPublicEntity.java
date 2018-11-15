@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class WechatPublicEntity {
 
+
     /**
      * 主键
      */

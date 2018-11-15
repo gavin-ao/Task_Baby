@@ -40,7 +40,7 @@ public class Task_BabyController {
                            @RequestParam(value = "timestamp") String timestamp,
                            @RequestParam(value = "nonce") String nonce,
                            @RequestParam(value = "echostr") String echostr) {
-        System.out.println("dd");
+        System.out.println(WeChatUtil.checkSignature(signature, timestamp, nonce) ? echostr : null);
         return WeChatUtil.checkSignature(signature, timestamp, nonce) ? echostr : null;
 
     }

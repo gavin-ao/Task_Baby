@@ -1,9 +1,13 @@
 package data.driven.cm.business.taskBaby.impl;
 
+import data.driven.cm.business.taskBaby.PosterService;
+import data.driven.cm.business.taskBaby.WechatPublicService;
 import data.driven.cm.business.taskBaby.WechatResponseService;
 import data.driven.cm.business.taskBaby.WechatUserInfoService;
-import data.driven.cm.component.WeChatContants;
+import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
+import data.driven.cm.entity.taskBaby.WechatPublicEntity;
+import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +27,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private static final Logger logger = LoggerFactory.getLogger(WechatResponseServiceImpl.class);
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
-
+    @Autowired
+    private PosterService posterService;
+    @Autowired
+    private WechatPublicService wechatPublicService;
     @Override
     public String notify(Map wechatEventMap) {
         if(checkActive(wechatEventMap)) {
@@ -46,14 +53,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return 返回处理后的消息
      */
     private String dispatherAndReturn(Map<String,String> wechatEventMap){
-       String eventName = wechatEventMap.get(WeChatContants.Event);
-       String toUserName = wechatEventMap.get(WeChatContants.ToUserName);
-       String fromUserName = wechatEventMap.get(WeChatContants.FromUserName);
-       String msgType = wechatEventMap.get(WeChatContants.MsgType);
-       String msgContent =wechatEventMap.get(WeChatContants.Content);
+       String eventName = wechatEventMap.get(WeChatConstant.Event);
+       String toUserName = wechatEventMap.get(WeChatConstant.ToUserName);
+       String fromUserName = wechatEventMap.get(WeChatConstant.FromUserName);
+       String msgType = wechatEventMap.get(WeChatConstant.MsgType);
+       String msgContent =wechatEventMap.get(WeChatConstant.Content);
        //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
         if(StringUtils.isNotEmpty(msgType) &&
-                msgType == WeChatContants.RESP_MESSAGE_TYPE_TEXT){
+                msgType == WeChatConstant.RESP_MESSAGE_TYPE_TEXT){
             if(StringUtils.isNotEmpty(msgContent) && StringUtils.isNotEmpty(fromUserName) &&
                     StringUtils.isNotEmpty(toUserName) && StringUtils.isNotEmpty(msgContent) &&
                     matchKeyWord(msgContent,toUserName)){
@@ -61,8 +68,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             }
         }
         //2.用户扫描海报二维码，有eventKey，并且可以是以qrscene_开头的
-        String eventKey = wechatEventMap.get(WeChatContants.EventKey);
-        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatContants.QREventKeyPrefix)){
+        String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
+        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatConstant.QREventKeyPrefix)){
             int helpCount = activityHelp(wechatEventMap);
             sendActivtyStateMsg(wechatEventMap,helpCount);//发送模版消息提示助力状态
         }
@@ -89,16 +96,27 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @param wechatEventMap
      * @return
      */
-    private String keyWordReply(Map wechatEventMap){
+    private String keyWordReply(Map<String,String> wechatEventMap){
 
 
-         String openId = "";//TODO：获取当前的OpenID
-         String activityId ="";//TODO:获取当前的activityId
+         String openId = wechatEventMap.get(WeChatConstant.FromUserName);
+         String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
+         if(StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)){
+             return "";
+         }
+        WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatAccount);
+        if(wechatPublicEntity == null){
+            return "";
+        }
+        String appId = wechatPublicEntity.getAppid();
+        String secretCode = wechatPublicEntity.getSecret();
+        Map<String,String> userPersonalInfo = WeChatUtil.getUserInfo(openId,appId,secretCode);
         //TODO: 调用带参数的二维码生成接口,返回带参数二维码的url
-         Map<String,String> userPersonalInfo = null;//TODO:调用获取用户基本信息的接口
-         String posterUrl ="";//TODO:获取用户原始的海报url
-         userPersonalInfo.put("posterUrl",posterUrl);
-         String url = getCombinedPosterUrl(userPersonalInfo);
+//         String posterUrl ="";//TODO:获取用户原始的海报url
+//         userPersonalInfo.put("posterUrl",posterUrl);
+
+
+//         String url = posterService.getCombinedCustomiedPosterFilePath(posterUrl,userPersonalInfo.get(""))
          //TODO:发送文本消息：活动内容介绍
         //TODO：发送海报图片信息
         //TODO：记录fans_Join表
@@ -118,25 +136,18 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     }
 
-    /**
+    /**TODO
      * 获取粉丝的个人信息，昵称，头像url等等
      * @param openId
      * @param wechatAccount
      * @return 个人信息
      */
     private Map<String,String> getFansPersonalInfo(String openId,String wechatAccount){
+//        WeChatUtil.getUserInfo(openId,)
         return null;
 
     }
 
-    /**
-     *
-     * @param personalInfoMap  headImgUrl, nickName, QRCodeUrl,posterUrl
-     * @return
-     */
-    private String getCombinedPosterUrl(Map<String,String> personalInfoMap){
-        return "";
-    }
 
     /**
      *
@@ -147,7 +158,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private boolean fansSubScribe(String wechatAccount, String fansOpenId){
             Map<String, String> userInfoMap = null;//TODO: 调用微信api获取用户基本信息的接口，返回给userInfoMap；
 
-            //TODO:根据userInfoMap 如果是新来的粉丝，调用数据库接口插入粉丝数据，如果是之前关注过的，就更新关注状态
+            //TODO:根据userInfoMap 如果是新来的粉丝，调用数据库接口插入粉丝数据 如果是之前关注过的，就更新关注状态
         return true;
 
     }
