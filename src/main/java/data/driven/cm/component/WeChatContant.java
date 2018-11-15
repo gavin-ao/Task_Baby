@@ -37,5 +37,5 @@ public class WeChatContant {
     public static final String MediaId = "MediaId";
     public static final String MEDIA_ID= "media_id"; //用于得到返回临时素材的media_id
     public static final String EventKey = "EventKey";
-    public static final String QREventKeyPrefix = "qrscene";//扫描二维码，eventkey的前缀未qrscene_
+    public static final String QREventKeyPrefix = "qrscene_";//扫描二维码，eventkey的前缀未qrscene_
 }
