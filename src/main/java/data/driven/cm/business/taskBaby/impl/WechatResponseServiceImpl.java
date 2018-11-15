@@ -137,11 +137,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         //得到合成图片的filePath
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+        userPersonalInfoMap.put(WeChatUtil.KEY_FILE_PATH,customizedPosterPath);
+        userPersonalInfoMap.put(WeChatUtil.KEY_APP_ID,appId);
+        userPersonalInfoMap.put(WeChatUtil.KEY_SECRET_CODE,secretCode);
+        return WeChatUtil.sendTemporaryImageMsg(userPersonalInfoMap);
 
          //TODO:发送文本消息：活动内容介绍
-        //TODO：发送海报图片信息
+
         //TODO：记录fans_Join表
-        return "success";//TODO：改成信息返回内容
     }
 
     /**
