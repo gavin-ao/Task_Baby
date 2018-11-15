@@ -2,7 +2,7 @@ package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.WechatUserInfoService;
 import data.driven.cm.dao.JDBCBaseDao;
-import data.driven.cm.entity.taskBaby.wechatUserInfoEntity;
+import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
     @Autowired
     private JDBCBaseDao dao;
     @Override
-    public wechatUserInfoEntity getUserInfoById(String wechatAccount, String openId) {
+    public WechatUserInfoEntity getUserInfoById(String wechatAccount, String openId) {
         return null;
     }
 }
