@@ -147,30 +147,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //TODO：记录fans_Join表
     }
 
-    /**
-     * 返回原始海报的url
-     * @param activityId
-     * @return
-     */
 
-    private String  getOriginPosterUrl(String activityId){
-
-
-        return "";
-
-    }
-
-    /**TODO
-     * 获取粉丝的个人信息，昵称，头像url等等
-     * @param openId
-     * @param wechatAccount
-     * @return 个人信息
-     */
-    private Map<String,String> getFansPersonalInfo(String openId,String wechatAccount){
-//        WeChatUtil.getUserInfo(openId,)
-        return null;
-
-    }
 
 
     /**
@@ -193,7 +170,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
     /**
-     * 活动被助力了
+     * TODO：活动被助力了
      * @param wechatEventMap
      * @return
      */
