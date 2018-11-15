@@ -8,7 +8,7 @@ import java.util.Date;
  * @Date: 2018/11/15 11:11
  * @Version 1.0
  */
-public class sysPictureEntity {
+public class SysPictureEntity {
 
     /**
      * 图片主键

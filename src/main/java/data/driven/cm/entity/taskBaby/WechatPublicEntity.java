@@ -8,7 +8,7 @@ import java.util.Date;
  * @Date: 2018/11/15 11:13
  * @Version 1.0
  */
-public class wechatPublicEntity {
+public class WechatPublicEntity {
 
     /**
      * 主键
