@@ -6,7 +6,7 @@ package data.driven.cm.component;
  * @Date: 2018/11/12 19:23
  * @Version 1.0
  */
-public class WeChatContants {
+public class WeChatConstant {
 
     /** 公众号APPID **/
     public static final String APPID = "APPID";

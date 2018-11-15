@@ -1,5 +1,7 @@
 package data.driven.cm.business.taskBaby;
 
+import java.util.Map;
+
 /**
  * 海报处理服务
  */
@@ -25,5 +27,7 @@ public interface PosterService {
      */
     public String getCombinedCustomiedPosterFilePath(
             String OriginlPosterUrl,String headImgUrl, String QRCodeUrl, String nickName);
+
+    public String getCombinedCustomiedPosterFilePath(Map<String,String> personalInfo);
 
 }

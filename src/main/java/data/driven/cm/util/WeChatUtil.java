@@ -44,6 +44,9 @@ public class WeChatUtil {
     /**获取二维码**/
     private static final String showqr_url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     private static final String qrcode_url1 = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    //用户个人信息的key；
+    public static final String KEY_HEADIMG_URL="headimgurl";
+    public static final String KEY_NICKNAME="nickname";
 
 
     /**
