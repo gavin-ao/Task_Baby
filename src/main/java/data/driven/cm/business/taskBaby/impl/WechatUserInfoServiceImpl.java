@@ -3,7 +3,6 @@ package data.driven.cm.business.taskBaby.impl;
 import data.driven.cm.business.taskBaby.WechatUserInfoService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
-import data.driven.cm.entity.verification.WechatStoreVerificationAuthorizationEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +52,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
             wechatUserId = UUIDUtil.getUUID();
 //            WechatStoreVerificationAuthorizationEntity wechatStoreVerificationAuthorizationEntity = new WechatStoreVerificationAuthorizationEntity();
             WechatUserInfoEntity wechatUserInfoEntity = new WechatUserInfoEntity();
-            wechatUserInfoEntity.setWechatUerId(wechatUserId);
+            wechatUserInfoEntity.setWechatUserId(wechatUserId);
             wechatUserInfoEntity.setSubscribe(subscribe);
             wechatUserInfoEntity.setNickname(nickname);
             wechatUserInfoEntity.setSex(sex);
@@ -100,7 +99,6 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      * @param openId 微信用户在公众号中唯一标示
      * @return wechatUserId 微信用户id
      */
-    @Autowired
     public String getUserInfoById(String wechatAccount, String openId) {
         String sql = "SELECT wechat_user_id from wechat_user_info where wechat_account = ? and openid = ?";
         Object wechatUserId = dao.getColumn(sql, wechatAccount,openId);
