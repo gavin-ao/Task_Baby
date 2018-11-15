@@ -1,9 +1,9 @@
 package data.driven.cm.business.taskBaby;
 
-import data.driven.cm.entity.taskBaby.wechatUserInfoEntity;
+import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
 
 public interface WechatUserInfoService {
     //public boolean insertUser();
-    public wechatUserInfoEntity getUserInfoById(String wechatAccount, String openId);
+    public WechatUserInfoEntity getUserInfoById(String wechatAccount, String openId);
 
 }
