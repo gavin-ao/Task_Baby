@@ -31,6 +31,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private WechatPublicService wechatPublicService;
     @Autowired
     private ActivityService activityService;
+    @Autowired
+    private SysPictureService sysPictureService;
     @Override
     public String notify(Map wechatEventMap) {
         if(checkActive(wechatEventMap)) {
@@ -115,7 +117,12 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId,appId,secretCode);
 
         //获取带参数的二维码
-        String activityId = activityService.getMatActivityId(wechatAccount,keyWord,null);
+        Map<String, Object> activitySimpleInfoMap =
+                activityService.getMacActivitySimpleInfo(wechatAccount,keyWord,null);
+        if(activitySimpleInfoMap == null){
+            return "";
+        }
+        String activityId = activitySimpleInfoMap.get("actId").toString();
         StringBuilder sceneStrBuilder = new StringBuilder();
         sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
         String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
@@ -124,8 +131,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //将二维码url put到userPersonalInfoMap中
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_RL,qrCodeUrl);
         //将活动的原始海报的url放入到userPersonalInfoMap中
-        String posterUrl ="";//TODO:获取用户原始的海报url
+        String picId = activitySimpleInfoMap.get("pictureId").toString();
+        String posterUrl = sysPictureService.getPictureURL(picId);
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL,posterUrl);
+
+        //得到合成图片的filePath
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
 
          //TODO:发送文本消息：活动内容介绍
