@@ -6,14 +6,6 @@ import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
 public interface WechatUserInfoService {
 
     /**
-     * 得到微信用户的 id
-     * @param wechatAccount 公众号原始ID
-     * @param openId 微信用户在公众号中唯一标示
-     * @return wechatUserId 微信用户id
-     */
-    public String getUserInfoById(String wechatAccount, String openId);
-
-    /**
      *  得到微信用户实体类
      * @param wechatAccount 公众号原始ID
      * @param openId 微信用户在公众号中唯一标示
@@ -24,7 +16,7 @@ public interface WechatUserInfoService {
     /**
      * 新增微信用户信息
      * @param subscribe 是否订阅公众号,1 是 0 否
-     * @param openid 微信用户在公众号中唯一的标示
+     * @param openId 微信用户在公众号中唯一的标示
      * @param nickname 用户昵称
      * @param sex 性别,1 男 2 女 0 未知
      * @param country 国家
