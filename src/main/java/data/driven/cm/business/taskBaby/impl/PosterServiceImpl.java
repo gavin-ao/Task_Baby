@@ -1,0 +1,122 @@
+package data.driven.cm.business.taskBaby.impl;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import data.driven.cm.business.taskBaby.PosterService;
+import data.driven.cm.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+/**
+ * @program: Task_Baby
+ * @description: 海报服务
+ * @author: Logan
+ * @create: 2018-11-15 12:01
+ * TODO
+ **/
+@Service
+public class PosterServiceImpl implements PosterService {
+    private static final Logger log = LoggerFactory.getLogger(PosterServiceImpl.class);
+    @Value("${file.download.path}")
+    private String downloadPath;
+    /**
+     * TODO
+     * @param OriginlPosterUrl 客户的原始海报url
+     * @param headImgUrl  粉丝头像url
+     * @param QRCodeUrl  带参数的二维码url
+     * @param nickName
+     * @return
+     */
+    @Override
+    public String getCombinedCustomizedPosterUrl(String OriginlPosterUrl, String headImgUrl, String QRCodeUrl, String nickName) {
+        return null;
+    }
+
+    /**
+     * TODO:暂时返回带参数的二维码的文件名便于测试，后面要改成合成之后的海报
+     * @param OriginlPosterUrl
+     * @param headImgUrl
+     * @param QRCodeUrl
+     * @param nickName
+     * @return
+     */
+    @Override
+    public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String QRCodeUrl, String nickName) {
+        return getTempImgFilePathByUrl(QRCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
+    }
+
+
+    /**
+     * 将URL图片存在本地，并返回filepath
+     * @param imgUrl
+     * @return 图片下载之后在本地的路径
+     */
+    private String getTempImgFilePathByUrl(String imgUrl) {
+        URL url = null;
+        OutputStream outPutStream = null;
+        BufferedReader br = null;
+        InputStreamReader inReader = null;
+        try {
+            url = new URL(imgUrl);
+            String fileName = UUIDUtil.getUUID();//生成一个随机的文件名
+            //将download根路径和随机文件名拼接成一个完整的filePath,作为临时文件的路径
+            StringBuilder pathStrBuilder = new StringBuilder();
+            pathStrBuilder.append(downloadPath).append(File.pathSeparator).append(fileName);
+            File file = new File(pathStrBuilder.toString());
+            outPutStream = new FileOutputStream(file);
+            URLConnection conn = url.openConnection();
+            inReader = new InputStreamReader(conn.getInputStream());
+            br = new BufferedReader(inReader);
+            String urlString = "";
+            String current;
+            while ((current = br.readLine()) != null) {
+                urlString += current;
+            }
+            outPutStream.write(urlString.getBytes());
+            return pathStrBuilder.toString();
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        } finally {
+            if (outPutStream != null) {
+                try {
+                    outPutStream.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage());
+                }
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage());
+                }
+            }
+            if (inReader != null) {
+                try {
+                    inReader.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage());
+                }
+            }
+
+        }
+       return "";
+    }
+
+    public boolean Clean(String filePath){
+        File file=new File(filePath);
+        if(file.exists()&&file.isFile()) {
+            file.delete();
+            return true;
+        }
+        return false;
+    }
+}
