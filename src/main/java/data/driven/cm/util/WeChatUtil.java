@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
 import org.dom4j.Document;
@@ -233,7 +234,6 @@ public class WeChatUtil {
         map.put("CreateTime", new Date().getTime());
         map.put("Content", requestMap.get(WeChatConstant.Content));
         return  mapToXML(map);
-//        return "<xml><Content><![CDATA[你谁阿]]></Content><CreateTime>1542034822929</CreateTime><ToUserName><![CDATA[oH1q_0bt1c9GXWzdx3l9fRKRE6rk]]></ToUserName><FromUserName><![CDATA[gh_2d2266631fa7]]></FromUserName><MsgType><![CDATA[text]]></MsgType></xml>";
     }
 
     /**
@@ -342,16 +342,14 @@ public class WeChatUtil {
      * @secret 开发者密码
      * @return 返回用户信息map格式
      */
-    public static Map<String,Object> getUserInfo(String fromUserName,String appId,String secret){
-        Map<String,Object> map = new HashMap<>();
+    public static Map<String,String> getUserInfo(String fromUserName,String appId,String secret){
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
         String access_token = jsonObject.getString("access_token");
         String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
 
         JSONObject result = parseObject(resultStr);
-
-        map = JSONObject.toJavaObject(result,Map.class);
+        Map<String, String> map = JSONObject.parseObject(resultStr, new TypeReference<Map<String, String>>(){});
         return map;
     }
 
