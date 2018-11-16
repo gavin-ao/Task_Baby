@@ -112,6 +112,8 @@ public class WeChatServiceImpl  implements WeChatService {
 //                    map.put("ToUserName",requestMap.get(WeChatConstant.FromUserName));
 //                    map.put("FromUserNam",requestMap.get(WeChatConstant.ToUserName));
                     requestMap.put("MediaId","N11YRmZ_2SBJtA306ft9DProkxYU3aY-28Lq_G8KA_JYyQtVLA46UF5X5Gm01yvZ");
+                    requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.FromUserName));
+                    requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.ToUserName));
                     respXml = WeChatUtil.sendImageMsg(requestMap);
                 }
             } else if (msgType.equals(WeChatConstant.REQ_MESSAGE_TYPE_IMAGE)) { // 图片消息

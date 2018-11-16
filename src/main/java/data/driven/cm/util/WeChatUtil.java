@@ -288,6 +288,15 @@ public class WeChatUtil {
         return mapToXML(map);
     }
 
+    /**
+     * 回复图片消息
+     * @param requestMap
+     *      requestMap 参数说明
+     *          ReplyToUserName 接收方账号(收到的OpenID)
+     *          ReplyFromUserName 发送方账号(微信账号)
+     *          MediaId
+     * @return 返回 String 类型的 xml
+     */
     public static String sendTemporaryImageMsg(Map<String,String> requestMap){
         String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
         String filePath =requestMap.get(KEY_FILE_PATH);

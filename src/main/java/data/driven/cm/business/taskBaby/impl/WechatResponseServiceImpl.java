@@ -3,7 +3,6 @@ package data.driven.cm.business.taskBaby.impl;
 import data.driven.cm.business.taskBaby.*;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,8 +23,6 @@ import java.util.Map;
 @Service
 public class WechatResponseServiceImpl implements WechatResponseService {
     private static final Logger logger = LoggerFactory.getLogger(WechatResponseServiceImpl.class);
-    @Autowired
-    private WechatUserInfoService wechatUserInfoService;
     @Autowired
     private PosterService posterService;
     @Autowired
@@ -42,12 +40,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
     /**
      * 查看活动是否激活
+     * 查看当前微信公众号下是否有激活的活动
      * @param wechatEventMap 传进来的微信时间消息
      * @return
      */
-    @Override
-    public boolean checkActive(Map wechatEventMap){
-          return true;
+    private boolean checkActive(Map<String,String> wechatEventMap){
+        String fromUserName = wechatEventMap.get(WeChatConstant.FromUserName);
+        if(fromUserName != null){
+            return activityService.countActivedActivity(fromUserName) > 0;
+        }
+
+        return false;
     }
     /**
      * 消息分发，将接收到的微信消息，分发到各个服务中去
@@ -55,7 +58,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return 返回处理后的消息
      */
     private String dispatherAndReturn(Map<String,String> wechatEventMap){
-       String eventName = wechatEventMap.get(WeChatConstant.Event);
        String toUserName = wechatEventMap.get(WeChatConstant.ToUserName);
        String fromUserName = wechatEventMap.get(WeChatConstant.FromUserName);
        String msgType = wechatEventMap.get(WeChatConstant.MsgType);
@@ -85,9 +87,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return
      */
      private boolean matchKeyWord(String keyWord, String wechatAccount){
-         MatActivityEntity activityEntity = null;
-         //TODO:根据根据关键字和微信账号,获取活动信息返回给activityEntity；
-         if(activityEntity!=null){
+         String activityId = activityService.getMatActivityId(wechatAccount,keyWord,null);
+         if(StringUtils.isNotEmpty(activityId)){
              return  true;
          }
          return false;
@@ -122,24 +123,27 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if(activitySimpleInfoMap == null){
             return "";
         }
-        String activityId = activitySimpleInfoMap.get("actId").toString();
+        String activityId = activitySimpleInfoMap.get(ActivityService.KEY_ACT_ID).toString();
         StringBuilder sceneStrBuilder = new StringBuilder();
         sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
         String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
                 WeChatUtil.QR_MAX_EXPIREDTIME,WeChatUtil.QR_SCENE_NAME_STR,sceneStrBuilder.toString(),appId,secretCode);
 
         //将二维码url put到userPersonalInfoMap中
-        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_RL,qrCodeUrl);
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL,qrCodeUrl);
         //将活动的原始海报的url放入到userPersonalInfoMap中
-        String picId = activitySimpleInfoMap.get("pictureId").toString();
+        String picId = activitySimpleInfoMap.get(ActivityService.KEY_PIC_ID).toString();
         String posterUrl = sysPictureService.getPictureURL(picId);
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL,posterUrl);
 
         //得到合成图片的filePath
+        userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName,openId);
+        userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName,wechatAccount);
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
         userPersonalInfoMap.put(WeChatUtil.KEY_FILE_PATH,customizedPosterPath);
         userPersonalInfoMap.put(WeChatUtil.KEY_APP_ID,appId);
         userPersonalInfoMap.put(WeChatUtil.KEY_SECRET_CODE,secretCode);
+
         return WeChatUtil.sendTemporaryImageMsg(userPersonalInfoMap);
 
          //TODO:发送文本消息：活动内容介绍
