@@ -33,12 +33,15 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private ActivityService activityService;
     @Autowired
     private SysPictureService sysPictureService;
+    @Autowired
+    private WechatUserInfoService wechatUserInfoService; //微信用户Service
+
     @Override
     public String notify(Map wechatEventMap) {
-        if(checkActive(wechatEventMap)) {
+//        if(checkActive(wechatEventMap)) { // 当用户只是关注并没有参加活动的话，采用 checkActive方法就会拦截，用户就不能与公众号进行交互了
            return dispatherAndReturn(wechatEventMap);
-        }
-        return "success";
+//        }
+//        return "success";
     }
     /**TODO:未考虑好实现，直接返回true
      * 查看活动是否激活
@@ -80,6 +83,29 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             sendActivtyStateMsg(wechatEventMap,helpCount);//发送模版消息提示助力状态
         }
 
+        String event = wechatEventMap.get(WeChatConstant.Event);
+        //3.用户关注公众号两种形式,具体如下：
+        //     1.搜索公众号直接进行关注
+        //    2.通过带参数二维进行关注
+        if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && StringUtils.isNoneEmpty(eventKey)){ //二维码关注
+
+        }else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&  "".equals(eventKey)){ //搜索直接关注
+            WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatEventMap.get(WeChatConstant.ToUserName));
+            Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FromUserName),wechatPublicEntity.getAppid(), wechatPublicEntity.getSecret());
+            wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")),userInfo.get("openid"),userInfo.get("nickname"),Integer.parseInt(userInfo.get("sex")),
+                    userInfo.get("country"),userInfo.get("province"),userInfo.get("language"),userInfo.get("headimgurl"),userInfo.get("unionid"),userInfo.get("remark"),
+                    userInfo.get("subscribe_scene"),wechatEventMap.get(WeChatConstant.ToUserName),Integer.parseInt(userInfo.get("subscribe_time")),userInfo.get("city"),Integer.parseInt(userInfo.get("qr_scene")),
+                    userInfo.get("qr_scene_str"));
+
+            wechatEventMap.put(WeChatConstant.Content,"谢谢您的关注！");
+            return WeChatUtil.sendTextMsg(wechatEventMap);
+        }
+
+        //4. 用户取消公众号关注
+
+        if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_UNSUBSCRIBE)){
+            wechatUserInfoService.updateSubscribe(wechatEventMap.get(WeChatConstant.ToUserName),wechatEventMap.get(WeChatConstant.FromUserName),0);
+        }
         return "success";
 
     }
