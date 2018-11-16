@@ -1,5 +1,7 @@
 package data.driven.cm.entity.wechat;
 
+import java.io.Serializable;
+
 /**
  * @program: Task_Baby
  * @description: 微信客服文本消息内容实体
@@ -7,7 +9,7 @@ package data.driven.cm.entity.wechat;
  * @create: 2018-11-16 14:27
  **/
 
-public class WechatCSTxtContentEntity {
+public class WechatCSTxtContentEntity implements Serializable {
     private  String content;
     public WechatCSTxtContentEntity(String content){
         this.content =content;

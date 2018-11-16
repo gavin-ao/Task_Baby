@@ -10,11 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.Map;
 
-import static data.driven.cm.component.WeChatConstant.KEY_APP_ID;
-import static data.driven.cm.component.WeChatConstant.KEY_FILE_PATH;
-import static data.driven.cm.component.WeChatConstant.KEY_SECRET_CODE;
+import static data.driven.cm.component.WeChatConstant.*;
 
 /**
  * @program: Task_Baby
@@ -43,19 +43,19 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 //        }
 //        return "success";
     }
-    /**
+    /**TODO:未考虑好实现，直接返回true
      * 查看活动是否激活
      * 查看当前微信公众号下是否有激活的活动
      * @param wechatEventMap 传进来的微信时间消息
      * @return
      */
     private boolean checkActive(Map<String,String> wechatEventMap){
-        String fromUserName = wechatEventMap.get(WeChatConstant.FromUserName);
-        if(fromUserName != null){
-            return activityService.countActivedActivity(fromUserName) > 0;
-        }
+//        String fromUserName = wechatEventMap.get(WeChatConstant.FromUserName);
+//        if(fromUserName != null){
+//            return activityService.countActivedActivity(fromUserName) > 0;
+//        }
 
-        return false;
+        return true;
     }
     /**
      * 消息分发，将接收到的微信消息，分发到各个服务中去
@@ -168,15 +168,27 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName,openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName,wechatAccount);
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-        userPersonalInfoMap.put(KEY_FILE_PATH,customizedPosterPath);
-        userPersonalInfoMap.put(KEY_APP_ID,appId);
-        userPersonalInfoMap.put(KEY_SECRET_CODE,secretCode);
 
-        return WeChatUtil.sendTemporaryImageMsg(userPersonalInfoMap);
+        //回复信息
+        Map<String,String> replyMap = new HashMap<String,String>();
 
-         //TODO:发送文本消息：活动内容介绍
+        replyMap.put(KEY_APP_ID,appId);
+        replyMap.put(KEY_SECRET_CODE,secretCode);
+        replyMap.put(KEY_CSMSG_TOUSER,openId);
+        replyMap.put(KEY_CSMSG_TYPE,KEY_CSMSG_TYPE_TEXT);
+        Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_shareCoypwritting);
+        if(shareCoppywritting!=null){//发送活动介绍
+        replyMap.put(KEY_CSMSG_CONTENT,shareCoppywritting.toString());
+            WeChatUtil.sendCustomMsg(userPersonalInfoMap);
+        }
 
+        if(customizedPosterPath!= null){//发送个性化海报
+            replyMap.put(KEY_FILE_PATH,customizedPosterPath);
+            replyMap.put(KEY_CSMSG_TYPE,KEY_CSMSG_TYPE_IMG);
+            WeChatUtil.sendCustomMsg(userPersonalInfoMap);
+        }
         //TODO：记录fans_Join表
+        return null;
     }
 
 

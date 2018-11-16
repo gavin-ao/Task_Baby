@@ -19,8 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.google.gson.Gson;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
+import data.driven.cm.entity.wechat.WechatCSImgMsgEntity;
 import data.driven.cm.entity.wechat.WechatCSTxtMsgEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -264,6 +266,19 @@ public class WeChatUtil {
         String url = custom_url+access_token;
         HttpUtil.doPost(url, testJson.toJSONString());
     }
+    /**
+     * 
+     * @author:     Logan
+     * @date:       2018/11/16 03:48 
+     * @params:     [JsonStr, appId, secret]   
+     * @return:     void
+    **/        
+    public static void sendCustomMsgByJsonStr(String JsonStr, String appId,String secret){
+        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
+        String access_token = jsonObject.getString("access_token");
+        String url = custom_url+access_token;
+        HttpUtil.doPost(url, JsonStr);
+    }
 /**
  * 根据Map发送客服消息
  * @author:     Logan
@@ -271,9 +286,10 @@ public class WeChatUtil {
  * @params:     [requestMap]
  * touser:粉丝的openId
  * msgtype:  消息类型text/image
- *     media_id/content
+ * filePath:海报的路径
  * appId:
  * secret:
+ *
  * @return:     void
 **/
     public static void sendCustomMsg(Map<String,String> requestMap){
@@ -285,17 +301,62 @@ public class WeChatUtil {
                 StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(seretCode)) {
             switch (msgType) {
                 case "text":
+                    String msg = getCSJsonTxtMsg(requestMap);//得到客服消息的json字符串；
+                    if(StringUtils.isNotEmpty(msg)) {
+                        sendCustomMsgByJsonStr(msg, appId, seretCode);
+                    }
                     break;
                 case "image":
+                    String imgMsg = getCSJsonImgMsg(requestMap,appId,seretCode);
+                    if(StringUtils.isNotEmpty(imgMsg)) {
+                        sendCustomMsgByJsonStr(imgMsg, appId, seretCode);
+                    }
                     break;
                 default:
                     break;
             }
         }
     }
+    /**
+     * 将客服文本消息体从map转化成Json
+     * @author:     Logan
+     * @date:       2018/11/16 03:48
+     * @params:     [requestMap]
+     * @return:     消息体的JSON串
+    **/
+    private static String getCSJsonTxtMsg(Map<String,String> requestMap){
+          String content = requestMap.get(KEY_CSMSG_CONTENT);
+          String touser = requestMap.get(KEY_CSMSG_TOUSER);
+          if(StringUtils.isNotEmpty(content)){
+              WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
+              Gson gson = new Gson();
+              return gson.toJson(msgEntity);
+          }else{
+              return null;
+          }
+    }
 
-    private JSONObject CSTxtMsg(Map<String,String> requestMap){
-//        WechatCSTxtMsgEntity msg = new WechatCSTxtMsgEntity();
+    private static String getCSJsonImgMsg(Map<String,String> requestMap,String appId,String secretCode){
+        String filePath = requestMap.get(KEY_FILE_PATH);
+        String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
+        String touser = requestMap.get(KEY_CSMSG_TOUSER);
+        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(secretCode)) {
+            try {
+                Map<String, Object> uploadInfoMap = UploadMeida(
+                        fileType, filePath, appId, secretCode);
+                //先新增临时素材，返回media_id
+                String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
+                if(StringUtils.isNotEmpty(mediaId)) {
+                    WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
+                    Gson gson = new Gson();
+                    return gson.toJson(imgMsgEntity);
+                }
+            } catch (IOException e) {
+                log.error("---------------发送临时图片消息失败------------");
+                log.error(e.getMessage());
+                return "";
+            }
+        }
         return null;
     }
     /**
@@ -366,9 +427,9 @@ public class WeChatUtil {
             return "";
         }
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
-        map.put("FromUserName", requestMap.get(WeChatConstant.Reply_FromUserName));
-        map.put("MsgType", "news");
+        map.put(WeChatConstant.ToUserName, requestMap.get(WeChatConstant.Reply_ToUserName));
+        map.put(WeChatConstant.FromUserName, requestMap.get(WeChatConstant.Reply_FromUserName));
+        map.put(WeChatConstant.MsgType, "news");
         map.put("CreateTime", new Date().getTime());
         List<Map<String,Object>> Articles=new ArrayList<Map<String,Object>>();
         for(ArticleItem itembean : items){

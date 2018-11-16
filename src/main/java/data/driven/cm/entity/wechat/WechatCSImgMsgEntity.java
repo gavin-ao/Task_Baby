@@ -1,5 +1,7 @@
 package data.driven.cm.entity.wechat;
 
+import java.io.Serializable;
+
 import static data.driven.cm.component.WeChatConstant.KEY_CSMSG_TYPE_IMG;
 
 /**
@@ -9,7 +11,7 @@ import static data.driven.cm.component.WeChatConstant.KEY_CSMSG_TYPE_IMG;
  * @create: 2018-11-16 14:35
  **/
 
-public class WechatCSImgMsgEntity {
+public class WechatCSImgMsgEntity implements Serializable {
     private String touser;
     private String msgtype;
     private WechatCSImgContentEntity image;
