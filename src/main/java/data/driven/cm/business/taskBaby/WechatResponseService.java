@@ -15,10 +15,5 @@ public interface WechatResponseService {
      */
     public String notify(Map wechatEventMap);
 
-    /**
-     * 判断活动是否激活
-     * @param wechatEventMap
-     * @return
-     */
-    public boolean checkActive(Map wechatEventMap);
+
 }
