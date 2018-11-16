@@ -16,6 +16,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import static data.driven.cm.component.WeChatConstant.KEY_HEADIMG_URL;
+import static data.driven.cm.component.WeChatConstant.KEY_NICKNAME;
+
 /**
  * @program: Task_Baby
  * @description: 海报服务
@@ -54,9 +57,9 @@ public class PosterServiceImpl implements PosterService {
     @Override
     public String getCombinedCustomiedPosterFilePath(Map<String, String> personalInfo) {
         String OriginlPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
-        String headImgUrl = personalInfo.get(WeChatUtil.KEY_HEADIMG_URL);
+        String headImgUrl = personalInfo.get(KEY_HEADIMG_URL);
         String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_URL);
-        String nickName = personalInfo.get(WeChatUtil.KEY_NICKNAME);
+        String nickName = personalInfo.get(KEY_NICKNAME);
         return getCombinedCustomiedPosterFilePath(OriginlPosterUrl,headImgUrl,qrCodeUrl,nickName);
     }
 
@@ -83,6 +86,7 @@ public class PosterServiceImpl implements PosterService {
      * @param imgUrl
      * @return 图片下载之后在本地的路径
      */
+
     private String getTempImgFilePathByUrl(String imgUrl) {
         URL url = null;
         OutputStream outPutStream = null;

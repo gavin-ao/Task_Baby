@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
+import data.driven.cm.entity.wechat.WechatCSTxtMsgEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.alibaba.fastjson.JSON.parseObject;
+import static data.driven.cm.component.WeChatConstant.*;
 
 /**
  * @Author: lxl
@@ -48,18 +50,13 @@ public class WeChatUtil {
     /** 客服接口-发消息 **/
     private static final String custom_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
 
+
     public static final String QR_TYPE_TEMPORARY ="1";//临时码
     public static final String QR_TYPE_PERMANENT ="2";//永久码；
     public static final int QR_MAX_EXPIREDTIME = 2592000; //临时二维码最大过期时间，单位是秒，30天
     public static final String QR_SCENE_NAME_ID = "QR_SCENE";
     public static final String QR_SCENE_NAME_STR = "QR_STR_SCENE";
-    //用户个人信息的key；
-    public static final String KEY_HEADIMG_URL="headimgurl";
-    public static final String KEY_NICKNAME="nickname";
-    public static final String KEY_FILE_PATH ="filePath";
-    public static final String KEY_APP_ID ="appId";
-    public static final String KEY_SECRET_CODE="secretCode";
-    public static final String KEY_MEDIA_ID="media_id";
+
 
 
 
@@ -267,6 +264,40 @@ public class WeChatUtil {
         String url = custom_url+access_token;
         HttpUtil.doPost(url, testJson.toJSONString());
     }
+/**
+ * 根据Map发送客服消息
+ * @author:     Logan
+ * @date:       2018/11/16 02:45
+ * @params:     [requestMap]
+ * touser:粉丝的openId
+ * msgtype:  消息类型text/image
+ *     media_id/content
+ * appId:
+ * secret:
+ * @return:     void
+**/
+    public static void sendCustomMsg(Map<String,String> requestMap){
+        String touser = requestMap.get(KEY_CSMSG_TOUSER);
+        String msgType = requestMap.get(KEY_CSMSG_TYPE);
+        String appId = requestMap.get(KEY_APP_ID);
+        String seretCode = requestMap.get(KEY_SECRET_CODE);
+        if(StringUtils.isNotEmpty(touser) && StringUtils.isNotEmpty(msgType) &&
+                StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(seretCode)) {
+            switch (msgType) {
+                case "text":
+                    break;
+                case "image":
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private JSONObject CSTxtMsg(Map<String,String> requestMap){
+//        WechatCSTxtMsgEntity msg = new WechatCSTxtMsgEntity();
+        return null;
+    }
     /**
      * 回复图片消息
      * @param requestMap
@@ -294,7 +325,9 @@ public class WeChatUtil {
      *      requestMap 参数说明
      *          ReplyToUserName 接收方账号(收到的OpenID)
      *          ReplyFromUserName 发送方账号(微信账号)
-     *          MediaId
+     *          filePath 图片down在本地的路径
+     *          appId 微信公众号的appId
+     *          secretCode 微信的secretCode
      * @return 返回 String 类型的 xml
      */
     public static String sendTemporaryImageMsg(Map<String,String> requestMap){

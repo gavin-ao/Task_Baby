@@ -10,9 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.Map;
+
+import static data.driven.cm.component.WeChatConstant.KEY_APP_ID;
+import static data.driven.cm.component.WeChatConstant.KEY_FILE_PATH;
+import static data.driven.cm.component.WeChatConstant.KEY_SECRET_CODE;
 
 /**
  * @program: Task_Baby
@@ -140,9 +142,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName,openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName,wechatAccount);
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-        userPersonalInfoMap.put(WeChatUtil.KEY_FILE_PATH,customizedPosterPath);
-        userPersonalInfoMap.put(WeChatUtil.KEY_APP_ID,appId);
-        userPersonalInfoMap.put(WeChatUtil.KEY_SECRET_CODE,secretCode);
+        userPersonalInfoMap.put(KEY_FILE_PATH,customizedPosterPath);
+        userPersonalInfoMap.put(KEY_APP_ID,appId);
+        userPersonalInfoMap.put(KEY_SECRET_CODE,secretCode);
 
         return WeChatUtil.sendTemporaryImageMsg(userPersonalInfoMap);
 

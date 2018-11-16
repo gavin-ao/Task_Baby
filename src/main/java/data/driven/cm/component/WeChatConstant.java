@@ -40,4 +40,20 @@ public class WeChatConstant {
     public static final String MEDIA_ID= "media_id"; //用于得到返回临时素材的media_id
     public static final String EventKey = "EventKey";
     public static final String QREventKeyPrefix = "qrscene_";//扫描二维码，eventkey的前缀未qrscene_
+
+   //客服消息常量
+    public static final String KEY_CSMSG_TOUSER ="touser";
+    public static final String KEY_CSMSG_TYPE ="msgtype";
+    public static final String KEY_CSMSG_CONTENT="content";
+    public static final String KEY_CSMSG_TYPE_TEXT="text";
+    public static final String KEY_CSMSG_TYPE_IMG="image";
+
+
+    //用户个人信息的key；
+    public static final String KEY_HEADIMG_URL="headimgurl";
+    public static final String KEY_NICKNAME="nickname";
+    public static final String KEY_FILE_PATH ="filePath";
+    public static final String KEY_APP_ID ="appId";
+    public static final String KEY_SECRET_CODE="secretCode";
+    public static final String KEY_MEDIA_ID="media_id";
 }
