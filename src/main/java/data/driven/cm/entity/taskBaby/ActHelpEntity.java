@@ -16,11 +16,6 @@ public class ActHelpEntity {
     private String helpId;
 
     /**
-     * 助力者id,微信用户的id
-     */
-    private String toId;
-
-    /**
      * 活动id
      */
     private String actId;
@@ -31,24 +26,24 @@ public class ActHelpEntity {
     private String wechatAccount;
 
     /**
-     * 助力状态,0 未助力 1 已助力
-     */
-    private Integer helpStatus;
-
-    /**
      * 被助力者
      */
     private String formId;
 
     /**
-     * 粉丝状态,0  否 1 是 注：针对于老用户是不算助力成功
-     */
-    private Integer fansStatus;
-
-    /**
      * 助力日期
      */
     private Date helpAt;
+
+    /**
+     * 助力成功状态,0 助力未成功 1 助力成功
+     */
+    private Integer helpSuccessStatus;
+
+    /**
+     * 助力人数
+     */
+    private Integer helpNumber;
 
     public String getHelpId() {
         return helpId;
@@ -56,14 +51,6 @@ public class ActHelpEntity {
 
     public void setHelpId(String helpId) {
         this.helpId = helpId;
-    }
-
-    public String getToId() {
-        return toId;
-    }
-
-    public void setToId(String toId) {
-        this.toId = toId;
     }
 
     public String getActId() {
@@ -74,28 +61,12 @@ public class ActHelpEntity {
         this.actId = actId;
     }
 
-    public Integer getHelpStatus() {
-        return helpStatus;
-    }
-
-    public void setHelpStatus(Integer helpStatus) {
-        this.helpStatus = helpStatus;
-    }
-
     public String getFormId() {
         return formId;
     }
 
     public void setFormId(String formId) {
         this.formId = formId;
-    }
-
-    public Integer getFansStatus() {
-        return fansStatus;
-    }
-
-    public void setFansStatus(Integer fansStatus) {
-        this.fansStatus = fansStatus;
     }
 
     public Date getHelpAt() {
@@ -112,5 +83,21 @@ public class ActHelpEntity {
 
     public void setWechatAccount(String wechatAccount) {
         this.wechatAccount = wechatAccount;
+    }
+
+    public Integer getHelpSuccessStatus() {
+        return helpSuccessStatus;
+    }
+
+    public void setHelpSuccessStatus(Integer helpSuccessStatus) {
+        this.helpSuccessStatus = helpSuccessStatus;
+    }
+
+    public Integer getHelpNumber() {
+        return helpNumber;
+    }
+
+    public void setHelpNumber(Integer helpNumber) {
+        this.helpNumber = helpNumber;
     }
 }
