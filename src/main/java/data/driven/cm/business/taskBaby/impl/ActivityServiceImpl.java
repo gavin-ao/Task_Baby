@@ -47,7 +47,7 @@ public class ActivityServiceImpl implements ActivityService {
      * @param wechatAccount 微信账号
      * @param keyWord 关键字
      * @param status 0是关闭，1是开启
-     * @return key:[actId, pictureId,startAt,endAt,status];
+     * @return key:[actId, pictureId,startAt,endAt,status,shareCopywriting];
      */
     @Override
     public Map<String, Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord, Integer status) {
@@ -56,7 +56,8 @@ public class ActivityServiceImpl implements ActivityService {
             statusValue = status;
         }
         String sql =
-                "select act_id as actId ,picture_id as pictureId，start_at as startAt,end_at as endAt,status" +
+                "select act_id as actId ,picture_id as pictureId，start_at as startAt," +
+                        "end_at as endAt,status,act_share_copywriting as shareCopywriting" +
                         " from  mat_activity where status =? and wechat_account=? and act_key_word=?";
         return dao.getMapResult(sql,statusValue,wechatAccount,keyWord);
     }

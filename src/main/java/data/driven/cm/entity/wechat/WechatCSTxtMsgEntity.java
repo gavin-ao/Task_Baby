@@ -1,5 +1,7 @@
 package data.driven.cm.entity.wechat;
 
+import java.io.Serializable;
+
 import static data.driven.cm.component.WeChatConstant.KEY_CSMSG_TYPE_TEXT;
 
 /**
@@ -9,7 +11,7 @@ import static data.driven.cm.component.WeChatConstant.KEY_CSMSG_TYPE_TEXT;
  * @create: 2018-11-16 14:33
  **/
 
-public class WechatCSTxtMsgEntity {
+public class WechatCSTxtMsgEntity implements Serializable {
     private String touser;
     private String msgtype;
     private WechatCSTxtContentEntity text;

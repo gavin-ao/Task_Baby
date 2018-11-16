@@ -11,6 +11,7 @@ import java.util.Map;
 public interface ActivityService {
        String KEY_ACT_ID = "actId";
        String KEY_PIC_ID = "picture";
+       String KEY_shareCoypwritting = "shareCopywriting";
     /**
      *
      * @param wechatAccount 微信账号
@@ -25,7 +26,7 @@ public interface ActivityService {
      * @param wechatAccount 微信账号
      * @param keyWord 关键字
      * @param status 0是关闭，1是开启
-     * @return key:[actId, pictureId];
+     * @return key:[actId, pictureId,startAt,endAt,status,shareCopywriting];
      */
     public Map<String,Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord,Integer status);
 

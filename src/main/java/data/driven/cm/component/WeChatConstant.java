@@ -42,9 +42,9 @@ public class WeChatConstant {
     public static final String QREventKeyPrefix = "qrscene_";//扫描二维码，eventkey的前缀未qrscene_
 
    //客服消息常量
-    public static final String KEY_CSMSG_TOUSER ="touser";
-    public static final String KEY_CSMSG_TYPE ="msgtype";
-    public static final String KEY_CSMSG_CONTENT="content";
+    public static final String KEY_CSMSG_TOUSER ="CSMSG_TOUSER";
+    public static final String KEY_CSMSG_TYPE ="CSMSG_TYPE";
+    public static final String KEY_CSMSG_CONTENT="CSMSG_CONTENT";
     public static final String KEY_CSMSG_TYPE_TEXT="text";
     public static final String KEY_CSMSG_TYPE_IMG="image";
 

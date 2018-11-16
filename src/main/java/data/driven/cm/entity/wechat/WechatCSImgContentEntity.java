@@ -1,5 +1,7 @@
 package data.driven.cm.entity.wechat;
 
+import java.io.Serializable;
+
 /**
  * @program: Task_Baby
  * @description: 微信客服图片消息内容实体
@@ -7,7 +9,7 @@ package data.driven.cm.entity.wechat;
  * @create: 2018-11-16 14:30
  **/
 
-public class WechatCSImgContentEntity {
+public class WechatCSImgContentEntity implements Serializable {
     private String media_id;
     public WechatCSImgContentEntity(String media_id){
         this.media_id = media_id;
