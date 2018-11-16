@@ -88,15 +88,13 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //     1.搜索公众号直接进行关注
         //    2.通过带参数二维进行关注
         if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && StringUtils.isNoneEmpty(eventKey)){ //二维码关注
+            //新增用户信息
+            insertWechatUserInfo(wechatEventMap);
+            //需要调用生成海报接口
 
         }else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&  "".equals(eventKey)){ //搜索直接关注
-            WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatEventMap.get(WeChatConstant.ToUserName));
-            Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FromUserName),wechatPublicEntity.getAppid(), wechatPublicEntity.getSecret());
-            wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")),userInfo.get("openid"),userInfo.get("nickname"),Integer.parseInt(userInfo.get("sex")),
-                    userInfo.get("country"),userInfo.get("province"),userInfo.get("language"),userInfo.get("headimgurl"),userInfo.get("unionid"),userInfo.get("remark"),
-                    userInfo.get("subscribe_scene"),wechatEventMap.get(WeChatConstant.ToUserName),Integer.parseInt(userInfo.get("subscribe_time")),userInfo.get("city"),Integer.parseInt(userInfo.get("qr_scene")),
-                    userInfo.get("qr_scene_str"));
-
+            //新增用户信息
+            insertWechatUserInfo(wechatEventMap);
             wechatEventMap.put(WeChatConstant.Content,"谢谢您的关注！");
             return WeChatUtil.sendTextMsg(wechatEventMap);
         }
@@ -110,6 +108,18 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     }
 
+    /**
+     * 新增微信用户方法
+     * @param wechatEventMap
+     */
+    public void insertWechatUserInfo(Map<String,String> wechatEventMap){
+        WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatEventMap.get(WeChatConstant.ToUserName));
+        Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FromUserName),wechatPublicEntity.getAppid(), wechatPublicEntity.getSecret());
+        wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")),userInfo.get("openid"),userInfo.get("nickname"),Integer.parseInt(userInfo.get("sex")),
+                userInfo.get("country"),userInfo.get("province"),userInfo.get("language"),userInfo.get("headimgurl"),userInfo.get("unionid"),userInfo.get("remark"),
+                userInfo.get("subscribe_scene"),wechatEventMap.get(WeChatConstant.ToUserName),Integer.parseInt(userInfo.get("subscribe_time")),userInfo.get("city"),Integer.parseInt(userInfo.get("qr_scene")),
+                userInfo.get("qr_scene_str"));
+    }
     /**
      * 根据微信公众号和关键字匹配激活的活动
      * @return
