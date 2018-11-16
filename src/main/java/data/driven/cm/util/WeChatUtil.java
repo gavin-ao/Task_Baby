@@ -366,8 +366,8 @@ public class WeChatUtil {
             return "";
         }
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatConstant.FromUserName));
-        map.put("FromUserName", requestMap.get(WeChatConstant.ToUserName));
+        map.put("ToUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
+        map.put("FromUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
         map.put("MsgType", "news");
         map.put("CreateTime", new Date().getTime());
         List<Map<String,Object>> Articles=new ArrayList<Map<String,Object>>();

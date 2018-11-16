@@ -86,6 +86,8 @@ public class WeChatServiceImpl  implements WeChatService {
                         item.setPicUrl("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1505100912368&di=69c2ba796aa2afd9a4608e213bf695fb&imgtype=0&src=http%3A%2F%2Ftx.haiqq.com%2Fuploads%2Fallimg%2F170510%2F0634355517-9.jpg");
 //                    item.setUrl("http://www.baidu.com");
                         items.add(item);
+                        requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.FromUserName));
+                        requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.ToUserName));
                         respXml = WeChatUtil.sendArticleMsg(requestMap, items);
                     }
                     else if("我的信息".equals(mes)){
@@ -106,6 +108,8 @@ public class WeChatServiceImpl  implements WeChatService {
                         item.setPicUrl(headimgurl);
                         item.setUrl(userInfo.get("headimgurl").toString());
                         items.add(item);
+                        requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.FromUserName));
+                        requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.ToUserName));
 
                         respXml = WeChatUtil.sendArticleMsg(requestMap, items);
 
