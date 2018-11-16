@@ -226,8 +226,8 @@ public class WeChatUtil {
     public static String sendTextMsg(Map<String,String> requestMap){
 
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatConstant.FromUserName));
-        map.put("FromUserName",  requestMap.get(WeChatConstant.ToUserName));
+        map.put("ToUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
+        map.put("FromUserName",  requestMap.get(WeChatConstant.Reply_FromUserName));
         map.put("MsgType", WeChatConstant.RESP_MESSAGE_TYPE_TEXT);
         map.put("CreateTime", new Date().getTime());
         map.put("Content", requestMap.get(WeChatConstant.Content));

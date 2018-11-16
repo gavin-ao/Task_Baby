@@ -54,7 +54,8 @@ public class WeChatServiceImpl  implements WeChatService {
             String createTime = requestMap.get("CreateTime");
             String msgId = requestMap.get("MsgId");
             DuplicateRemovalMessage duplicateRemovalMessage = new DuplicateRemovalMessage();
-
+            requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.FromUserName));
+            requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.ToUserName));
             if (msgId != null) {
                 duplicateRemovalMessage.setMsgId(msgId);
             } else {
@@ -108,8 +109,7 @@ public class WeChatServiceImpl  implements WeChatService {
                         item.setPicUrl(headimgurl);
                         item.setUrl(userInfo.get("headimgurl").toString());
                         items.add(item);
-                        requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.FromUserName));
-                        requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.ToUserName));
+
 
                         respXml = WeChatUtil.sendArticleMsg(requestMap, items);
 
