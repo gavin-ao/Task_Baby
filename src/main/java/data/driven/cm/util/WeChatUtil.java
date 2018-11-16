@@ -288,20 +288,20 @@ public class WeChatUtil {
      * @secret 开发者密码
      * @return 返回用户信息map格式
      */
-    public static Map<String, String> getUserInfo(String fromUserName,String appId,String secret){
-        Map<String,String> map = new HashMap<>();
+    public static Map<String,Object> getUserInfo(String fromUserName,String appId,String secret){
+        Map<String,Object> map = new HashMap<>();
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
         String access_token = jsonObject.getString("access_token");
         String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
 //        System.out.println("url " + url);
-        if(resultStr == null){
-            map.put("success","false");
-            return map;
-        }
+//        if(resultStr == null){
+//            map.put("success","false");
+//            return map;
+//        }
         JSONObject result = parseObject(resultStr);
+
         map = JSONObject.toJavaObject(result,Map.class);
-        map.put("success","true");
         return map;
     }
 
