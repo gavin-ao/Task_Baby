@@ -5,11 +5,15 @@ import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.util.UUIDUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -75,8 +79,50 @@ public class PosterServiceImpl implements PosterService {
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
         if(StringUtils.isEmpty(OriginlPosterUrl)||StringUtils.isEmpty(headImgUrl)||
                 StringUtils.isEmpty(qrCodeUrl)||StringUtils.isEmpty(nickName)){
-            return null;
-        }
+            Font font = new Font("微软雅黑",Font.PLAIN,53);
+            StringBuilder tempFileNameBuider =new StringBuilder();
+            tempFileNameBuider.append(downloadPath).append(File.pathSeparator).
+                    append(UUIDUtil.getUUID()).append(".jpg");
+            Graphics2D g = null;
+                try {
+                    log.debug("--------加载原始海报, 路径：",OriginlPosterUrl,"--------------");
+                    BufferedImage imgPoster = ImageIO.read(new File(OriginlPosterUrl));
+                    log.debug("--------加载二维码,路径：",qrCodeUrl,"----------------");
+                    BufferedImage  imgQRCode = ImageIO.read(new File(qrCodeUrl));
+                    log.debug("--------加载头像,路径：",headImgUrl,"----------------");
+                    BufferedImage imgHead = ImageIO.read(new File(headImgUrl));
+                    //以原始海报作为模板
+                    g = imgPoster.createGraphics();
+                    // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
+                    g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight() - 100,
+                            300, 300, null);
+                    //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
+                    g.drawImage(imgHead,60,30,100,100,null);
+                    // 设置文本样式
+                    g.setFont(font);
+                    g.setColor(Color.BLACK);
+                    // 截取用户名称的最后一个字符
+//                    String lastChar = userName.substring(userName.length() - 1);
+                    // 拼接新的用户名称
+//                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
+                    // 添加用户名称
+                    g.drawString(nickName, 60+100+5, 80);
+                    // 完成模板修改
+                    g.dispose();
+                    // 获取新文件的地址
+                    File outputfile = new File(tempFileNameBuider.toString());
+                    // 生成新的合成过的用户二维码并写入新图片
+                    ImageIO.write(imgPoster, "jpg", outputfile);
+                    return tempFileNameBuider.toString();
+                } catch (IOException e) {
+                    log.error("-----------拼接海报出错：",e.getMessage());
+                }finally {
+                    if(g!=null){
+                       g.dispose();
+                    }
+                }
+
+            }
         return getTempImgFilePathByUrl(qrCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 
