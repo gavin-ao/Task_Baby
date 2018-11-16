@@ -21,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -270,15 +271,15 @@ public class WeChatUtil {
      * 回复图片消息
      * @param requestMap
      *      requestMap 参数说明
-     *          FromUserName 开发者微信号
-     *          ToUserName 接收方账号(收到的OpenID)
+     *          ReplyToUserName 接收方账号(收到的OpenID)
+     *          ReplyFromUserName 发送方账号(微信账号)
      *          MediaId
      * @return 返回 String 类型的 xml
      */
     public static String sendImageMsg(Map<String,String> requestMap){
         Map<String,Object> map = new HashMap<>();
-        map.put("ToUserName",requestMap.get(WeChatConstant.FromUserName));
-        map.put("FromUserName",requestMap.get(WeChatConstant.ToUserName));
+        map.put(WeChatConstant.ToUserName,requestMap.get(WeChatConstant.Reply_FromUserName));
+        map.put(WeChatConstant.FromUserName,requestMap.get(WeChatConstant.Reply_ToUserName));
         map.put("MsgType", WeChatConstant.REQ_MESSAGE_TYPE_IMAGE);
         Map<String,Object> mediaId = new HashMap<>();
         mediaId.put("MediaId",requestMap.get(WeChatConstant.MediaId));
@@ -292,16 +293,24 @@ public class WeChatUtil {
         String filePath =requestMap.get(KEY_FILE_PATH);
         String appId = requestMap.get(KEY_APP_ID);
         String secretCode = requestMap.get(KEY_SECRET_CODE);
-        try {
-            Map<String,Object> uploadInfoMap = UploadMeida(fileType,filePath,appId,secretCode);
-            String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
-            requestMap.put(WeChatConstant.MediaId,mediaId);
-            return sendImageMsg(requestMap);
-        } catch (IOException e) {
-            log.error("---------------发送临时图片消息失败------------");
-            log.error(e.getMessage());
-            return "";
+        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(secretCode)) {
+            try {
+                Map<String, Object> uploadInfoMap = UploadMeida(
+                        fileType, filePath, appId, secretCode);
+                String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
+                if(StringUtils.isNotEmpty(mediaId)) {
+                    requestMap.put(WeChatConstant.MediaId, mediaId);
+                    requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.Reply_ToUserName));
+                    requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.Reply_FromUserName));
+                    return sendImageMsg(requestMap);
+                }
+            } catch (IOException e) {
+                log.error("---------------发送临时图片消息失败------------");
+                log.error(e.getMessage());
+                return "";
+            }
         }
+        return "";
     }
 
     /**

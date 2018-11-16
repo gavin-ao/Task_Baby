@@ -30,7 +30,9 @@ public class WeChatConstant {
     public static final String EVENT_TYPE_CLICK = "CLICK";
 
     public static final String FromUserName = "FromUserName";
+    public static final String Reply_FromUserName = "ReplyFromUserName";
     public static final String ToUserName = "ToUserName";
+    public static final String Reply_ToUserName = "ReplyToUserName";
     public static final String MsgType = "MsgType";
     public static final String Content = "Content";
     public static final String Event = "Event";

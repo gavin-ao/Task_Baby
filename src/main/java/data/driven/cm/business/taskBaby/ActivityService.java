@@ -9,6 +9,8 @@ import java.util.Map;
  * Activyty数据服务
  */
 public interface ActivityService {
+       String KEY_ACT_ID = "actId";
+       String KEY_PIC_ID = "picture";
     /**
      *
      * @param wechatAccount 微信账号
@@ -26,4 +28,6 @@ public interface ActivityService {
      * @return key:[actId, pictureId];
      */
     public Map<String,Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord,Integer status);
+
+    public Integer countActivedActivity(String wechatAccount);
 }
