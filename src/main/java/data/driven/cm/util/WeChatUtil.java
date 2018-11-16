@@ -23,6 +23,8 @@ import data.driven.cm.entity.taskBaby.ArticleItem;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.alibaba.fastjson.JSON.parseObject;
 
@@ -33,6 +35,7 @@ import static com.alibaba.fastjson.JSON.parseObject;
  * @Version 1.0
  */
 public class WeChatUtil {
+    private static final Logger log = LoggerFactory.getLogger(WeChatUtil.class);
 
     /**微信用户**/
     private static final String user_url = "https://api.weixin.qq.com/cgi-bin/user/info";
@@ -49,7 +52,10 @@ public class WeChatUtil {
     //用户个人信息的key；
     public static final String KEY_HEADIMG_URL="headimgurl";
     public static final String KEY_NICKNAME="nickname";
-
+    public static final String KEY_FILE_PATH ="filePath";
+    public static final String KEY_APP_ID ="appId";
+    public static final String KEY_SECRET_CODE="secretCode";
+    public static final String KEY_MEDIA_ID="media_id";
 
 
 
@@ -249,6 +255,22 @@ public class WeChatUtil {
         return mapToXML(map);
     }
 
+    public static String sendTemporaryImageMsg(Map<String,String> requestMap){
+        String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
+        String filePath =requestMap.get(KEY_FILE_PATH);
+        String appId = requestMap.get(KEY_APP_ID);
+        String secretCode = requestMap.get(KEY_SECRET_CODE);
+        try {
+            Map<String,Object> uploadInfoMap = UploadMeida(fileType,filePath,appId,secretCode);
+            String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
+            requestMap.put(WeChatConstant.MediaId,mediaId);
+            return sendImageMsg(requestMap);
+        } catch (IOException e) {
+            log.error("---------------发送临时图片消息失败------------");
+            log.error(e.getMessage());
+            return "";
+        }
+    }
 
     /**
      * 回复图文消息

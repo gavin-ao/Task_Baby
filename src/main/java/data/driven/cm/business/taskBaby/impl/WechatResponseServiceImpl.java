@@ -137,37 +137,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         //得到合成图片的filePath
         String customizedPosterPath=posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+        userPersonalInfoMap.put(WeChatUtil.KEY_FILE_PATH,customizedPosterPath);
+        userPersonalInfoMap.put(WeChatUtil.KEY_APP_ID,appId);
+        userPersonalInfoMap.put(WeChatUtil.KEY_SECRET_CODE,secretCode);
+        return WeChatUtil.sendTemporaryImageMsg(userPersonalInfoMap);
 
          //TODO:发送文本消息：活动内容介绍
-        //TODO：发送海报图片信息
+
         //TODO：记录fans_Join表
-        return "success";//TODO：改成信息返回内容
     }
 
-    /**
-     * 返回原始海报的url
-     * @param activityId
-     * @return
-     */
 
-    private String  getOriginPosterUrl(String activityId){
-
-
-        return "";
-
-    }
-
-    /**TODO
-     * 获取粉丝的个人信息，昵称，头像url等等
-     * @param openId
-     * @param wechatAccount
-     * @return 个人信息
-     */
-    private Map<String,String> getFansPersonalInfo(String openId,String wechatAccount){
-//        WeChatUtil.getUserInfo(openId,)
-        return null;
-
-    }
 
 
     /**
@@ -190,7 +170,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
     /**
-     * 活动被助力了
+     * TODO：活动被助力了
      * @param wechatEventMap
      * @return
      */
