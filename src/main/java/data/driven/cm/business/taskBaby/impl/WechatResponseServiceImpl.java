@@ -182,7 +182,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             WeChatUtil.sendCustomMsg(userPersonalInfoMap);
         }
 
-        if(customizedPosterPath!= null){
+        if(customizedPosterPath!= null){//发送个性化海报
             replyMap.put(KEY_FILE_PATH,customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE,KEY_CSMSG_TYPE_IMG);
             WeChatUtil.sendCustomMsg(userPersonalInfoMap);
