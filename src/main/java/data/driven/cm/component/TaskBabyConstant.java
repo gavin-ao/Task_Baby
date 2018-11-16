@@ -9,7 +9,7 @@ package data.driven.cm.component;
 
 public class TaskBabyConstant {
     public static final String KEY_POSTER_URL="POSTER_URL";
-    public static final String KEY_QRCODE_RL="QRCODE_URL";
+    public static final String KEY_QRCODE_URL ="QRCODE_URL";
     public static final String SEPERATOR_QRSCEAN="&&";
 
 }

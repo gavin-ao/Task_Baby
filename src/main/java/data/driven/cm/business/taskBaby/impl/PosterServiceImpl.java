@@ -1,6 +1,5 @@
 package data.driven.cm.business.taskBaby.impl;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import data.driven.cm.business.taskBaby.PosterService;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.util.UUIDUtil;
@@ -41,11 +40,22 @@ public class PosterServiceImpl implements PosterService {
         return null;
     }
 
+    /**
+     *
+     * @param personalInfo
+     *   Map需要:
+     *   KEY_POSTER_URL:原始海报的url
+     *   KEY_HEADIMG_URL:用户头像url
+     *   KEY_QRCODE_URL
+     *   KEY_NICKNAME
+     * @return
+     */
+
     @Override
     public String getCombinedCustomiedPosterFilePath(Map<String, String> personalInfo) {
         String OriginlPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
         String headImgUrl = personalInfo.get(WeChatUtil.KEY_HEADIMG_URL);
-        String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_RL);
+        String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_URL);
         String nickName = personalInfo.get(WeChatUtil.KEY_NICKNAME);
         return getCombinedCustomiedPosterFilePath(OriginlPosterUrl,headImgUrl,qrCodeUrl,nickName);
     }
