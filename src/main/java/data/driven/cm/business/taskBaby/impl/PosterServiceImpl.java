@@ -34,27 +34,14 @@ public class PosterServiceImpl implements PosterService {
     private static final Logger log = LoggerFactory.getLogger(PosterServiceImpl.class);
     @Value("${file.download.path}")
     private String downloadPath;
-    /**
-     * TODO
-     * @param OriginlPosterUrl 客户的原始海报url
-     * @param headImgUrl  粉丝头像url
-     * @param QRCodeUrl  带参数的二维码url
-     * @param nickName
-     * @return
-     */
-    @Override
-    public String getCombinedCustomizedPosterUrl(String OriginlPosterUrl, String headImgUrl, String QRCodeUrl, String nickName) {
-        return null;
-    }
+
 
     /**
-     *
-     * @param personalInfo
-     *   Map需要:
-     *   KEY_POSTER_URL:原始海报的url
-     *   KEY_HEADIMG_URL:用户头像url
-     *   KEY_QRCODE_URL
-     *   KEY_NICKNAME
+     * @param personalInfo Map需要:
+     *                     KEY_POSTER_URL:原始海报的url
+     *                     KEY_HEADIMG_URL:用户头像url
+     *                     KEY_QRCODE_URL
+     *                     KEY_NICKNAME
      * @return
      */
 
@@ -64,11 +51,10 @@ public class PosterServiceImpl implements PosterService {
         String headImgUrl = personalInfo.get(KEY_HEADIMG_URL);
         String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_URL);
         String nickName = personalInfo.get(KEY_NICKNAME);
-        return getCombinedCustomiedPosterFilePath(OriginlPosterUrl,headImgUrl,qrCodeUrl,nickName);
+        return getCombinedCustomiedPosterFilePath(OriginlPosterUrl, headImgUrl, qrCodeUrl, nickName);
     }
 
     /**
-     * TODO:暂时返回带参数的二维码的文件名便于测试，后面要改成合成之后的海报
      * @param OriginlPosterUrl
      * @param headImgUrl
      * @param qrCodeUrl
@@ -77,58 +63,55 @@ public class PosterServiceImpl implements PosterService {
      */
     @Override
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
-        if(StringUtils.isEmpty(OriginlPosterUrl)||StringUtils.isEmpty(headImgUrl)||
-                StringUtils.isEmpty(qrCodeUrl)||StringUtils.isEmpty(nickName)){
-            Font font = new Font("微软雅黑",Font.PLAIN,53);
-            StringBuilder tempFileNameBuider =new StringBuilder();
+        if (StringUtils.isEmpty(OriginlPosterUrl) || StringUtils.isEmpty(headImgUrl) ||
+                StringUtils.isEmpty(qrCodeUrl) || StringUtils.isEmpty(nickName)) {
+            Font font = new Font("微软雅黑", Font.PLAIN, 53);
+            StringBuilder tempFileNameBuider = new StringBuilder();
             tempFileNameBuider.append(downloadPath).append(File.pathSeparator).
                     append(UUIDUtil.getUUID()).append(".jpg");
             Graphics2D g = null;
-                try {
-                    log.debug("--------加载原始海报, 路径：",OriginlPosterUrl,"--------------");
-                    BufferedImage imgPoster = ImageIO.read(new File(OriginlPosterUrl));
-                    log.debug("--------加载二维码,路径：",qrCodeUrl,"----------------");
-                    BufferedImage  imgQRCode = ImageIO.read(new File(qrCodeUrl));
-                    log.debug("--------加载头像,路径：",headImgUrl,"----------------");
-                    BufferedImage imgHead = ImageIO.read(new File(headImgUrl));
-                    //以原始海报作为模板
-                    g = imgPoster.createGraphics();
-                    // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
-                    g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight() - 100,
-                            300, 300, null);
-                    //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
-                    g.drawImage(imgHead,60,30,100,100,null);
-                    // 设置文本样式
-                    g.setFont(font);
-                    g.setColor(Color.BLACK);
-                    // 截取用户名称的最后一个字符
+            try {
+                log.debug("--------加载原始海报, 路径：", OriginlPosterUrl, "--------------");
+                BufferedImage imgPoster = ImageIO.read(new File(OriginlPosterUrl));
+                log.debug("--------加载二维码,路径：", qrCodeUrl, "----------------");
+                BufferedImage imgQRCode = ImageIO.read(new File(qrCodeUrl));
+                log.debug("--------加载头像,路径：", headImgUrl, "----------------");
+                BufferedImage imgHead = ImageIO.read(new File(headImgUrl));
+                //以原始海报作为模板
+                g = imgPoster.createGraphics();
+                // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
+                g.drawImage(imgQRCode, imgPoster.getWidth() - 40 - 300, imgPoster.getHeight() - 100,
+                        300, 300, null);
+                //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
+                g.drawImage(imgHead, 60, 30, 100, 100, null);
+                // 设置文本样式
+                g.setFont(font);
+                g.setColor(Color.BLACK);
+                // 截取用户名称的最后一个字符
 //                    String lastChar = userName.substring(userName.length() - 1);
-                    // 拼接新的用户名称
+                // 拼接新的用户名称
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
-                    // 添加用户名称
-                    g.drawString(nickName, 60+100+5, 80);
-                    // 完成模板修改
-                    g.dispose();
-                    // 获取新文件的地址
-                    File outputfile = new File(tempFileNameBuider.toString());
-                    // 生成新的合成过的用户二维码并写入新图片
-                    ImageIO.write(imgPoster, "jpg", outputfile);
-                    return tempFileNameBuider.toString();
-                } catch (IOException e) {
-                    log.error("-----------拼接海报出错：",e.getMessage());
-                }finally {
-                    if(g!=null){
-                       g.dispose();
-                    }
-                }
-
+                // 添加用户名称
+                g.drawString(nickName, 60 + 100 + 5, 80);
+                // 完成模板修改
+                g.dispose();
+                // 获取新文件的地址
+                File outputfile = new File(tempFileNameBuider.toString());
+                // 生成新的合成过的用户二维码并写入新图片
+                ImageIO.write(imgPoster, "jpg", outputfile);
+                return tempFileNameBuider.toString();
+            } catch (IOException e) {
+                log.error("-----------拼接海报出错：", e.getMessage());
             }
+
+        }
         return getTempImgFilePathByUrl(qrCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 
 
     /**
      * 将URL图片存在本地，并返回filepath
+     *
      * @param imgUrl
      * @return 图片下载之后在本地的路径
      */
@@ -184,12 +167,12 @@ public class PosterServiceImpl implements PosterService {
             }
 
         }
-       return "";
+        return "";
     }
 
-    public boolean Clean(String filePath){
-        File file=new File(filePath);
-        if(file.exists()&&file.isFile()) {
+    public boolean Clean(String filePath) {
+        File file = new File(filePath);
+        if (file.exists() && file.isFile()) {
             file.delete();
             return true;
         }

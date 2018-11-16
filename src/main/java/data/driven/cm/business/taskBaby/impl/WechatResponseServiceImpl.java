@@ -133,13 +133,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      }
 
     /**
-     *
-     * @param wechatEventMap
-     * @return
-     */
+     * 粉丝发关键字，微信公众号发送客服信息
+     * 回复活动内容介绍和个性化海报
+     * @author:     Logan
+     * @date:       2018/11/17 12:45
+     * @params:     [wechatEventMap]
+     * @return:     java.lang.String
+    **/
     private String keyWordReply(Map<String,String> wechatEventMap){
-
-
          String openId = wechatEventMap.get(WeChatConstant.FromUserName);
          String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
          String keyWord = wechatEventMap.get(WeChatConstant.Content);
