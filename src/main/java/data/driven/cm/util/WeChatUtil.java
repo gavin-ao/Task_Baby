@@ -43,7 +43,9 @@ public class WeChatUtil {
     private static final String qrcode_url = "https://api.weixin.qq.com/cgi-bin/qrcode/create";
     /**获取二维码**/
     private static final String showqr_url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
-    private static final String qrcode_url1 = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    /** 客服接口-发消息 **/
+    private static final String custom_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+
     public static final String QR_TYPE_TEMPORARY ="1";//临时码
     public static final String QR_TYPE_PERMANENT ="2";//永久码；
     public static final int QR_MAX_EXPIREDTIME = 2592000; //临时二维码最大过期时间，单位是秒，30天
@@ -235,6 +237,36 @@ public class WeChatUtil {
     }
 
     /**
+     *  通过客服接口发送文本和图片
+     * @param testJson 需要发送的信息
+     *          文本：
+     *                 {
+                            "touser":"OPENID",
+                            "msgtype":"text",
+                            "text":
+                            {
+                            "content":"Hello World"
+                            }
+                        }
+                 图片：
+                        {
+                            "touser":"OPENID",
+                            "msgtype":"image",
+                            "image":
+                            {
+                            "media_id":"MEDIA_ID"
+                            }
+                        }
+     * @param appId
+     * @param secret
+     */
+    public static void sendCustomMsg(JSONObject testJson,String appId,String secret){
+        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
+        String access_token = jsonObject.getString("access_token");
+        String url = custom_url+access_token;
+        HttpUtil.doPost(url, testJson.toJSONString());
+    }
+    /**
      * 回复图片消息
      * @param requestMap
      *      requestMap 参数说明
@@ -316,11 +348,7 @@ public class WeChatUtil {
         String access_token = jsonObject.getString("access_token");
         String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
-//        System.out.println("url " + url);
-//        if(resultStr == null){
-//            map.put("success","false");
-//            return map;
-//        }
+
         JSONObject result = parseObject(resultStr);
 
         map = JSONObject.toJavaObject(result,Map.class);
