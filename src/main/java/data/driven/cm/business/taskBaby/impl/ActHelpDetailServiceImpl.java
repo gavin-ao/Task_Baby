@@ -30,9 +30,26 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
     @Override
     public String insertActHelpDetailEntity(String helpId, Integer helpStatus, Integer fansStatus, String actId,String helpOpenid) {
         Date createAt = new Date();
-        String actHelpDetailId = UUIDUtil.getUUID();
-        String sql = "INSERT INTO act_help_detail (act_help_detail_id,help_id,help_status,fans_status,act_id,create_at,help_openid) VALUES (?,?,?,?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql, actHelpDetailId,helpId,helpStatus,fansStatus,actId,createAt,helpOpenid);
-        return actHelpDetailId;
+        String actHelpDetailId = getEntityById(helpOpenid,actId);
+        if(actHelpDetailId == null){
+            String sql = "INSERT INTO act_help_detail (act_help_detail_id,help_id,help_status,fans_status,act_id,create_at,help_openid) VALUES (?,?,?,?,?,?,?)";
+            jdbcBaseDao.executeUpdate(sql, actHelpDetailId,helpId,helpStatus,fansStatus,actId,createAt,helpOpenid);
+            return actHelpDetailId;
+        }
+        return null;
+    }
+    /**
+     * 通过helpOpenId  和 活动id 来得到活动助力详细id
+     * @param helpOpenId 助力者OpenId
+     * @param actId 活动id
+     * @return 返回 活动助力详细id
+     */
+    public String getEntityById(String helpOpenId,String actId) {
+        String sql = "select act_help_detail_id from act_help_detail where act_id = ? and help_openid = ?";
+        Object id = jdbcBaseDao.getColumn(sql, actId,helpOpenId);
+        if(id != null){
+            return id.toString();
+        }
+        return null;
     }
 }
