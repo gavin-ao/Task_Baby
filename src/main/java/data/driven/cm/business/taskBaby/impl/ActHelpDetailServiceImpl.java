@@ -22,14 +22,15 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
      * @param helpStatus 助力状态
      * @param fansStatus 粉丝状态
      * @param actId 活动id
+     * @param helpOpenid 助力者openid
      * @return
      */
     @Override
-    public String insertActHelpDetailEntity(String helpId, Integer helpStatus, Integer fansStatus, String actId) {
+    public String insertActHelpDetailEntity(String helpId, Integer helpStatus, Integer fansStatus, String actId,String helpOpenid) {
         Date createAt = new Date();
         String actHelpDetailId = UUIDUtil.getUUID();
-        String sql = "INSERT INTO act_help_detail (act_help_detail_id,help_id,help_status,fans_status,act_id,create_at) VALUES (?,?,?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql, actHelpDetailId,helpId,helpStatus,fansStatus,actId,createAt);
+        String sql = "INSERT INTO act_help_detail (act_help_detail_id,help_id,help_status,fans_status,act_id,create_at,help_openid) VALUES (?,?,?,?,?,?,?)";
+        jdbcBaseDao.executeUpdate(sql, actHelpDetailId,helpId,helpStatus,fansStatus,actId,createAt,helpOpenid);
         return actHelpDetailId;
     }
 }

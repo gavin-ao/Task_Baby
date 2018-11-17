@@ -15,8 +15,9 @@ public interface ActHelpDetailService {
      * @param helpStatus 助力状态
      * @param fansStatus 粉丝状态
      * @param actId 活动id
+     * @param helpOpenid 助力者openid
      * @return
      */
-    public String insertActHelpDetailEntity(String helpId,Integer helpStatus,Integer fansStatus,String actId);
+    public String insertActHelpDetailEntity(String helpId,Integer helpStatus,Integer fansStatus,String actId,String helpOpenid);
 
 }
