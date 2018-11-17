@@ -3,6 +3,7 @@ package data.driven.cm.entity.wechat;
 import java.io.Serializable;
 
 import static data.driven.cm.component.WeChatConstant.VALUE_CSMSG_TYPE_IMG;
+import static data.driven.cm.component.WeChatConstant.VALUE_CSMSG_TYPE_TEXT;
 
 /**
  * @program: Task_Baby
@@ -16,7 +17,7 @@ public class WechatCSTxtMsgEntity implements Serializable {
     private String msgtype;
     private WechatCSTxtContentEntity text;
     public WechatCSTxtMsgEntity(String touser,String content){
-        this.msgtype = VALUE_CSMSG_TYPE_IMG;
+        this.msgtype = VALUE_CSMSG_TYPE_TEXT;
         this.touser = touser;
         this.text = new WechatCSTxtContentEntity(content);
     }

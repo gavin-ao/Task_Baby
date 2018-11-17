@@ -3,6 +3,7 @@ package data.driven.cm.entity.wechat;
 import java.io.Serializable;
 
 import static data.driven.cm.component.WeChatConstant.VALUE_CSMSG_TYPE_IMG;
+import static data.driven.cm.component.WeChatConstant.VALUE_CSMSG_TYPE_TEXT;
 
 /**
  * @program: Task_Baby
