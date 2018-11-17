@@ -35,8 +35,8 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
     public String insertActivityHelpEntity(String actId, String wechatAccount, String fansOpenId, Integer helpSuccessStatus, Integer helpNumber) {
         Date helpAt = new Date();
         String helpId = UUIDUtil.getUUID();
-        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,fans_id,help_success_status,help_number) VALUES (?,?,?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,fansOpenId,helpSuccessStatus,helpNumber);
+        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,fans_id,help_success_status,help_number,help_at) VALUES (?,?,?,?,?,?,?)";
+        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,fansOpenId,helpSuccessStatus,helpNumber,helpAt);
         return helpId;
     }
 
