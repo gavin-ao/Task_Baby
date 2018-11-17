@@ -337,8 +337,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
            replyMap.put(KEY_APP_ID,appId);
            replyMap.put(KEY_SECRET_CODE,secretCode);
-           replyMap.put(KEY_CSMSG_TOUSER,
-                   trackResult.get(ActivityTrackerService.KEY_HELP_FANS_OPENID).toString());
+           replyMap.put(KEY_CSMSG_TOUSER,touser);
            replyMap.put(KEY_CSMSG_CONTENT,msg);
            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
            WeChatUtil.sendCustomMsg(replyMap);
