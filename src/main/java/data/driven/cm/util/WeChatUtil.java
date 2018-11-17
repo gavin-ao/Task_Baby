@@ -526,7 +526,7 @@ public class WeChatUtil {
     public static Map<String,Object> UploadMeida(String fileType,String filePath,String appId,String secret) throws IOException {
         //返回结果
         String result = null;
-        File file = new File("F:\\testProject\\gougou.jpg");
+        File file = new File(filePath);
         if (!file.exists() || !file.isFile()) {
             throw new IOException("文件不存在");
         }

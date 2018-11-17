@@ -64,8 +64,8 @@ public class PosterServiceImpl implements PosterService {
      */
     @Override
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
-        if (StringUtils.isEmpty(OriginlPosterUrl) || StringUtils.isEmpty(headImgUrl) ||
-                StringUtils.isEmpty(qrCodeUrl) || StringUtils.isEmpty(nickName)) {
+        if (StringUtils.isNotEmpty(OriginlPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
+                StringUtils.isNotEmpty(qrCodeUrl) && StringUtils.isNotEmpty(nickName)) {
             Font font = new Font("微软雅黑", Font.PLAIN, 53);
             StringBuilder tempFileNameBuider = new StringBuilder();
             tempFileNameBuider.append(downloadPath).append(File.separator).

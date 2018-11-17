@@ -184,17 +184,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         replyMap.put(KEY_APP_ID,appId);
         replyMap.put(KEY_SECRET_CODE,secretCode);
         replyMap.put(KEY_CSMSG_TOUSER,openId);
-        replyMap.put(KEY_CSMSG_TYPE,KEY_CSMSG_TYPE_TEXT);
         Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_shareCoypwritting);
         if(shareCoppywritting!=null){//发送活动介绍
         replyMap.put(KEY_CSMSG_CONTENT,shareCoppywritting.toString());
-            WeChatUtil.sendCustomMsg(userPersonalInfoMap);
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            WeChatUtil.sendCustomMsg(replyMap);
         }
 
         if(customizedPosterPath!= null){//发送个性化海报
             replyMap.put(KEY_FILE_PATH,customizedPosterPath);
-            replyMap.put(KEY_CSMSG_TYPE,KEY_CSMSG_TYPE_IMG);
-            WeChatUtil.sendCustomMsg(userPersonalInfoMap);
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
+            WeChatUtil.sendCustomMsg(replyMap);
         }
         //TODO：记录fans_Join表
         return null;
