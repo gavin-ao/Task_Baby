@@ -36,7 +36,7 @@ public class SysPictureServiceImpl implements SysPictureService {
      */
     @Override
     public String getPictureURL(String picId) {
-        String sql = "select file_path as filePath where picture_id = ?";
+        String sql = "select file_path as filePath from sys_picture where picture_id = ?";
         Object filePath = dao.getColumn(sql,picId);
         return filePath.toString();
     }
