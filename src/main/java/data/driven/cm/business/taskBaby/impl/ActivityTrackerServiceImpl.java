@@ -112,6 +112,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         resultMap.put(WeChatConstant.KEY_NICKNAME,userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME));
         resultMap.put(KEY_HELP_FANS_OPENID,helpEntity.getFansId());
         resultMap.put(KEY_HELP_HELP_OPENID,detailEntity.getHelpOpenId());
+        resultMap.put(WeChatConstant.APPID,appId);
+        resultMap.put(WeChatConstant.SECRET,secretCode);
         return resultMap;
     }
 
