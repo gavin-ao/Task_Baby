@@ -81,7 +81,7 @@ public class PosterServiceImpl implements PosterService {
                 //以原始海报作为模板
                 g = imgPoster.createGraphics();
                 // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
-                g.drawImage(imgQRCode, imgPoster.getWidth() - 40 - 300, imgPoster.getHeight() - 100,
+                g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight()-100-300,
                         300, 300, null);
                 //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
                 g.drawImage(imgHead, 60, 60, 100, 100, null);
