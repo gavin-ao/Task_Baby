@@ -209,11 +209,12 @@ public class WeChatServiceImpl  implements WeChatService {
 //                }
             }
             if(respXml == null){
-                requestMap.put(WeChatConstant.Content,mes);
+                requestMap.put(WeChatConstant.Content,"");
                 respXml = WeChatUtil.sendTextMsg(requestMap);
             }
             System.out.println(respXml);
-            return new String(respXml.getBytes(),"ISO-8859-1");
+//            return new String(respXml.getBytes(),"ISO-8859-1");
+            return "success";
         } catch (Exception e) {
             e.printStackTrace();
         }

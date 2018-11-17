@@ -2,9 +2,12 @@ package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.ActivityService;
 import data.driven.cm.dao.JDBCBaseDao;
+import data.driven.cm.entity.taskBaby.MatActivityEntity;
+import data.driven.cm.entity.verification.WechatStoreVerificationAuthorizationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +29,21 @@ public class ActivityServiceImpl implements ActivityService {
             return Integer.valueOf(result.toString());
         }
         return 0;
+    }
+
+    /**
+     * 通过任务ID得到任务实体
+     * @param actId 任务ID
+     * @return MatActivityEntity
+     */
+    @Override
+    public MatActivityEntity getMatActivityEntityByActId(String actId) {
+        String sql = "select act_id,picture_id,act_share_copywriting from mat_activity where act_id = ?";
+        List<MatActivityEntity> MatActivityEntityList = dao.queryList(MatActivityEntity.class,sql,actId);
+        if (MatActivityEntityList != null && MatActivityEntityList.size() > 0){
+            return MatActivityEntityList.get(0);
+        }
+        return null;
     }
 
     @Override

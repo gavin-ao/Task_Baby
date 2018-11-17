@@ -31,4 +31,11 @@ public interface ActivityService {
     public Map<String,Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord,Integer status);
 
     public Integer countActivedActivity(String wechatAccount);
+
+    /**
+     * 通过任务ID得到任务实体
+     * @param actId 任务ID
+     * @return MatActivityEntity
+     */
+    public MatActivityEntity getMatActivityEntityByActId(String actId);
 }
