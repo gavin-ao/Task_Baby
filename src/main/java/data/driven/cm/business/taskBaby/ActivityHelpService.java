@@ -51,9 +51,9 @@ public interface ActivityHelpService {
      * @author:     Logan
      * @date:       2018/11/17 03:55
      * @params:     [helpOpenId, activityId]
-     * @return:     java.lang.Integer
+     * @return:     助力活动主表id
      **/
-    public Integer getHelpId(String helpOpenId,String activityId);
+    public String getHelpId(String helpOpenId,String activityId);
 
 
 

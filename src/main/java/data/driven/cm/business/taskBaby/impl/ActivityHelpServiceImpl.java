@@ -89,14 +89,14 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
      * @author:     Logan
      * @date:       2018/11/17 03:55
      * @params:     [helpOpenId, activityId]
-     * @return:     java.lang.Integer
+     * @return:     助力活动主表id
     **/
     @Override
-    public Integer getHelpId(String helpOpenId,String activityId){
+    public String getHelpId(String helpOpenId,String activityId){
         String sql = "select help_id from act_help where act_id=? and fans_id=?";
         Object helpId = jdbcBaseDao.getColumn(sql,activityId,helpOpenId);
         if(helpId != null){
-            return Integer.parseInt(helpId.toString());
+            return helpId.toString();
         }else{
             return null;
         }
