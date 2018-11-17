@@ -332,6 +332,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                MatActivityEntity activityEntity =
                        activityService.getMatActivityEntityByActId(activityId);
                msg=activityEntity.getRewardUrl();
+               activityTrackerService.updateActHelpStatus(
+                       trackResult.get(ActivityTrackerService.KEY_HELP_HELP_ID).toString(),1);
            }
            //回复信息
            Map<String,String> replyMap = new HashMap<String,String>();

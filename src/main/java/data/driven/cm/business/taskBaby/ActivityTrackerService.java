@@ -11,6 +11,7 @@ public interface ActivityTrackerService {
     String KEY_HELP_REMAIN ="remain";
     String KEY_HELP_FANS_OPENID = "fansOpenId";//被助力者的OpenId
     String KEY_HELP_HELP_OPENID = "helpOpenId";//助力者的openId
+    String KEY_HELP_HELP_ID="helpId";
     public Map<String,Integer> getHelpCount(String helpId,String activityId);
 
 
@@ -19,4 +20,6 @@ public interface ActivityTrackerService {
     public ActHelpEntity getTrack(String helpId);
 
     public ActHelpDetailEntity getTrackDetail(String helpIdDetialId);
+
+    public void updateActHelpStatus(String helpId,int status);
 }

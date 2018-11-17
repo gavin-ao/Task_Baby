@@ -114,7 +114,13 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         resultMap.put(KEY_HELP_HELP_OPENID,detailEntity.getHelpOpenId());
         resultMap.put(WeChatConstant.APPID,appId);
         resultMap.put(WeChatConstant.SECRET,secretCode);
+        resultMap.put(KEY_HELP_HELP_ID,helpEntity.getHelpId());
         return resultMap;
+    }
+
+    public void updateActHelpStatus(String helpId,int status){
+        String sql = "update act_help set help_success_status=? where help_id=?";
+        jdbcBaseDao.executeUpdate(sql,status,helpId);
     }
 
 }
