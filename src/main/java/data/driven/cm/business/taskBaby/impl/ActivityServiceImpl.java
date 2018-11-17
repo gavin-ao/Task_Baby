@@ -59,6 +59,23 @@ public class ActivityServiceImpl implements ActivityService {
        }
         return null;
     }
+    /**
+     * 获取活动要求助力数
+     * @author:     Logan
+     * @date:       2018/11/17 05:18
+     * @params:     [activityId]
+     * @return:     java.lang.Integer
+    **/
+    @Override
+    public Integer getRequiredHelpCount(String activityId){
+        String sql ="select partake_num from mat_activity where act_id =?";
+        Object count = dao.getColumn(sql,activityId);
+        if(count != null){
+            return Integer.parseInt(count.toString());
+        }else{
+            return null;
+        }
+    }
 
     /**
      *

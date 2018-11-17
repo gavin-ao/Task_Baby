@@ -38,4 +38,13 @@ public interface ActivityService {
      * @return MatActivityEntity
      */
     public MatActivityEntity getMatActivityEntityByActId(String actId);
+
+    /**
+     * 获取活动要求助力数
+     * @author:     Logan
+     * @date:       2018/11/17 05:18
+     * @params:     [activityId]
+     * @return:     java.lang.Integer
+     **/
+    public Integer getRequiredHelpCount(String activityId);
 }

@@ -41,6 +41,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     @Autowired
     private ActHelpDetailService actHelpDetailService; //活动助力详细表
 
+    @Autowired
+    private ActivityTrackerService activityTrackerService;
     @Override
     public String notify(Map wechatEventMap) {
 //        if(checkActive(wechatEventMap)) { // 当用户只是关注并没有参加活动的话，采用 checkActive方法就会拦截，用户就不能与公众号进行交互了
@@ -310,6 +312,23 @@ public class WechatResponseServiceImpl implements WechatResponseService {
        if(!activityHelpService.checkFansInActivity(openId,activityId)){
            activityHelpService.insertActivityHelpEntity(
                    activityId,wechatAccount, openId,0,0);
+       }
+   }
+
+   private void trackActive(String touser,String helpId,String activityId,
+                            String helpFansId,String helpFansNickName){
+       String msgTemplate = "收到%s的助力，还差%d的人助力"
+       Map<String,Integer> trackResult =  activityTrackerService.getHelpCount(helpId,activityId);
+       StringBuilder trackMsgSB = new StringBuilder();
+       if(trackResult !=null){
+           int require = trackResult.get(ActivityTrackerService.KEY_HELP_REQUIRE);
+           int help = trackResult.get(ActivityTrackerService.KEY_HELP_HELP);
+           int remain = trackResult.get(ActivityTrackerService.KEY_HELP_REMAIN);
+           if(remain>0){
+              trackMsgSB.append()
+           }else{
+
+           }
        }
    }
 
