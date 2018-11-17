@@ -66,7 +66,7 @@ public class PosterServiceImpl implements PosterService {
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
         if (StringUtils.isNotEmpty(OriginlPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
                 StringUtils.isNotEmpty(qrCodeUrl) && StringUtils.isNotEmpty(nickName)) {
-            Font font = new Font("微软雅黑", Font.PLAIN, 53);
+            Font font = new Font("微软雅黑", Font.PLAIN, 50);
             StringBuilder tempFileNameBuider = new StringBuilder();
             tempFileNameBuider.append(downloadPath).append(File.separator).
                     append(UUIDUtil.getUUID()).append(".jpg");
@@ -93,20 +93,20 @@ public class PosterServiceImpl implements PosterService {
                 // 拼接新的用户名称
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
                 // 添加用户名称
-                g.drawString(nickName, 60 + 100 + 5, 110);
+                g.drawString(nickName, 60 + 100 + 60, 130);
                 // 完成模板修改
                 g.dispose();
                 // 获取新文件的地址
                 File outputfile = new File(tempFileNameBuider.toString());
                 // 生成新的合成过的用户二维码并写入新图片
-                ImageIO.write(imgPoster, "jpg", outputfile);
+                ImageIO.write(imgPoster, "png", outputfile);
                 return tempFileNameBuider.toString();
             } catch (IOException e) {
                 log.error("-----------拼接海报出错：", e.getMessage());
             }
 
         }
-        return getTempImgFilePathByUrl(qrCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
+        return null;//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 
     /***
@@ -122,7 +122,7 @@ public class PosterServiceImpl implements PosterService {
             URL url = null;
             InputStream is= null;
             try {
-                url = new URL("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQGu8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyeENuU2c2dnFlX2gxMDJIbk5zY0QAAgQCnu9bAwQAjScA");
+                url = new URL(imgAddress);
                 is = url.openConnection().getInputStream();
                 BufferedImage image = ImageIO.read(is);
                 return image;
