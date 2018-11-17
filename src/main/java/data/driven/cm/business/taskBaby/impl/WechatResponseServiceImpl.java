@@ -315,20 +315,33 @@ public class WechatResponseServiceImpl implements WechatResponseService {
        }
    }
 
-   private void trackActive(String touser,String helpId,String activityId,
-                            String helpFansId,String helpFansNickName){
-       String msgTemplate = "收到%s的助力，还差%d的人助力"
-       Map<String,Integer> trackResult =  activityTrackerService.getHelpCount(helpId,activityId);
+   private void trackActive(String touser,String helpId,
+                            String activityId,String appId,String secretCode){
+       String msgTemplate = "收到%s的助力，还差%d人完成助力";
+       String msg = "";
+       Map<String,Object> trackResult =  activityTrackerService.getTrackInfo(helpId,activityId);
        StringBuilder trackMsgSB = new StringBuilder();
        if(trackResult !=null){
-           int require = trackResult.get(ActivityTrackerService.KEY_HELP_REQUIRE);
-           int help = trackResult.get(ActivityTrackerService.KEY_HELP_HELP);
-           int remain = trackResult.get(ActivityTrackerService.KEY_HELP_REMAIN);
+           int remain = Integer.parseInt(
+                   trackResult.get(ActivityTrackerService.KEY_HELP_REMAIN).toString());
            if(remain>0){
-              trackMsgSB.append()
+               msg = String.format(msgTemplate,
+                      trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),remain);
            }else{
-
+               MatActivityEntity activityEntity =
+                       activityService.getMatActivityEntityByActId(activityId);
+               msg=activityEntity.getRewardUrl();
            }
+           //回复信息
+           Map<String,String> replyMap = new HashMap<String,String>();
+
+           replyMap.put(KEY_APP_ID,appId);
+           replyMap.put(KEY_SECRET_CODE,secretCode);
+           replyMap.put(KEY_CSMSG_TOUSER,
+                   trackResult.get(ActivityTrackerService.KEY_HELP_FANS_OPENID).toString());
+           replyMap.put(KEY_CSMSG_CONTENT,msg);
+           replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+           WeChatUtil.sendCustomMsg(replyMap);
        }
    }
 
