@@ -35,6 +35,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private SysPictureService sysPictureService;
     @Autowired
     private WechatUserInfoService wechatUserInfoService; //微信用户Service
+    @Autowired
+    private ActivityHelpService activityHelpService;
 
     @Override
     public String notify(Map wechatEventMap) {
@@ -196,11 +198,23 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             WeChatUtil.sendCustomMsg(replyMap);
         }
-        //TODO：记录fans_Join表
-        return null;
+        joinActivity(wechatAccount,openId,activityId);
+        return "success";
     }
 
-
+/**
+ * 加入活动
+ * @author:     Logan
+ * @date:       2018/11/17 03:50
+ * @params:     [wechatAccount, openId, activityId]
+ * @return:     void
+**/
+   private void joinActivity(String wechatAccount,String openId,String activityId){
+       if(!activityHelpService.checkFansInActivity(openId,activityId)){
+           activityHelpService.insertActivityHelpEntity(
+                   activityId,wechatAccount, openId,0,0);
+       }
+   }
 
 
     /**

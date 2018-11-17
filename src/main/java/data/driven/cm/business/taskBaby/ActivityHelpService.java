@@ -37,6 +37,24 @@ public interface ActivityHelpService {
     public Integer getEndHelpCount(String actId);
 
 
+    /**
+     * 判断当前粉丝是不是已经参加了活动发起
+     * @author:     Logan
+     * @date:       2018/11/17 03:31
+     * @params:     [openId, activityId]
+     * @return:     boolean 如果参加了返回true，没参加返回false
+     **/
+    public boolean checkFansInActivity(String openId,String activityId);
+
+    /**
+     * 根据被助力者的openid和activityId，返回HelpId
+     * @author:     Logan
+     * @date:       2018/11/17 03:55
+     * @params:     [helpOpenId, activityId]
+     * @return:     java.lang.Integer
+     **/
+    public Integer getHelpId(String helpOpenId,String activityId);
+
 
 
 
