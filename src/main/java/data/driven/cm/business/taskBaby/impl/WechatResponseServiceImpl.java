@@ -100,7 +100,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             //增加助力详细表
             String eventKeyValue =wechatEventMap.get(WeChatConstant.EventKey); //得到传参的信息
             //qrscene_oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456
-            String helpOpenId = eventKeyValue.split("&&")[0].substring(8);
+            String helpOpenId = eventKeyValue.split("&&")[0];
+            helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_")+1);//第一个下划线后面的就是openId
 //            StringBuilder helpOpenId = new StringBuilder();
 //            for (int i = 1 ; i < helpOpenIds.length;i++){
 //                helpOpenId.append(helpOpenIds[i]);
@@ -334,8 +335,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
            }
            //回复信息
            Map<String,String> replyMap = new HashMap<String,String>();
-           String appId = replyMap.get(WeChatConstant.APPID).toString();
-           String secretCode = replyMap.get(WeChatConstant.SECRET).toString();
+           String appId = trackResult.get(WeChatConstant.APPID).toString();
+           String secretCode = trackResult.get(WeChatConstant.SECRET).toString();
            replyMap.put(KEY_APP_ID,appId);
            replyMap.put(KEY_SECRET_CODE,secretCode);
            replyMap.put(KEY_CSMSG_TOUSER,touser);
