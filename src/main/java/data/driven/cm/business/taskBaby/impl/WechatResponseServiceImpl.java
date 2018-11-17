@@ -112,18 +112,20 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String helpId = activityHelpService.getHelpId(helpOpenId.toString(),actId);
             //通过openId+actId得到当前用户是否已参加助力,如果id存在则是老用户否则为新用户
             String fromHelpId = activityHelpService.getHelpId(fromUserName,actId);
+            String actHelpDetailId = null;
             if (StringUtils.isNotEmpty(fromHelpId)){
                 //老用户
-                actHelpDetailService.insertActHelpDetailEntity(helpId,0,0,actId,fromUserName);
+                actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId,0,0,actId,fromUserName);
             }else{
                 //新用户
-                actHelpDetailService.insertActHelpDetailEntity(helpId,1,1,actId,fromUserName);
+                actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId,1,1,actId,fromUserName);
                 MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
                 wechatEventMap.put(ActivityService.KEY_ACT_ID,matActivityEntity.getActId());
                 wechatEventMap.put(ActivityService.KEY_PIC_ID,matActivityEntity.getPictureId());
                 wechatEventMap.put(ActivityService.KEY_shareCoypwritting,matActivityEntity.getActShareCopywriting());
                 //需要调用生成海报接口
                 actIdReply(wechatEventMap);
+                trackActive(helpOpenId,actHelpDetailId,actId);
             }
 
         }else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&  "".equals(eventKey)){ //搜索直接关注
