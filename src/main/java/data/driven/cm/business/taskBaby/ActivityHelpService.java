@@ -23,11 +23,11 @@ public interface ActivityHelpService {
 
     /**
      * 得到还差多少人，已经有多少人领取
-     * @param formId 被助力者Id
+     * @param fansId 被助力者Id
      * @param actId 活动Id
      * @return map 1.surplushHelpNumber 还需多少人 2.endTotal 已经有xx人领取 都是Integer
      */
-    public Map<String,Integer> getTotalNumber(String formId,String actId);
+    public Map<String,Integer> getTotalNumber(String fansId,String actId);
 
     /**
      * 通过任务Id得到当前完成的人数

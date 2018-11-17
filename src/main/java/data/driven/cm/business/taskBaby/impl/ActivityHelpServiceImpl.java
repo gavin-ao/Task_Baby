@@ -42,17 +42,17 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
 
     /**
      * 得到还差多少人，已经有多少人领取
-     * @param formId 被助力者Id
+     * @param fansId 被助力者Id
      * @param actId 活动Id
      * @return map 1.surplushHelpNumber 还需多少人 2.endTotal 已经有xx人领取 都是Integer
      */
     @Override
-    public Map<String, Integer> getTotalNumber(String formId, String actId) {
-        String surplusHelpSql = "select (m.prize_num-a.help_number) as surplus_help_number from act_help a ,mat_activity m where a.act_id = m.act_id and a.form_id = ? and a.act_id= ?";
-        Integer surplusHelpNumber = jdbcBaseDao.getCount(surplusHelpSql, formId, actId);
+    public Map<String, Integer> getTotalNumber(String fansId, String actId) {
+        String surplusHelpSql = "select (m.prize_num-a.help_number) as surplus_help_number from act_help a ,mat_activity m where a.act_id = m.act_id and a.fans_id = ? and a.act_id= ?";
+        Integer surplusHelpNumber = jdbcBaseDao.getCount(surplusHelpSql, fansId, actId);
 
-        String endTotalSql = "SELECT count(1) as end_total from act_help where help_success_status = 1 and form_id = ? and act_id= ?";
-        Integer endTotal = jdbcBaseDao.getCount(endTotalSql, formId, actId);
+        String endTotalSql = "SELECT count(1) as end_total from act_help where help_success_status = 1 and fans_id = ? and act_id= ?";
+        Integer endTotal = jdbcBaseDao.getCount(endTotalSql, fansId, actId);
         Map<String,Integer> map = new HashMap<>();
         map.put("surplusHelpNumber",surplusHelpNumber);
         map.put("endTotal",endTotal);

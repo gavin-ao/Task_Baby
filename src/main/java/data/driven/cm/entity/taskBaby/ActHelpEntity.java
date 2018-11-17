@@ -28,7 +28,7 @@ public class ActHelpEntity {
     /**
      * 被助力者
      */
-    private String formId;
+    private String fansId;
 
     /**
      * 助力日期
@@ -61,12 +61,12 @@ public class ActHelpEntity {
         this.actId = actId;
     }
 
-    public String getFormId() {
-        return formId;
+    public String getFansId() {
+        return fansId;
     }
 
-    public void setFormId(String formId) {
-        this.formId = formId;
+    public void setFansId(String fansId) {
+        this.fansId = fansId;
     }
 
     public Date getHelpAt() {
