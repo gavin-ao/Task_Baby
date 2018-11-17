@@ -70,4 +70,19 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         Integer endHelpCount = jdbcBaseDao.getCount(endHelpCountSql,actId);
         return endHelpCount;
     }
+    /**
+     * 判断当前粉丝是不是已经参加了活动发起
+     * @author:     Logan
+     * @date:       2018/11/17 03:31
+     * @params:     [openId, activityId]
+     * @return:     boolean 如果参加了返回true，没参加返回false
+    **/
+    @Override
+    public boolean checkFansInActivity(String openId,String activityId){
+        String sql = "select count(1) from act_help where act_id=? and fans_id =?";
+        Integer count = jdbcBaseDao.getCount(sql,activityId,openId);
+        return count > 0;
+    }
+
+
 }
