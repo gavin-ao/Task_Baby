@@ -81,8 +81,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                     matchKeyWord(msgContent,toUserName)){
                 return keyWordReply(wechatEventMap);
             }
+        String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
 //        //2.用户扫描海报二维码，有eventKey，并且可以是以qrscene_开头的
-//        String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
 //        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatConstant.QREventKeyPrefix)){
 //            int helpCount = activityHelp(wechatEventMap);
 //            sendActivtyStateMsg(wechatEventMap,helpCount);//发送模版消息提示助力状态
