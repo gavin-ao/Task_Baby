@@ -93,7 +93,7 @@ public class PosterServiceImpl implements PosterService {
                 // 拼接新的用户名称
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
                 // 添加用户名称
-                g.drawString(nickName, 60 + 100 + 60, 130);
+                g.drawString(nickName, 60 + 100 + 30, 130);
                 // 完成模板修改
                 g.dispose();
                 // 获取新文件的地址
