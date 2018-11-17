@@ -4,6 +4,7 @@ import data.driven.cm.business.taskBaby.ActHelpDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import java.util.Date;
  * @Date: 2018/11/16 18:26
  * @Version 1.0
  */
+@Service
 public class ActHelpDetailServiceImpl implements ActHelpDetailService{
     @Autowired
     JDBCBaseDao jdbcBaseDao;
