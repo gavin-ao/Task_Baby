@@ -315,10 +315,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
        }
    }
 
-   private void trackActive(String touser,String helpId,String activityId){
+   private void trackActive(String touser,String helpDetailId,String activityId){
        String msgTemplate = "收到%s的助力，还差%d人完成助力";
        String msg = "";
-       Map<String,Object> trackResult =  activityTrackerService.getTrackInfo(helpId,activityId);
+       Map<String,Object> trackResult =  activityTrackerService.getTrackInfo(helpDetailId,activityId);
        if(trackResult !=null){
            int remain = Integer.parseInt(
                    trackResult.get(ActivityTrackerService.KEY_HELP_REMAIN).toString());
