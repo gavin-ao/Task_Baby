@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface ActivityService {
        String KEY_ACT_ID = "actId";
-       String KEY_PIC_ID = "picture";
+       String KEY_PIC_ID = "pictureId";
        String KEY_shareCoypwritting = "shareCopywriting";
     /**
      *

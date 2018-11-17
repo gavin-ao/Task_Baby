@@ -68,14 +68,12 @@ public class WechatResponseServiceImpl implements WechatResponseService {
        String msgType = wechatEventMap.get(WeChatConstant.MsgType);
        String msgContent =wechatEventMap.get(WeChatConstant.Content);
        //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
-        if(StringUtils.isNotEmpty(msgType) &&
-                msgType == WeChatConstant.RESP_MESSAGE_TYPE_TEXT){
-            if(StringUtils.isNotEmpty(msgContent) && StringUtils.isNotEmpty(fromUserName) &&
-                    StringUtils.isNotEmpty(toUserName) && StringUtils.isNotEmpty(msgContent) &&
+        if(StringUtils.isNotEmpty(msgType)&& msgType.equals( WeChatConstant.RESP_MESSAGE_TYPE_TEXT) &&
+             StringUtils.isNotEmpty(msgContent) &&  StringUtils.isNotEmpty(fromUserName) &&
+                    StringUtils.isNotEmpty(toUserName)  &&
                     matchKeyWord(msgContent,toUserName)){
                 return keyWordReply(wechatEventMap);
             }
-        }
         //2.用户扫描海报二维码，有eventKey，并且可以是以qrscene_开头的
         String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
         if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatConstant.QREventKeyPrefix)){

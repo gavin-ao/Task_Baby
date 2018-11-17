@@ -56,7 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
             statusValue = status;
         }
         String sql =
-                "select act_id as actId ,picture_id as pictureId，start_at as startAt," +
+                "select act_id as actId, picture_id as pictureId, start_at as startAt ," +
                         "end_at as endAt,status,act_share_copywriting as shareCopywriting" +
                         " from  mat_activity where status =? and wechat_account=? and act_key_word=?";
         return dao.getMapResult(sql,statusValue,wechatAccount,keyWord);
