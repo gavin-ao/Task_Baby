@@ -83,14 +83,15 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         return actHelpEntity;
     }
     public Map<String,Object> getTrackInfo(String helpDetailId, String activityId){
-        Map<String,Integer> helpCountMap = getHelpCount(helpDetailId,activityId);
-        if(helpCountMap == null){
-            return null;
-        }
         ActHelpDetailEntity detailEntity = getTrackDetail(helpDetailId);
         if(detailEntity == null){
             return null;
         }
+        Map<String,Integer> helpCountMap = getHelpCount(detailEntity.getHelpId(),activityId);
+        if(helpCountMap == null){
+            return null;
+        }
+
         ActHelpEntity helpEntity = getTrack(detailEntity.getHelpId());
         if(helpEntity == null){
             return null;
