@@ -63,11 +63,11 @@ public class PosterServiceImpl implements PosterService {
      */
     @Override
     public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
-        if (StringUtils.isEmpty(OriginlPosterUrl) || StringUtils.isEmpty(headImgUrl) ||
-                StringUtils.isEmpty(qrCodeUrl) || StringUtils.isEmpty(nickName)) {
+        if (StringUtils.isNotEmpty(OriginlPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
+                StringUtils.isNotEmpty(qrCodeUrl) && StringUtils.isNotEmpty(nickName)) {
             Font font = new Font("微软雅黑", Font.PLAIN, 53);
             StringBuilder tempFileNameBuider = new StringBuilder();
-            tempFileNameBuider.append(downloadPath).append(File.pathSeparator).
+            tempFileNameBuider.append(downloadPath).append(File.separator).
                     append(UUIDUtil.getUUID()).append(".jpg");
             Graphics2D g = null;
             try {
@@ -126,7 +126,7 @@ public class PosterServiceImpl implements PosterService {
             String fileName = UUIDUtil.getUUID();//生成一个随机的文件名
             //将download根路径和随机文件名拼接成一个完整的filePath,作为临时文件的路径
             StringBuilder pathStrBuilder = new StringBuilder();
-            pathStrBuilder.append(downloadPath).append(File.pathSeparator).append(fileName);
+            pathStrBuilder.append(downloadPath).append(File.separator).append(fileName);
             File file = new File(pathStrBuilder.toString());
             outPutStream = new FileOutputStream(file);
             URLConnection conn = url.openConnection();

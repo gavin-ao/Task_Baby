@@ -36,6 +36,6 @@ public class SysPictureServiceImpl implements SysPictureService {
      */
     @Override
     public String getPictureURL(String picId) {
-        return null;
+        return "F:\\testProject\\ceshi.jpg";
     }
 }
