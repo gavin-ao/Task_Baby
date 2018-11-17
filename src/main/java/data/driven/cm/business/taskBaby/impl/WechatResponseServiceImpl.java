@@ -320,7 +320,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
    private void trackActive(String touser,String helpDetailId,String activityId){
        String msgTemplate = "收到%s的助力，还差%d人完成助力";
-       String msg = "";
+       String msgSuccessTemplate = "收到%s的助力,%s";
+       String msg="";
        Map<String,Object> trackResult =  activityTrackerService.getTrackInfo(helpDetailId,activityId);
        if(trackResult !=null){
            int remain = Integer.parseInt(
@@ -331,7 +332,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
            }else{
                MatActivityEntity activityEntity =
                        activityService.getMatActivityEntityByActId(activityId);
-               msg=activityEntity.getRewardUrl();
+               msg=String.format(msgSuccessTemplate,
+                       trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),activityEntity.getRewardUrl());
                activityTrackerService.updateActHelpStatus(
                        trackResult.get(ActivityTrackerService.KEY_HELP_HELP_ID).toString(),1);
            }
