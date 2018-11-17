@@ -40,6 +40,11 @@ public class ActHelpDetailEntity {
      */
     private Date createAt;
 
+    /**
+     * 助力者OpenId
+     */
+    private String helpOpenId;
+
     public String getActHelpDetailId() {
         return actHelpDetailId;
     }
@@ -86,5 +91,13 @@ public class ActHelpDetailEntity {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public String getHelpOpenId() {
+        return helpOpenId;
+    }
+
+    public void setHelpOpenId(String helpOpenId) {
+        this.helpOpenId = helpOpenId;
     }
 }
