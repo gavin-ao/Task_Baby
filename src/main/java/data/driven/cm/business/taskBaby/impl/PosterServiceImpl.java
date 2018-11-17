@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.Buffer;
 import java.util.Map;
 
 import static data.driven.cm.component.WeChatConstant.KEY_HEADIMG_URL;
@@ -67,23 +68,23 @@ public class PosterServiceImpl implements PosterService {
                 StringUtils.isEmpty(qrCodeUrl) || StringUtils.isEmpty(nickName)) {
             Font font = new Font("微软雅黑", Font.PLAIN, 53);
             StringBuilder tempFileNameBuider = new StringBuilder();
-            tempFileNameBuider.append(downloadPath).append(File.pathSeparator).
+            tempFileNameBuider.append(downloadPath).append(File.separator).
                     append(UUIDUtil.getUUID()).append(".jpg");
             Graphics2D g = null;
             try {
                 log.debug("--------加载原始海报, 路径：", OriginlPosterUrl, "--------------");
-                BufferedImage imgPoster = ImageIO.read(new File(OriginlPosterUrl));
+                BufferedImage imgPoster = getBufferedImage(OriginlPosterUrl);
                 log.debug("--------加载二维码,路径：", qrCodeUrl, "----------------");
-                BufferedImage imgQRCode = ImageIO.read(new File(qrCodeUrl));
+                BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
                 log.debug("--------加载头像,路径：", headImgUrl, "----------------");
-                BufferedImage imgHead = ImageIO.read(new File(headImgUrl));
+                BufferedImage imgHead = getBufferedImage(headImgUrl);
                 //以原始海报作为模板
                 g = imgPoster.createGraphics();
                 // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
                 g.drawImage(imgQRCode, imgPoster.getWidth() - 40 - 300, imgPoster.getHeight() - 100,
                         300, 300, null);
                 //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
-                g.drawImage(imgHead, 60, 30, 100, 100, null);
+                g.drawImage(imgHead, 60, 60, 100, 100, null);
                 // 设置文本样式
                 g.setFont(font);
                 g.setColor(Color.BLACK);
@@ -92,7 +93,7 @@ public class PosterServiceImpl implements PosterService {
                 // 拼接新的用户名称
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
                 // 添加用户名称
-                g.drawString(nickName, 60 + 100 + 5, 80);
+                g.drawString(nickName, 60 + 100 + 5, 110);
                 // 完成模板修改
                 g.dispose();
                 // 获取新文件的地址
@@ -108,6 +109,50 @@ public class PosterServiceImpl implements PosterService {
         return getTempImgFilePathByUrl(qrCodeUrl);//TODO:暂时只返回二维码图片，后面要改成合成后的图片
     }
 
+    /***
+     * 将文件按照地址读进来，返回BufferedImage
+     *
+     * @author:     Logan
+     * @date:       2018/11/17 01:27
+     * @params:     [imgAddress]   支持以http开头的url和本地文件
+     * @return:     java.awt.image.BufferedImage
+    **/
+    private BufferedImage getBufferedImage(String imgAddress){
+        if(imgAddress.startsWith("http")){//imgAddres是url
+            URL url = null;
+            InputStream is= null;
+            try {
+                url = new URL("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQGu8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyeENuU2c2dnFlX2gxMDJIbk5zY0QAAgQCnu9bAwQAjScA");
+                is = url.openConnection().getInputStream();
+                BufferedImage image = ImageIO.read(is);
+                return image;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }finally {
+                if(is != null){
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        log.error("---------读取图片文件错误：url：",imgAddress,"---------");
+                        log.error(e.getMessage());
+                        return null;
+                    }
+                }
+
+            }
+
+        }else{//imgAddress是本地路径
+            try {
+                BufferedImage image = ImageIO.read(new File(imgAddress));
+                return image;
+            } catch (IOException e) {
+                log.error("---------读取图片文件错误：本地路径：",imgAddress,"---------");
+                log.error(e.getMessage());
+                return null;
+            }
+        }
+        return null;
+    }
 
     /**
      * 将URL图片存在本地，并返回filepath
@@ -126,7 +171,7 @@ public class PosterServiceImpl implements PosterService {
             String fileName = UUIDUtil.getUUID();//生成一个随机的文件名
             //将download根路径和随机文件名拼接成一个完整的filePath,作为临时文件的路径
             StringBuilder pathStrBuilder = new StringBuilder();
-            pathStrBuilder.append(downloadPath).append(File.pathSeparator).append(fileName);
+            pathStrBuilder.append(downloadPath).append(File.separator).append(fileName);
             File file = new File(pathStrBuilder.toString());
             outPutStream = new FileOutputStream(file);
             URLConnection conn = url.openConnection();
