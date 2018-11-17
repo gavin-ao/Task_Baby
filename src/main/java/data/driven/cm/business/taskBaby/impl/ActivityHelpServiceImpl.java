@@ -32,11 +32,11 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
      * @return
      */
     @Override
-    public String insertActivityHelpEntity(String actId, String wechatAccount, String formId, Integer helpSuccessStatus, Integer helpNumber) {
+    public String insertActivityHelpEntity(String actId, String wechatAccount, String fansOpenId, Integer helpSuccessStatus, Integer helpNumber) {
         Date helpAt = new Date();
         String helpId = UUIDUtil.getUUID();
-        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,form_id,help_success_status,help_number) VALUES (?,?,?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,formId,helpSuccessStatus,helpNumber);
+        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,fans_id,help_success_status,help_number) VALUES (?,?,?,?,?,?)";
+        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,fansOpenId,helpSuccessStatus,helpNumber);
         return helpId;
     }
 

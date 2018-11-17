@@ -202,6 +202,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         return "success";
     }
 
+
+
 /**
  * 加入活动
  * @author:     Logan
