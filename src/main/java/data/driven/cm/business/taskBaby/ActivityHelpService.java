@@ -46,6 +46,14 @@ public interface ActivityHelpService {
      **/
     public boolean checkFansInActivity(String openId,String activityId);
 
+    /**
+     * 根据被助力者的openid和activityId，返回HelpId
+     * @author:     Logan
+     * @date:       2018/11/17 03:55
+     * @params:     [helpOpenId, activityId]
+     * @return:     java.lang.Integer
+     **/
+    public Integer getHelpId(String helpOpenId,String activityId);
 
 
 

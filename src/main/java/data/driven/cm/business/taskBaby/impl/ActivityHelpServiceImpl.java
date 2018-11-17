@@ -84,5 +84,21 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         return count > 0;
     }
 
-
+    /**
+     * 根据被助力者的openid和activityId，返回HelpId
+     * @author:     Logan
+     * @date:       2018/11/17 03:55
+     * @params:     [helpOpenId, activityId]
+     * @return:     java.lang.Integer
+    **/
+    @Override
+    public Integer getHelpId(String helpOpenId,String activityId){
+        String sql = "select help_id from act_help where act_id=? and fans_id=?";
+        Object helpId = jdbcBaseDao.getColumn(sql,activityId,helpOpenId);
+        if(helpId != null){
+            return Integer.parseInt(helpId.toString());
+        }else{
+            return null;
+        }
+    }
 }
