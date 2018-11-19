@@ -16,9 +16,10 @@ public interface ActivityRewardService {
      * @param wechatUserId 微信用户Id
      * @param wechatAccount 公众号原始ID
      * @param receiveStatus 领取状态,1 已领取 0 未领取
+     * @param prizeId 活动奖品关联表
      * @return
      */
-    public String insertActivityRewardEntity(String actId,String wechatUserId,String wechatAccount,Integer receiveStatus);
+    public String insertActivityRewardEntity(String actId,String wechatUserId,String wechatAccount,Integer receiveStatus,String prizeId);
 
     /**
      * 获取 活动奖励实体

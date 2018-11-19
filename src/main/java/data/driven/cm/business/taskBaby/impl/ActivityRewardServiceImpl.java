@@ -27,16 +27,17 @@ public class ActivityRewardServiceImpl implements ActivityRewardService {
      * @param wechatUserId 微信用户Id openId
      * @param wechatAccount 公众号原始ID
      * @param receiveStatus 领取状态,1 已领取 0 未领取
+     * @param prizeId 活动奖品关联表
      * @return
      */
     @Override
-    public String insertActivityRewardEntity(String actId, String wechatUserId, String wechatAccount, Integer receiveStatus) {
+    public String insertActivityRewardEntity(String actId, String wechatUserId, String wechatAccount, Integer receiveStatus,String prizeId) {
         Date caretAt = new Date();
         String rewardId = getRewardIdByActIdAndWechatUserId(actId,wechatUserId);
         if (rewardId == null){
             rewardId = UUIDUtil.getUUID();
-            String sql = "insert into activity_reward (reward_id,act_id,wechat_user_id,wechat_account,receive_status,create_at) VALUES (?,?,?,?,?,?)";
-            jdbcBaseDao.executeUpdate(sql,rewardId,actId,wechatUserId,wechatAccount,receiveStatus,caretAt);
+            String sql = "insert into activity_reward (reward_id,act_id,wechat_user_id,wechat_account,receive_status,create_at,prize_id) VALUES (?,?,?,?,?,?,?)";
+            jdbcBaseDao.executeUpdate(sql,rewardId,actId,wechatUserId,wechatAccount,receiveStatus,caretAt,prizeId);
         }
         return rewardId;
     }
@@ -64,7 +65,7 @@ public class ActivityRewardServiceImpl implements ActivityRewardService {
      */
     @Override
     public ActivityRewardEntity getEntityByActIdAndWechatUserId(String actId,String wechatUserId){
-        String sql = "select reward_id,act_id,wechat_user_id,wechat_account,receive_status,create_at from activity_reward where act_id = ? and wechat_user_id = ?";
+        String sql = "select reward_id,act_id,wechat_user_id,wechat_account,receive_status,create_at,prize_id from activity_reward where act_id = ? and wechat_user_id = ?";
         List<ActivityRewardEntity> activityRewardEntityList = jdbcBaseDao.queryList(ActivityRewardEntity.class,sql,actId,wechatUserId);
         if (activityRewardEntityList != null && activityRewardEntityList.size() > 0){
             return activityRewardEntityList.get(0);
