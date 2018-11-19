@@ -53,7 +53,7 @@ public class ActivityRewardServiceImpl implements ActivityRewardService {
     public String getRewardIdByActIdAndWechatUserId(String actId,String wechatUserId){
         String sql = "select reward_id from activity_reward where act_id = ? and wechat_user_id = ? ";
         Object id = jdbcBaseDao.getColumn(sql,actId,wechatUserId);
-        if (StringUtils.isNotEmpty(id.toString())){
+        if (id!=null){
             return id.toString();
         }
         return null;

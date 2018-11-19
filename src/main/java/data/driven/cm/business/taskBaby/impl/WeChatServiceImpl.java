@@ -64,11 +64,17 @@ public class WeChatServiceImpl  implements WeChatService {
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce,fromXML);
                 requestMap=WeChatUtil.parseXml(respXml);
                 if (deDuplication(requestMap)){ //排重
+                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
+                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                    }
                      wechatResponseService.notify(requestMap);
                 }
             }else{ //处理明文
                 requestMap=WeChatUtil.parseRequest(request);
                 if (deDuplication(requestMap)){
+                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
+                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                    }
                     wechatResponseService.notify(requestMap);
                 }
             }

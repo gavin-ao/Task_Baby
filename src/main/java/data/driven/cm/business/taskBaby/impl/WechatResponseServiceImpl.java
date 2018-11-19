@@ -182,6 +182,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 wechatEventMap.put(ActivityService.KEY_shareCoypwritting,
                         matActivityEntity.getActShareCopywriting());
                 //需要调用生成海报接口
+                wechatEventMap.put(ActivityService.KEY_ACT_ID,actId);
+                wechatEventMap.put(ActivityService.KEY_PIC_ID,matActivityEntity.getPictureId());
                 activityReply(wechatEventMap);
                 String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
             }
@@ -384,7 +386,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         //回复信息
         Map<String, String> replyMap = new HashMap<String, String>();
-
+        logger.info("发送文本中。。。");
         replyMap.put(KEY_CSMSG_TOUSER, openId);
         Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_shareCoypwritting);
         if (shareCoppywritting != null) {//发送活动介绍
@@ -392,13 +394,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
-
+        logger.info("发送文本完成。。。");
+        logger.info("发送海报中。。。");
         if (customizedPosterPath != null) {//发送个性化海报
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
-        joinActivity(wechatAccount, openId, activityId);
+        logger.info("发送海报完成。。。");
         return "success";
     }
 
