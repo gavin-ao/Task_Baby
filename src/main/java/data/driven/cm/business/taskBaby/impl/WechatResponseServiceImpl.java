@@ -184,28 +184,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 //需要调用生成海报接口
                 activityReply(wechatEventMap);
                 String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
-                switch (processStatus) {
-                    case ACTIVITY_HELP_PROCESS_SUCCESS://刚好
-                        ActivityPrizeMappingEntity prizeMappingEntity =
-                                prizeMappingService.getEntityByActId(actId);
-                        String rewardInfo = getRewardInfo(prizeMappingEntity);
-                        activityRewardService.insertActivityRewardEntity(actId, fromUserName,
-                                wechatAccount, 1,prizeMappingEntity.getPrizeId());
-                        //发送奖品消息
-                        if (StringUtils.isNotEmpty(rewardInfo)) {
-                            Map<String, String> replyMap = new HashMap<String, String>();
-                            replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
-                            replyMap.put(KEY_CSMSG_CONTENT, rewardInfo);
-                            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-                            WeChatUtil.sendCustomMsg(replyMap, accessToken);//发送奖品消息
-                        }
-                        break;
-                    case ACTIVITY_HELP_PROCESS_EXCEEDS://如果助力人数超限了，更新助力状态为不成功
-                        actHelpDetailService.updateActHelpDetailEntity(actHelpDetailId,0,1);
-                        break;
-                    default:
-                        break;
-                }
             }
 
         } else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) { //搜索直接关注
@@ -448,7 +426,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String trackActive(String touser, String helpDetailId, String activityId, String access_token) {
         String processStatus = ACTIVITY_HELP_PROCESS_INPROCESS;
         String msgTemplate = "收到%s的助力，还差%d人完成助力";
-        String msgSuccessTemplate = "收到%s的助力,%s";
+        String msgSuccessTemplate = "收到%s的助力,%s,%s";
         String msg = "";
         Map<String, Object> trackResult = activityTrackerService.getTrackInfo(helpDetailId, activityId);
         if (trackResult != null) {
@@ -462,11 +440,23 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 MatActivityEntity activityEntity =
                         activityService.getMatActivityEntityByActId(activityId);
                 if (remain == 0) {
-                    msg = String.format(msgSuccessTemplate,
-                            trackResult.get(WeChatConstant.KEY_NICKNAME).toString(), activityEntity.getRewardUrl());
+
                     processStatus = ACTIVITY_HELP_PROCESS_SUCCESS;
+                    ActivityPrizeMappingEntity prizeMappingEntity =
+                            prizeMappingService.getEntityByActId(activityId);
+                    String rewardInfo = getRewardInfo(prizeMappingEntity);
+                    //插入领奖信息表
+                    activityRewardService.insertActivityRewardEntity(activityId, touser,
+                            activityEntity.getWechatAccount(), 1,prizeMappingEntity.getPrizeId());
+                    //发送奖品消息
+                    if (StringUtils.isNotEmpty(rewardInfo)) {
+                        msg = String.format(msgSuccessTemplate,
+                                trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),
+                                activityEntity.getRewardUrl(),rewardInfo);
+                    }
                 } else {
                     processStatus = ACTIVITY_HELP_PROCESS_EXCEEDS;
+                    actHelpDetailService.updateActHelpDetailEntity(helpDetailId,0,1);
                 }
             }
             //回复信息
