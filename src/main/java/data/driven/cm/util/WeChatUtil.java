@@ -26,10 +26,13 @@ import data.driven.cm.entity.wechat.WechatCSImgMsgEntity;
 import data.driven.cm.entity.wechat.WechatCSTxtMsgEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+
 
 import static com.alibaba.fastjson.JSON.parseObject;
 import static data.driven.cm.component.WeChatConstant.*;
@@ -142,14 +145,43 @@ public class WeChatUtil {
     /**
      * 解析微信发来的请求(xml)
      *
+     * @param respXml 解密后的xml文件
+     * @return
+     * @throws Exception
+     */
+    @SuppressWarnings({ "unchecked"})
+    public static Map<String,String> parseXml(String respXml) throws Exception {
+        // 将解析结果存储在HashMap中
+        Map<String,String> map = new HashMap<>();
+
+        SAXReader saxReader = new SAXReader();
+        Document document;
+        try {
+            document = saxReader.read(new ByteArrayInputStream(respXml.getBytes()));
+            // 得到xml根元素
+            Element root = document.getRootElement();
+            // 得到根元素的所有子节点
+            List<Element> elementList = root.elements();
+            // 遍历所有子节点
+            for (Element e : elementList)
+                map.put(e.getName(), e.getText());
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
+     * 解析微信发来的请求(request)
+     *
      * @param request
      * @return
      * @throws Exception
      */
     @SuppressWarnings({ "unchecked"})
-    public static Map<String,String> parseXml(HttpServletRequest request) throws Exception {
+    public static Map<String,String> parseRequest(HttpServletRequest request) throws Exception {
         // 将解析结果存储在HashMap中
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new HashMap<>();
 
         // 从request中取得输入流
         InputStream inputStream = request.getInputStream();
@@ -166,10 +198,8 @@ public class WeChatUtil {
 
         // 释放资源
         inputStream.close();
-        inputStream = null;
         return map;
     }
-
     /**
      * 组装 xml
      * @param map
