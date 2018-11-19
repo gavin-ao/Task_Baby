@@ -79,6 +79,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
              StringUtils.isNotEmpty(msgContent) &&  StringUtils.isNotEmpty(fromUserName) &&
                     StringUtils.isNotEmpty(toUserName)  &&
                     matchKeyWord(msgContent,toUserName)){
+                insertWechatUserInfo(wechatEventMap);
                 return keyWordReply(wechatEventMap);
             }
         String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
