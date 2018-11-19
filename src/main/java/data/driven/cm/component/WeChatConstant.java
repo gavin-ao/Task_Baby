@@ -14,7 +14,9 @@ public class WeChatConstant {
     public static final String SECRET = "SECRET";
 
     // Token
-    public static final String TOKEN = "lxl";
+    public static final String TOKEN = "xkb";
+    public static final String EncodingAESKey = "CJpofN6kdTJmCwXksXL3NYV4Oi2yw69CEwUPNjnU4De";
+
     public static final String RESP_MESSAGE_TYPE_TEXT = "text";
     public static final String REQ_MESSAGE_TYPE_TEXT = "text";
     public static final String REQ_MESSAGE_TYPE_IMAGE = "image";
