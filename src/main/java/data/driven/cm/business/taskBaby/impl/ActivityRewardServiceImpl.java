@@ -6,6 +6,7 @@ import data.driven.cm.entity.taskBaby.ActivityRewardEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @Date: 2018/11/19 9:52
  * @Version 1.0
  */
+@Service
 public class ActivityRewardServiceImpl implements ActivityRewardService {
 
     @Autowired
