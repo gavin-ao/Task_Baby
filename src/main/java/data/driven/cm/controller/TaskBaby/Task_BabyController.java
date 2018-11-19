@@ -47,12 +47,23 @@ public class Task_BabyController {
 
     /**
      * 此处是处理微信服务器的消息转发的
+     * 处理微信服务器发来的post请求，进行签名的验证
      */
     @ResponseBody
     @PostMapping(value = "/wechat")
     public String processMsg(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 调用核心服务类接收处理请求
-        return weChatService.processRequest(request,response);
+        // 微信加密签名
+        String signature = request.getParameter("signature");
+        // 时间戳
+        String timestamp = request.getParameter("timestamp");
+        // 随机数
+        String nonce = request.getParameter("nonce");
+        if (WeChatUtil.checkSignature(signature, timestamp, nonce)){
+            // 调用核心服务类接收处理请求
+            return weChatService.processRequest(request,response);
+        }
+        return null;
+
     }
 
     /**
