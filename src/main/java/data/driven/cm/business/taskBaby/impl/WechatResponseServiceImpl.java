@@ -1,8 +1,10 @@
 package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.*;
+import data.driven.cm.component.RewardTypeEnum;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
+import data.driven.cm.entity.taskBaby.ActivityPrizeMappingEntity;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
@@ -50,6 +52,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     @Autowired
     private ActivityRewardService activityRewardService;
+    @Autowired
+    private ActivityPrizeMappingService prizeMappingService;
 
     private static final String ACTIVITY_HELP_PROCESS_SUCCESS = "success"; //助力刚好成功
     private static final String ACTIVITY_HELP_PROCESS_INPROCESS = "inProcess";//还需要继续助力
@@ -170,7 +174,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String actHelpDetailId = null;
             if (StringUtils.isNotEmpty(fromHelpId)) {
                 //老用户
-                actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
+                actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
             } else {
                 //新用户
                 actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, actId, fromUserName);
@@ -182,13 +186,22 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
                 switch (processStatus) {
                     case ACTIVITY_HELP_PROCESS_SUCCESS://刚好
-                        actHelpDetailService.insertActHelpDetailEntity(helpId,
-                                1, 1, actId, fromUserName);
-                        activityRewardService.insertActivityRewardEntity(actId, fromUserName, wechatAccount, 1);
+                        ActivityPrizeMappingEntity prizeMappingEntity =
+                                prizeMappingService.getEntityByActId(actId);
+                        String rewardInfo = getRewardInfo(prizeMappingEntity);
+                        activityRewardService.insertActivityRewardEntity(actId, fromUserName,
+                                wechatAccount, 1,prizeMappingEntity.getPrizeId());
+                        //发送奖品消息
+                        if (StringUtils.isNotEmpty(rewardInfo)) {
+                            Map<String, String> replyMap = new HashMap<String, String>();
+                            replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
+                            replyMap.put(KEY_CSMSG_CONTENT, rewardInfo);
+                            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+                            WeChatUtil.sendCustomMsg(replyMap, accessToken);//发送奖品消息
+                        }
                         break;
-                    case ACTIVITY_HELP_PROCESS_EXCEEDS:
-                        actHelpDetailService.insertActHelpDetailEntity(helpId,
-                                0, 1, actId, fromUserName);
+                    case ACTIVITY_HELP_PROCESS_EXCEEDS://如果助力人数超限了，更新助力状态为不成功
+                        actHelpDetailService.updateActHelpDetailEntity(actHelpDetailId,0,1);
                         break;
                     default:
                         break;
@@ -211,6 +224,30 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     }
 
+    private String getRewardInfo(ActivityPrizeMappingEntity prizeMappingEntity){
+        String prizeMsg="";
+        if(prizeMappingEntity == null){
+            return null;
+        }
+        String actId = prizeMappingEntity.getActId();
+        MatActivityEntity activityEntity = activityService.getMatActivityEntityByActId(actId);
+        RewardTypeEnum rewardType = null;
+        for(int i=0; i<=RewardTypeEnum.values().length - 1; i++){
+            if(RewardTypeEnum.values()[i].getIndex()==activityEntity.getActType()){
+                rewardType = RewardTypeEnum.values()[i];
+            }
+        }
+
+        switch (rewardType){
+            case TOKEN:
+                  prizeMsg=String.format("口令：%s",prizeMappingEntity.getToken());
+                  break;
+            case SECURECODE:
+                  prizeMsg=String.format("地址:%s,口令:%s",
+                          prizeMappingEntity.getLinkUrl(),prizeMappingEntity.getToken());
+        }
+        return prizeMsg;
+    }
     /**
      * 新增微信用户方法
      *

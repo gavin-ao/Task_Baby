@@ -74,4 +74,8 @@ public class ActivityRewardServiceImpl implements ActivityRewardService {
         }
         return null;
     }
+    public void updateActivityReward(String rewardId,String prizeId){
+        String sql = "update activity_reward set prize_id =? where reward_id=?";
+        jdbcBaseDao.executeUpdate(sql,prizeId,rewardId);
+    }
 }

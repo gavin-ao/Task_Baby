@@ -40,12 +40,21 @@ public class ActivityServiceImpl implements ActivityService {
      */
     @Override
     public MatActivityEntity getMatActivityEntityByActId(String actId) {
-        String sql = "select act_id,picture_id,act_share_copywriting,reward_url from mat_activity where act_id = ?";
+        String sql = "select act_id,picture_id,act_share_copywriting,reward_url,act_type from mat_activity where act_id = ?";
         List<MatActivityEntity> MatActivityEntityList = dao.queryList(MatActivityEntity.class, sql, actId);
         if (MatActivityEntityList != null && MatActivityEntityList.size() > 0) {
             return MatActivityEntityList.get(0);
         }
         return null;
+    }
+    public Integer getMacActivityType(String actId){
+        String sql = "select act_type from mat_activity where act_id=?";
+        Object result = dao.getColumn(sql,actId);
+        if(result == null){
+            return null;
+        }else{
+            return new Integer(result.toString());
+        }
     }
     /**
      * 根据活动id获取活动状态相关字段

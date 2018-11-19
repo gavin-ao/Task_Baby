@@ -40,6 +40,14 @@ public interface ActivityService {
      */
     public MatActivityEntity getMatActivityEntityByActId(String actId);
 
+    /**
+     * 
+     * @author:     Logan
+     * @date:       2018/11/19 17:24
+     * @params:     [actId]   
+     * @return:     java.lang.Integer
+    **/        
+    public Integer getMacActivityType(String actId);
     /**根据活动Id获取活动状态实体
      *
      * @author:     Logan

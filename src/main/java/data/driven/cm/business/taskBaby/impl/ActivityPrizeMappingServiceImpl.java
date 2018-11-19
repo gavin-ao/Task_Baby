@@ -4,6 +4,7 @@ import data.driven.cm.business.taskBaby.ActivityPrizeMappingService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.ActivityPrizeMappingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @Date: 2018/11/19 16:23
  * @Version 1.0
  */
+@Service
 public class ActivityPrizeMappingServiceImpl implements ActivityPrizeMappingService{
     @Autowired
     JDBCBaseDao jdbcBaseDao;
