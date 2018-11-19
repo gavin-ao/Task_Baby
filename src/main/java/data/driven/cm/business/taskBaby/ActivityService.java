@@ -1,6 +1,7 @@
 package data.driven.cm.business.taskBaby;
 
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
+import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
 import sun.font.TrueTypeFont;
 
 import java.util.Map;
@@ -38,6 +39,15 @@ public interface ActivityService {
      * @return MatActivityEntity
      */
     public MatActivityEntity getMatActivityEntityByActId(String actId);
+
+    /**根据活动Id获取活动状态实体
+     *
+     * @author:     Logan
+     * @date:       2018/11/19 10:52
+     * @params:     [actId]
+     * @return:     data.driven.cm.entity.taskBaby.MatActivityStatusEntity
+    **/
+    public MatActivityStatusEntity getMacActivityStatusByActId(String actId);
 
     /**
      * 获取活动要求助力数

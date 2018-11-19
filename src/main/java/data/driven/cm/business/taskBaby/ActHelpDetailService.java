@@ -19,5 +19,12 @@ public interface ActHelpDetailService {
      * @return
      */
     public String insertActHelpDetailEntity(String helpId,Integer helpStatus,Integer fansStatus,String actId,String helpOpenid);
-
+    /**
+     * 更新助力详情表
+     * @author:     Logan
+     * @date:       2018/11/19 14:44
+     * @params:     [helpDetailId, helpStatus, fansStatus]
+     * @return:     int
+    **/
+    public int updateActHelpDetailEntity(String helpDetailId,Integer helpStatus,Integer fansStatus);
 }

@@ -3,6 +3,7 @@ package data.driven.cm.business.taskBaby.impl;
 import data.driven.cm.business.taskBaby.ActivityService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
+import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
 import data.driven.cm.entity.verification.WechatStoreVerificationAuthorizationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Integer countActivedActivity(String wechatAccount) {
         String sql = "select count(*) as activityCount from mat_activity where wechat_account=? ";
-        Object result = dao.getColumn(sql,wechatAccount);
-        if(result !=null){
+        Object result = dao.getColumn(sql, wechatAccount);
+        if (result != null) {
             return Integer.valueOf(result.toString());
         }
         return 0;
@@ -33,19 +34,38 @@ public class ActivityServiceImpl implements ActivityService {
 
     /**
      * 通过任务ID得到任务实体
+     *
      * @param actId 任务ID
      * @return MatActivityEntity
      */
     @Override
     public MatActivityEntity getMatActivityEntityByActId(String actId) {
         String sql = "select act_id,picture_id,act_share_copywriting,reward_url from mat_activity where act_id = ?";
-        List<MatActivityEntity> MatActivityEntityList = dao.queryList(MatActivityEntity.class,sql,actId);
-        if (MatActivityEntityList != null && MatActivityEntityList.size() > 0){
+        List<MatActivityEntity> MatActivityEntityList = dao.queryList(MatActivityEntity.class, sql, actId);
+        if (MatActivityEntityList != null && MatActivityEntityList.size() > 0) {
             return MatActivityEntityList.get(0);
         }
         return null;
     }
+    /**
+     * 根据活动id获取活动状态相关字段
+     * @author:     Logan
+     * @date:       2018/11/19 10:53
+     * @params:     [actId]
+     * @return:     data.driven.cm.entity.taskBaby.MatActivityStatusEntity
+    **/
+    @Override
+    public MatActivityStatusEntity getMacActivityStatusByActId(String actId) {
 
+    String sql = "select act_id,act_key_word,start_at,end_at,status from mat_activity where act_id = ?";
+    List<MatActivityStatusEntity> matActivityStatusList = dao.queryList(MatActivityStatusEntity.class, sql, actId);
+        if(matActivityStatusList !=null&&matActivityStatusList.size()>0)
+
+    {
+        return matActivityStatusList.get(0);
+    }
+        return null;
+}
     @Override
     public String getMatActivityId(String wechatAccount, String keyWord, Integer status) {
         int statusValue = 1;//默认活动开启

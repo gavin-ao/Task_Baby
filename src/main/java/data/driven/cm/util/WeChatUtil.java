@@ -273,9 +273,7 @@ public class WeChatUtil {
      * @params:     [JsonStr, appId, secret]   
      * @return:     void
     **/        
-    public static void sendCustomMsgByJsonStr(String JsonStr, String appId,String secret){
-        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String access_token = jsonObject.getString("access_token");
+    public static void sendCustomMsgByJsonStr(String JsonStr, String access_token){
         String url = custom_url+access_token;
         HttpUtil.doPost(url, JsonStr);
     }
@@ -292,24 +290,22 @@ public class WeChatUtil {
  *
  * @return:     void
 **/
-    public static void sendCustomMsg(Map<String,String> requestMap){
+    public static void sendCustomMsg(Map<String,String> requestMap,String access_token){
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
         String msgType = requestMap.get(KEY_CSMSG_TYPE);
-        String appId = requestMap.get(KEY_APP_ID);
-        String seretCode = requestMap.get(KEY_SECRET_CODE);
         if(StringUtils.isNotEmpty(touser) && StringUtils.isNotEmpty(msgType) &&
-                StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(seretCode)) {
+                StringUtils.isNotEmpty(access_token)) {
             switch (msgType) {
                 case "text":
                     String msg = getCSJsonTxtMsg(requestMap);//得到客服消息的json字符串；
                     if(StringUtils.isNotEmpty(msg)) {
-                        sendCustomMsgByJsonStr(msg, appId, seretCode);
+                        sendCustomMsgByJsonStr(msg, access_token);
                     }
                     break;
                 case "image":
-                    String imgMsg = getCSJsonImgMsg(requestMap,appId,seretCode);
+                    String imgMsg = getCSJsonImgMsg(requestMap,access_token);
                     if(StringUtils.isNotEmpty(imgMsg)) {
-                        sendCustomMsgByJsonStr(imgMsg, appId, seretCode);
+                        sendCustomMsgByJsonStr(imgMsg, access_token);
                     }
                     break;
                 default:
@@ -336,14 +332,14 @@ public class WeChatUtil {
           }
     }
 
-    private static String getCSJsonImgMsg(Map<String,String> requestMap,String appId,String secretCode){
+    private static String getCSJsonImgMsg(Map<String,String> requestMap,String access_token){
         String filePath = requestMap.get(KEY_FILE_PATH);
         String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
-        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(secretCode)) {
+        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(access_token)) {
             try {
                 Map<String, Object> uploadInfoMap = UploadMeida(
-                        fileType, filePath, appId, secretCode);
+                        fileType, filePath, access_token);
                 //先新增临时素材，返回media_id
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
@@ -380,41 +376,6 @@ public class WeChatUtil {
         return mapToXML(map);
     }
 
-    /**
-     * 回复图片消息
-     * @param requestMap
-     *      requestMap 参数说明
-     *          ReplyToUserName 接收方账号(收到的OpenID)
-     *          ReplyFromUserName 发送方账号(微信账号)
-     *          filePath 图片down在本地的路径
-     *          appId 微信公众号的appId
-     *          secretCode 微信的secretCode
-     * @return 返回 String 类型的 xml
-     */
-    public static String sendTemporaryImageMsg(Map<String,String> requestMap){
-        String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
-        String filePath =requestMap.get(KEY_FILE_PATH);
-        String appId = requestMap.get(KEY_APP_ID);
-        String secretCode = requestMap.get(KEY_SECRET_CODE);
-        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(appId) && StringUtils.isNotEmpty(secretCode)) {
-            try {
-                Map<String, Object> uploadInfoMap = UploadMeida(
-                        fileType, filePath, appId, secretCode);
-                String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
-                if(StringUtils.isNotEmpty(mediaId)) {
-                    requestMap.put(WeChatConstant.MediaId, mediaId);
-                    requestMap.put(WeChatConstant.Reply_FromUserName,requestMap.get(WeChatConstant.Reply_ToUserName));
-                    requestMap.put(WeChatConstant.Reply_ToUserName,requestMap.get(WeChatConstant.Reply_FromUserName));
-                    return sendImageMsg(requestMap);
-                }
-            } catch (IOException e) {
-                log.error("---------------发送临时图片消息失败------------");
-                log.error(e.getMessage());
-                return "";
-            }
-        }
-        return "";
-    }
 
     /**
      * 回复图文消息
@@ -447,6 +408,7 @@ public class WeChatUtil {
         return mapToXML(map);
     }
 
+
     /**
      * 通过微信用户OpenID 得到用户信息
      * @param fromUserName 相当于用户Openid
@@ -457,6 +419,21 @@ public class WeChatUtil {
     public static Map<String,String> getUserInfo(String fromUserName,String appId,String secret){
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
         String access_token = jsonObject.getString("access_token");
+        String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
+        String resultStr = HttpUtil.doGetSSL(url);
+
+        JSONObject result = parseObject(resultStr);
+        Map<String, String> map = JSONObject.parseObject(resultStr, new TypeReference<Map<String, String>>(){});
+        return map;
+    }
+    /**
+     * 通过微信用户OpenID 得到用户信息
+     * @param fromUserName 相当于用户Openid
+     * @appId 开发者ID
+     * @secret 开发者密码
+     * @return 返回用户信息map格式
+     */
+    public static Map<String,String> getUserInfo(String fromUserName,String access_token){
         String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
 
@@ -510,7 +487,41 @@ public class WeChatUtil {
 //        HttpUtil.httpsRequestPicture(showqr_url + URLEncoder.encode(ticket),
 //                "GET", null, "F:\\testProject",fileName, "jpg");
     }
+    /**
+     * 获取微信公众号二维码 并保存
+     * @author:     Logan
+     * @date:       2018/11/19 12:15
+     * @params:     [codeType, expireSeconds, actionName, sceneStr, access_token]
+     * @return:     java.lang.String
+    **/
+    public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String access_token) {
+        String url = qrcode_url+"?access_token="+access_token;
 
+        Map<String, Object> map = new HashMap<>();
+        if ("1".equals(codeType)) { // 临时二维码
+            map.put("expire_seconds", expireSeconds);
+            map.put("action_name", actionName);
+            Map<String, Object> sceneMap = new HashMap<>();
+            Map<String, Object> sceneIdMap = new HashMap<>();
+            sceneIdMap.put("scene_str", sceneStr);
+            sceneMap.put("scene", sceneIdMap);
+            map.put("action_info", sceneMap);
+        } else if ("2".equals(codeType)) { // 永久二维码
+            map.put("action_name", actionName);
+            Map<String, Object> sceneMap = new HashMap<>();
+            Map<String, Object> sceneIdMap = new HashMap<>();
+            sceneIdMap.put("scene_str", sceneStr);
+            sceneMap.put("scene", sceneIdMap);
+            map.put("action_info", sceneMap);
+        }
+        String data = JSON.toJSONString(map);
+        // 得到ticket票据,用于换取二维码图片
+        String resultStr = HttpUtil.doPost(url, data);
+        JSONObject jsonticket = JSON.parseObject(resultStr);
+        String ticket = jsonticket.getString("ticket");
+        String showqrUrl = showqr_url + URLEncoder.encode(ticket);
+        return showqrUrl;
+    }
     /**
      * 新增临时素材
      * @param fileType 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
@@ -530,10 +541,89 @@ public class WeChatUtil {
         if (!file.exists() || !file.isFile()) {
             throw new IOException("文件不存在");
         }
-//        String token = WechatUtil.getToken();
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
         String token = jsonObject.getString("access_token");
         String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + token + "&type=" + fileType;
+        URL url = new URL(urlString);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");//以POST方式提交表单
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+        conn.setUseCaches(false);//POST方式不能使用缓存
+        //设置请求头信息
+        conn.setRequestProperty("Connection", "Keep-Alive");
+        conn.setRequestProperty("Charset", "UTF-8");
+        //设置边界
+        String BOUNDARY = "----------" + System.currentTimeMillis();
+        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        //请求正文信息
+        //第一部分
+        StringBuilder sb = new StringBuilder();
+        sb.append("--");//必须多两条道
+        sb.append(BOUNDARY);
+        sb.append("\r\n");
+        sb.append("Content-Disposition: form-data;name=\"media\"; filename=\"" + file.getName() + "\"\r\n");
+        sb.append("Content-Type:application/octet-stream\r\n\r\n");
+//        System.out.println("sb:" + sb);
+
+        //获得输出流
+        OutputStream out = new DataOutputStream(conn.getOutputStream());
+        //输出表头
+        out.write(sb.toString().getBytes("UTF-8"));
+        //文件正文部分
+        //把文件以流的方式 推送道URL中
+        DataInputStream din = new DataInputStream(new FileInputStream(file));
+        int bytes = 0;
+        byte[] buffer = new byte[1024];
+        while ((bytes = din.read(buffer)) != -1) {
+            out.write(buffer, 0, bytes);
+        }
+        din.close();
+        //结尾部分
+        byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
+        out.write(foot);
+        out.flush();
+        out.close();
+        if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
+
+            StringBuffer strbuffer = null;
+            BufferedReader reader = null;
+            try {
+                strbuffer = new StringBuffer();
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String lineString = null;
+                while ((lineString = reader.readLine()) != null) {
+                    strbuffer.append(lineString);
+
+                }
+                if (result == null) {
+                    result = strbuffer.toString();
+//                    System.out.println("result:" + result);
+                }
+            } catch (IOException e) {
+//                System.out.println("发送POST请求出现异常！" + e);
+                e.printStackTrace();
+            } finally {
+                if (reader != null) {
+                    reader.close();
+                }
+            }
+        }
+        //返回的字符串转成json
+        JSONObject resultJson = JSON.parseObject(result);
+        Map<String,Object> map = new HashMap<>();
+        map = JSONObject.toJavaObject(resultJson,Map.class);
+        return map;
+    }
+    public static Map<String,Object> UploadMeida(String fileType,String filePath,String access_token) throws IOException {
+        //返回结果
+        String result = null;
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("文件不存在");
+        }
+//        String token = WechatUtil.getToken();
+        String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + access_token + "&type=" + fileType;
         URL url = new URL(urlString);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setRequestMethod("POST");//以POST方式提交表单
