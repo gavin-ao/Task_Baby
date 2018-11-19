@@ -39,6 +39,14 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
         }
         return null;
     }
+
+    @Override
+    public int updateActHelpDetailEntity(String helpDetailId, Integer helpStatus, Integer fansStatus) {
+        String sql = "update act_help_detail set help_status=?,fans_status=? where act_help_detail_id =?";
+        return jdbcBaseDao.executeUpdate(sql,helpStatus,fansStatus,helpDetailId);
+
+    }
+
     /**
      * 通过helpOpenId  和 活动id 来得到活动助力详细id
      * @param helpOpenId 助力者OpenId

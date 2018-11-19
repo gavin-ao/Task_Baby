@@ -168,9 +168,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 //新用户
                 actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, actId, fromUserName);
                 MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
-                wechatEventMap.put(ActivityService.KEY_ACT_ID, matActivityEntity.getActId());
-                wechatEventMap.put(ActivityService.KEY_PIC_ID, matActivityEntity.getPictureId());
-                wechatEventMap.put(ActivityService.KEY_shareCoypwritting, matActivityEntity.getActShareCopywriting());
+                wechatEventMap.put(ActivityService.KEY_shareCoypwritting,
+                        matActivityEntity.getActShareCopywriting());
                 //需要调用生成海报接口
                 activityReply(wechatEventMap);
                 trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
@@ -397,17 +396,23 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             } else {
                 MatActivityEntity activityEntity =
                         activityService.getMatActivityEntityByActId(activityId);
-                msg = String.format(msgSuccessTemplate,
-                        trackResult.get(WeChatConstant.KEY_NICKNAME).toString(), activityEntity.getRewardUrl());
-                activityTrackerService.updateActHelpStatus(
-                        trackResult.get(ActivityTrackerService.KEY_HELP_HELP_ID).toString(), 1);
+                if (remain == 0) {
+                    msg = String.format(msgSuccessTemplate,
+                            trackResult.get(WeChatConstant.KEY_NICKNAME).toString(), activityEntity.getRewardUrl());
+                    activityTrackerService.updateActHelpStatus(
+                            trackResult.get(ActivityTrackerService.KEY_HELP_HELP_ID).toString(), 1);
+                }else{
+                    actHelpDetailService.updateActHelpDetailEntity(helpDetailId,0,1);
+                }
             }
             //回复信息
-            Map<String, String> replyMap = new HashMap<String, String>();
-            replyMap.put(KEY_CSMSG_TOUSER, touser);
-            replyMap.put(KEY_CSMSG_CONTENT, msg);
-            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-            WeChatUtil.sendCustomMsg(replyMap, access_token);
+            if (StringUtils.isNotEmpty(msg)) {
+                Map<String, String> replyMap = new HashMap<String, String>();
+                replyMap.put(KEY_CSMSG_TOUSER, touser);
+                replyMap.put(KEY_CSMSG_CONTENT, msg);
+                replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+                WeChatUtil.sendCustomMsg(replyMap, access_token);
+            }
         }
     }
 
