@@ -77,9 +77,7 @@ public class PosterServiceImpl implements PosterService {
                 long begin = System.currentTimeMillis();
                 BufferedImage imgPoster = getBufferedImage(OriginlPosterUrl);
                 float duration = (System.currentTimeMillis()-begin)/1000f;
-                begin = System.currentTimeMillis();
                 BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
-                begin = System.currentTimeMillis();
                 BufferedImage imgHead = getBufferedImage(headImgUrl);
                 //以原始海报作为模板
                 g = imgPoster.createGraphics();
