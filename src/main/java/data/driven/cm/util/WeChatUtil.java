@@ -306,7 +306,9 @@ public class WeChatUtil {
     public static void sendCustomMsgByJsonStr(String JsonStr, String access_token){
         String url = custom_url+access_token;
         log.debug("——————————调用微信接口发送图片客服信息——————————");
+        long begin =System.currentTimeMillis();
         HttpUtil.doPost(url, JsonStr);
+        WeChatUtil.log(log,begin,"调用微信接口发送图片客服信息");
     }
 /**
  * 根据Map发送客服消息
@@ -374,8 +376,7 @@ public class WeChatUtil {
                 //先新增临时素材，返回media_id
                 Map<String, Object> uploadInfoMap = UploadMeida(
                         fileType, filePath, access_token);
-                float duration = (System.currentTimeMillis() -begin)/1000f;
-                log.debug("---------临时素材上传成功,耗时：",duration,"秒-------------");
+                WeChatUtil.log(log,begin,"上传临时素材");
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
                     WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);

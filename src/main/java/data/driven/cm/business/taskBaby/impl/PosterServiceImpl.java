@@ -94,13 +94,11 @@ public class PosterServiceImpl implements PosterService {
                 begin = System.currentTimeMillis();
                 g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight()-100-300,
                         300, 300, null);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------画二维码，总耗时:",duration,"秒-----------");
+                WeChatUtil.log(log,begin,"重绘二维码");
                 //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
                 begin =System.currentTimeMillis();
                 g.drawImage(imgHead, 60, 60, 100, 100, null);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------画头像完成，耗时:",duration,"秒-----------");
+                WeChatUtil.log(log,begin,"重绘头像");
                 // 设置文本样式
                 begin =System.currentTimeMillis();
                 g.setFont(font);
@@ -111,8 +109,7 @@ public class PosterServiceImpl implements PosterService {
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
                 // 添加用户名称
                 g.drawString(nickName, 60 + 100 + 30, 130);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------写昵称，耗时:",duration,"秒-----------");
+               WeChatUtil.log(log,begin,"写入昵称");
                 // 完成模板修改
                 g.dispose();
                 int type = imgPoster.getType() == 0? BufferedImage.TYPE_INT_ARGB : imgPoster.getType();
@@ -143,7 +140,8 @@ public class PosterServiceImpl implements PosterService {
      * @return:     java.awt.image.BufferedImage
     **/
     private BufferedImage getBufferedImage(String imgAddress){
-        log.info("-------");
+        log.info("-------根据图片地址加载图片，地址：",imgAddress,"-----------");
+        long beign = System.currentTimeMillis();
         if(imgAddress.startsWith("http")){//imgAddres是url
             URL url = null;
             InputStream is= null;
@@ -151,6 +149,7 @@ public class PosterServiceImpl implements PosterService {
                 url = new URL(imgAddress);
                 is = url.openConnection().getInputStream();
                 BufferedImage image = ImageIO.read(is);
+                WeChatUtil.log(log,beign,"加载url图片");
                 return image;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -161,6 +160,7 @@ public class PosterServiceImpl implements PosterService {
                     } catch (IOException e) {
                         log.error("---------读取图片文件错误：url：",imgAddress,"---------");
                         log.error(e.getMessage());
+
                         return null;
                     }
                 }
@@ -170,6 +170,7 @@ public class PosterServiceImpl implements PosterService {
         }else{//imgAddress是本地路径
             try {
                 BufferedImage image = ImageIO.read(new File(imgAddress));
+                WeChatUtil.log(log,beign,"加载本地图片");
                 return image;
             } catch (IOException e) {
                 log.error("---------读取图片文件错误：本地路径：",imgAddress,"---------");
@@ -177,6 +178,7 @@ public class PosterServiceImpl implements PosterService {
                 return null;
             }
         }
+
         return null;
     }
 
