@@ -293,11 +293,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         StringBuilder sceneStrBuilder = new StringBuilder();
         sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
         begin=System.currentTimeMillis();
-        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
-                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), access_token);
-        WeChatUtil.log(logger,begin,"获取带参数的二维码的url");
-        //将二维码url put到userPersonalInfoMap中
-        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
+
         //将活动的原始海报的url放入到userPersonalInfoMap中
         begin = System.currentTimeMillis();
         String picId = activitySimpleInfoMap.get(ActivityService.KEY_PIC_ID).toString();
@@ -320,10 +316,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, access_token);
-            WeChatUtil.log(logger,begin,"回复文字信息全部动作");
+            WeChatUtil.log(logger,start,"回复文字信息全部动作");
         }
         logger.info("--------发送图片中。。。。。。----------------");
         begin = System.currentTimeMillis();
+        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
+                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), access_token);
+         long urlbegin = System.currentTimeMillis();
+        WeChatUtil.log(logger,urlbegin,"获取带参数的二维码的url");
+        //将二维码url put到userPersonalInfoMap中
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
+
         //得到合成图片的filePath
         String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
         WeChatUtil.log(logger,begin,"3张图片合成");
