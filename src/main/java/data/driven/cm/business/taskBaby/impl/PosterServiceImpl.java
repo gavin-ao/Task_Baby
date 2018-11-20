@@ -2,6 +2,7 @@ package data.driven.cm.business.taskBaby.impl;
 
 import data.driven.cm.business.taskBaby.PosterService;
 import data.driven.cm.component.TaskBabyConstant;
+import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.util.UUIDUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -73,21 +74,13 @@ public class PosterServiceImpl implements PosterService {
                     append(UUIDUtil.getUUID()).append(".jpg");
             Graphics2D g = null;
             try {
-                log.debug("--------加载原始海报, 路径：", OriginlPosterUrl, "--------------");
                 long begin = System.currentTimeMillis();
                 BufferedImage imgPoster = getBufferedImage(OriginlPosterUrl);
                 float duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------加载原始海报完成，耗时:",duration,"秒-----------");
                 begin = System.currentTimeMillis();
-                log.debug("--------加载二维码,路径：", qrCodeUrl, "----------------");
                 BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------加载二维码完成，耗时:",duration,"秒-----------");
-                log.debug("--------加载头像,路径：", headImgUrl, "----------------");
                 begin = System.currentTimeMillis();
                 BufferedImage imgHead = getBufferedImage(headImgUrl);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------加载头像完成，耗时:",duration,"秒-----------");
                 //以原始海报作为模板
                 g = imgPoster.createGraphics();
                 // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
@@ -118,10 +111,9 @@ public class PosterServiceImpl implements PosterService {
                 File outputfile = new File(tempFileNameBuider.toString());
                 begin =System.currentTimeMillis();
                 // 生成新的合成过的用户二维码并写入新图片
-                log.debug("------将合成的海报保存本地---------------");
+                begin =System.currentTimeMillis();
                 ImageIO.write(imgPoster, "png", outputfile);
-                duration = (System.currentTimeMillis()-begin)/1000f;
-                log.debug("---------生成合成海报后存在本地，耗时:",duration,"秒-----------");
+                WeChatUtil.log(log,begin,"合成海报保存");
                 return tempFileNameBuider.toString();
             } catch (IOException e) {
                 log.error("-----------拼接海报出错：", e.getMessage());
@@ -140,7 +132,7 @@ public class PosterServiceImpl implements PosterService {
      * @return:     java.awt.image.BufferedImage
     **/
     private BufferedImage getBufferedImage(String imgAddress){
-        log.info("-------根据图片地址加载图片，地址：",imgAddress,"-----------");
+        log.info(String.format("-------根据图片地址加载图片，地址：%s",imgAddress));
         long beign = System.currentTimeMillis();
         if(imgAddress.startsWith("http")){//imgAddres是url
             URL url = null;

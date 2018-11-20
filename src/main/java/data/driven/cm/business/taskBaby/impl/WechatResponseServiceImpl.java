@@ -309,10 +309,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
         WeChatUtil.log(logger,start, "回复消息前的准备工作");
-        logger.debug("————————————————开始生成个性化图片-----------");
         begin = System.currentTimeMillis();
         String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-        WeChatUtil.log(logger,begin,"生成个性化二维码");
+        WeChatUtil.log(logger,begin,"3张图片合成");
         //回复信息
         Map<String, String> replyMap = new HashMap<String, String>();
 
@@ -324,7 +323,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, access_token);
-            WeChatUtil.log(logger,begin,"回复文字信息");
+            WeChatUtil.log(logger,begin,"回复文字信息全部动作");
         }
         logger.info("--------发送图片中。。。。。。----------------");
         if ( customizedPosterPath!= null) {//发送个性化海报
@@ -332,7 +331,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             begin = System.currentTimeMillis();
             WeChatUtil.sendCustomMsg(replyMap, access_token);
-            WeChatUtil.log(logger,begin,"发送图片客服信息");
+            WeChatUtil.log(logger,begin,"发送图片全部动作");
         }
         logger.info("--------插入粉丝加入活动的数据---------------");
         joinActivity(wechatAccount, openId, activityId);
