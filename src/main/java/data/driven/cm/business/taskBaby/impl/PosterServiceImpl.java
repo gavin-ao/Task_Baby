@@ -6,6 +6,7 @@ import data.driven.cm.util.UUIDUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -114,6 +115,8 @@ public class PosterServiceImpl implements PosterService {
                 log.debug("---------写昵称，耗时:",duration,"秒-----------");
                 // 完成模板修改
                 g.dispose();
+                int type = imgPoster.getType() == 0? BufferedImage.TYPE_INT_ARGB : imgPoster.getType();
+                imgPoster = resizeImageWithHint(imgPoster,type);
                 // 获取新文件的地址
                 File outputfile = new File(tempFileNameBuider.toString());
                 begin =System.currentTimeMillis();
@@ -244,5 +247,22 @@ public class PosterServiceImpl implements PosterService {
             return true;
         }
         return false;
+    }
+    private static BufferedImage resizeImageWithHint(BufferedImage originalImage, int type){
+
+        BufferedImage resizedImage = new BufferedImage(510, 800, type);
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, 510, 800, null);
+        g.dispose();
+        g.setComposite(AlphaComposite.Src);
+
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        return resizedImage;
     }
 }
