@@ -280,19 +280,22 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //获取粉丝个人信息存入到userPersonalInfoMap
         String access_token = getAccessToken(wechatAccount);
         Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, access_token);
-
+        begin = System.currentTimeMillis();
         //获取带参数的二维码
         Map<String, Object> activitySimpleInfoMap =
                 activityService.getMacActivitySimpleInfo(wechatAccount, keyWord, null);
+        WeChatUtil.log(logger,begin,"getMacActivitySimpleInfo");
         if (activitySimpleInfoMap == null) {
             return "";
         }
+
         String activityId = activitySimpleInfoMap.get(ActivityService.KEY_ACT_ID).toString();
         StringBuilder sceneStrBuilder = new StringBuilder();
         sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        begin=System.currentTimeMillis();
         String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
                 WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), access_token);
-
+        WeChatUtil.log(logger,begin,"获取带参数的二维码的url");
         //将二维码url put到userPersonalInfoMap中
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
         //将活动的原始海报的url放入到userPersonalInfoMap中
