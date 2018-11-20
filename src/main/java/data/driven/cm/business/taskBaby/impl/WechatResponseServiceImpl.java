@@ -131,11 +131,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             }
         }
         String eventKey = wechatEventMap.get(WeChatConstant.EventKey);
-//        //2.用户扫描海报二维码，有eventKey，并且可以是以qrscene_开头的
-//        if(StringUtils.isNotEmpty(eventKey)&& eventKey.startsWith(WeChatConstant.QREventKeyPrefix)){
-//            int helpCount = activityHelp(wechatEventMap);
-//            sendActivtyStateMsg(wechatEventMap,helpCount);//发送模版消息提示助力状态
-//        }
 
         String event = wechatEventMap.get(WeChatConstant.Event);
         //3.用户关注公众号两种形式,具体如下：
@@ -144,19 +139,16 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) &&
                 event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&
                 StringUtils.isNoneEmpty(eventKey)) { //二维码关注
+            logger.info("----------------扫二维码进入------------------------");
             //新增用户信息
             insertWechatUserInfo(wechatEventMap);
-
-//            String helpId,Integer helpStatus,Integer fansStatus,String actId
+            logger.info("----------------插入新增用户信息------------------------");
+            logger.info(String.format("------------EventKey%s-------------------",eventKey));
             //增加助力详细表
             String eventKeyValue = wechatEventMap.get(WeChatConstant.EventKey); //得到传参的信息
-            //qrscene_oH1q_0bt1c9GXWzdx3l9fRKRE6rk_123456
             String helpOpenId = eventKeyValue.split("&&")[0];
+            logger.info(String.format("----------助力的helpid:%s----------",helpOpenId));
             helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_") + 1);//第一个下划线后面的就是openId
-//            StringBuilder helpOpenId = new StringBuilder();
-//            for (int i = 1 ; i < helpOpenIds.length;i++){
-//                helpOpenId.append(helpOpenIds[i]);
-//            }
             String actId = eventKeyValue.split("&&")[1];
             if (!checkActiveAvailable(actId)) {
                 Map<String, String> msgReply = new HashMap<String, String>();
@@ -175,9 +167,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String actHelpDetailId = null;
             if (StringUtils.isNotEmpty(fromHelpId)) {
                 //老用户
+                logger.info("---------------老用户------------");
                 actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
             } else {
                 //新用户
+                logger.info("---------------老用户------------");
                 actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, actId, fromUserName);
                 MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
                 wechatEventMap.put(ActivityService.KEY_shareCoypwritting,
@@ -386,20 +380,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         //获取粉丝个人信息存入到userPersonalInfoMap
         Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, accessToken);
-
-        //获取带参数的二维码
         String activityId = wechatEventMap.get(ActivityService.KEY_ACT_ID).toString();
-        StringBuilder sceneStrBuilder = new StringBuilder();
-        sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
-        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
-                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), accessToken);
 
-        //将二维码url put到userPersonalInfoMap中
-        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
-        //将活动的原始海报的url放入到userPersonalInfoMap中
-        String picId = wechatEventMap.get(ActivityService.KEY_PIC_ID).toString();
-        String posterUrl = sysPictureService.getPictureURL(picId);
-        userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
 
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
@@ -416,6 +398,19 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         logger.info("发送文本完成。。。");
         logger.info("发送海报中。。。");
+        //获取带参数的二维码
+
+        StringBuilder sceneStrBuilder = new StringBuilder();
+        sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
+                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), accessToken);
+
+        //将二维码url put到userPersonalInfoMap中
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
+        //将活动的原始海报的url放入到userPersonalInfoMap中
+        String picId = wechatEventMap.get(ActivityService.KEY_PIC_ID).toString();
+        String posterUrl = sysPictureService.getPictureURL(picId);
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
         //得到合成图片的filePath
        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
 
