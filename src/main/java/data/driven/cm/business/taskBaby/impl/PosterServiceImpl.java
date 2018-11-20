@@ -73,19 +73,35 @@ public class PosterServiceImpl implements PosterService {
             Graphics2D g = null;
             try {
                 log.debug("--------加载原始海报, 路径：", OriginlPosterUrl, "--------------");
+                long begin = System.currentTimeMillis();
                 BufferedImage imgPoster = getBufferedImage(OriginlPosterUrl);
+                float duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------加载原始海报完成，耗时:",duration,"秒-----------");
+                begin = System.currentTimeMillis();
                 log.debug("--------加载二维码,路径：", qrCodeUrl, "----------------");
                 BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------加载二维码完成，耗时:",duration,"秒-----------");
                 log.debug("--------加载头像,路径：", headImgUrl, "----------------");
+                begin = System.currentTimeMillis();
                 BufferedImage imgHead = getBufferedImage(headImgUrl);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------加载头像完成，耗时:",duration,"秒-----------");
                 //以原始海报作为模板
                 g = imgPoster.createGraphics();
                 // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
+                begin = System.currentTimeMillis();
                 g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight()-100-300,
                         300, 300, null);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------画二维码，总耗时:",duration,"秒-----------");
                 //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
+                begin =System.currentTimeMillis();
                 g.drawImage(imgHead, 60, 60, 100, 100, null);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------画头像完成，耗时:",duration,"秒-----------");
                 // 设置文本样式
+                begin =System.currentTimeMillis();
                 g.setFont(font);
                 g.setColor(Color.BLACK);
                 // 截取用户名称的最后一个字符
@@ -94,12 +110,18 @@ public class PosterServiceImpl implements PosterService {
 //                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
                 // 添加用户名称
                 g.drawString(nickName, 60 + 100 + 30, 130);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------写昵称，耗时:",duration,"秒-----------");
                 // 完成模板修改
                 g.dispose();
                 // 获取新文件的地址
                 File outputfile = new File(tempFileNameBuider.toString());
+                begin =System.currentTimeMillis();
                 // 生成新的合成过的用户二维码并写入新图片
+                log.debug("------将合成的海报保存本地---------------");
                 ImageIO.write(imgPoster, "png", outputfile);
+                duration = (System.currentTimeMillis()-begin)/1000f;
+                log.debug("---------生成合成海报后存在本地，耗时:",duration,"秒-----------");
                 return tempFileNameBuider.toString();
             } catch (IOException e) {
                 log.error("-----------拼接海报出错：", e.getMessage());

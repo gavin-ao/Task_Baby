@@ -305,6 +305,7 @@ public class WeChatUtil {
     **/        
     public static void sendCustomMsgByJsonStr(String JsonStr, String access_token){
         String url = custom_url+access_token;
+        log.debug("——————————调用微信接口发送图片客服信息——————————");
         HttpUtil.doPost(url, JsonStr);
     }
 /**
@@ -368,9 +369,13 @@ public class WeChatUtil {
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
         if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(access_token)) {
             try {
+                log.debug("-----------开始上传临时素材--------------");
+                long begin=System.currentTimeMillis();
+                //先新增临时素材，返回media_id
                 Map<String, Object> uploadInfoMap = UploadMeida(
                         fileType, filePath, access_token);
-                //先新增临时素材，返回media_id
+                float duration = (System.currentTimeMillis() -begin)/1000f;
+                log.debug("---------临时素材上传成功,耗时：",duration,"秒-------------");
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
                     WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
@@ -646,6 +651,7 @@ public class WeChatUtil {
         return map;
     }
     public static Map<String,Object> UploadMeida(String fileType,String filePath,String access_token) throws IOException {
+        long begin = System.currentTimeMillis();
         //返回结果
         String result = null;
         File file = new File(filePath);
@@ -656,6 +662,7 @@ public class WeChatUtil {
         String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + access_token + "&type=" + fileType;
         URL url = new URL(urlString);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        log.debug("----------------openConnection End---------------");
         conn.setRequestMethod("POST");//以POST方式提交表单
         conn.setDoInput(true);
         conn.setDoOutput(true);
@@ -682,6 +689,7 @@ public class WeChatUtil {
         out.write(sb.toString().getBytes("UTF-8"));
         //文件正文部分
         //把文件以流的方式 推送道URL中
+        log.debug("---------开始写入文件流--------------");
         DataInputStream din = new DataInputStream(new FileInputStream(file));
         int bytes = 0;
         byte[] buffer = new byte[1024];
@@ -689,11 +697,15 @@ public class WeChatUtil {
             out.write(buffer, 0, bytes);
         }
         din.close();
+        float duration = (System.currentTimeMillis()-begin)/1000f;
+        log.debug("------------上传素材的写入文件结束，耗时：",duration,"————————————");
         //结尾部分
         byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
         out.write(foot);
         out.flush();
         out.close();
+        log.debug("----------------开始把文件流写入conn-----------------");
+        long connBegin = System.currentTimeMillis();
         if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
 
             StringBuffer strbuffer = null;
@@ -710,6 +722,8 @@ public class WeChatUtil {
                     result = strbuffer.toString();
 //                    System.out.println("result:" + result);
                 }
+                 duration = (System.currentTimeMillis()-connBegin)/1000f;
+                log.debug("-----------------写入conn结束,耗时：",duration,"-----------");
             } catch (IOException e) {
 //                System.out.println("发送POST请求出现异常！" + e);
                 e.printStackTrace();
@@ -723,6 +737,7 @@ public class WeChatUtil {
         JSONObject resultJson = JSON.parseObject(result);
         Map<String,Object> map = new HashMap<>();
         map = JSONObject.toJavaObject(resultJson,Map.class);
+        duration = (System.currentTimeMillis()-begin)/1000f;
         return map;
     }
 
