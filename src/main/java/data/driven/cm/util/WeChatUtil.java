@@ -740,7 +740,11 @@ public class WeChatUtil {
         duration = (System.currentTimeMillis()-begin)/1000f;
         return map;
     }
-
+    public static void log(Logger log, long begin, String info){
+        float duration = (System.currentTimeMillis()-begin)/1000f;
+        log.info(String.format(
+                "---------------%s完成，总耗时:%f秒----------------",info,duration));
+    }
     public static final String access_token = "access_token_";
 
 //    /**

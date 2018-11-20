@@ -269,6 +269,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return: java.lang.String
      **/
     private String keyWordReply(Map<String, String> wechatEventMap) {
+        long begin = System.currentTimeMillis();
         String openId = wechatEventMap.get(WeChatConstant.FromUserName);
         String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
         String keyWord = wechatEventMap.get(WeChatConstant.Content);
@@ -302,11 +303,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //得到合成图片的filePath
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
+        WeChatUtil.log(logger,begin, "回复消息前的准备工作");
         logger.debug("————————————————开始生成个性化图片-----------");
-        long begin = System.currentTimeMillis();
+        begin = System.currentTimeMillis();
         String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-        float duration = (System.currentTimeMillis()-begin)/1000f;
-        logger.debug("-------------个性化图片生成完成，总耗时：",duration,"秒---------");
+        WeChatUtil.log(logger,begin,"生成个性化二维码");
         //回复信息
         Map<String, String> replyMap = new HashMap<String, String>();
 
@@ -314,16 +315,19 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_shareCoypwritting);
         if (shareCoppywritting != null) {//发送活动介绍
             logger.info("--------发送活动介绍-----------");
+            begin = System.currentTimeMillis();
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, access_token);
+            WeChatUtil.log(logger,begin,"回复文字信息");
         }
         logger.info("--------发送图片中。。。。。。----------------");
         if ( customizedPosterPath!= null) {//发送个性化海报
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
+            begin = System.currentTimeMillis();
             WeChatUtil.sendCustomMsg(replyMap, access_token);
-            logger.info("----------图片发送成功----------------");
+            WeChatUtil.log(logger,begin,"发送图片客服信息");
         }
         logger.info("--------插入粉丝加入活动的数据---------------");
         joinActivity(wechatAccount, openId, activityId);
@@ -340,8 +344,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String appId = wechatEntity.getAppid();
             String secretCode = wechatEntity.getSecret();
             String accessToken = WXUtil.getAccessToken(appId, secretCode).getString("access_token");
-            float duration = (System.currentTimeMillis()-begin)/1000f;
-            logger.debug("----获取AccessToken 总耗时:",duration,"秒-----------");
+            WeChatUtil.log(logger,begin,"生成AccessToken");
             return accessToken;
         } else {
             return null;

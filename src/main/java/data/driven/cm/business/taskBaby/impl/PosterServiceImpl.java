@@ -143,6 +143,7 @@ public class PosterServiceImpl implements PosterService {
      * @return:     java.awt.image.BufferedImage
     **/
     private BufferedImage getBufferedImage(String imgAddress){
+        log.info("-------");
         if(imgAddress.startsWith("http")){//imgAddres是url
             URL url = null;
             InputStream is= null;
