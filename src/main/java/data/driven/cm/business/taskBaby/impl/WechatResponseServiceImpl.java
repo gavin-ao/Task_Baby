@@ -269,7 +269,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return: java.lang.String
      **/
     private String keyWordReply(Map<String, String> wechatEventMap) {
-        long begin = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         String openId = wechatEventMap.get(WeChatConstant.FromUserName);
         String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
         String keyWord = wechatEventMap.get(WeChatConstant.Content);
@@ -280,7 +280,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //获取粉丝个人信息存入到userPersonalInfoMap
         String access_token = getAccessToken(wechatAccount);
         Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, access_token);
-        begin = System.currentTimeMillis();
+        long begin = System.currentTimeMillis();
         //获取带参数的二维码
         Map<String, Object> activitySimpleInfoMap =
                 activityService.getMacActivitySimpleInfo(wechatAccount, keyWord, null);
@@ -299,14 +299,16 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //将二维码url put到userPersonalInfoMap中
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
         //将活动的原始海报的url放入到userPersonalInfoMap中
+        begin = System.currentTimeMillis();
         String picId = activitySimpleInfoMap.get(ActivityService.KEY_PIC_ID).toString();
         String posterUrl = sysPictureService.getPictureURL(picId);
+        WeChatUtil.log(logger,begin,"getPictureURL");
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
 
         //得到合成图片的filePath
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
-        WeChatUtil.log(logger,begin, "回复消息前的准备工作");
+        WeChatUtil.log(logger,start, "回复消息前的准备工作");
         logger.debug("————————————————开始生成个性化图片-----------");
         begin = System.currentTimeMillis();
         String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
