@@ -305,13 +305,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         WeChatUtil.log(logger,begin,"getPictureURL");
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
 
-        //得到合成图片的filePath
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
         WeChatUtil.log(logger,start, "回复消息前的准备工作");
-        begin = System.currentTimeMillis();
-        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-        WeChatUtil.log(logger,begin,"3张图片合成");
+
         //回复信息
         Map<String, String> replyMap = new HashMap<String, String>();
 
@@ -326,6 +323,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             WeChatUtil.log(logger,begin,"回复文字信息全部动作");
         }
         logger.info("--------发送图片中。。。。。。----------------");
+        begin = System.currentTimeMillis();
+        //得到合成图片的filePath
+        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+        WeChatUtil.log(logger,begin,"3张图片合成");
         if ( customizedPosterPath!= null) {//发送个性化海报
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
@@ -397,10 +398,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         String posterUrl = sysPictureService.getPictureURL(picId);
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
 
-        //得到合成图片的filePath
         userPersonalInfoMap.put(WeChatConstant.Reply_ToUserName, openId);
         userPersonalInfoMap.put(WeChatConstant.Reply_FromUserName, wechatAccount);
-        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
 
         //回复信息
         Map<String, String> replyMap = new HashMap<String, String>();
@@ -414,6 +413,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         logger.info("发送文本完成。。。");
         logger.info("发送海报中。。。");
+        //得到合成图片的filePath
+       String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+
         if (customizedPosterPath != null) {//发送个性化海报
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
