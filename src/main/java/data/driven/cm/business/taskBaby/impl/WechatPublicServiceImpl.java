@@ -4,9 +4,11 @@ import data.driven.cm.business.taskBaby.WechatPublicService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.entity.verification.WechatStoreVerificationAuthorizationEntity;
+import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +52,20 @@ public class WechatPublicServiceImpl implements WechatPublicService{
             return wechatPublicEntityList.get(0);
         }
         return null;
+    }
+    /**
+     * 新增微信公众号信息表
+     * @param authorizationAppid  开发者ID
+     * @param funcInfo 授权给开发者的权限集列表,微信公众号给的是数组的，现改为用逗号存储
+     * @return 微信公众号信息表id
+     */
+    @Override
+    public String insertWechatPublicEntity(String authorizationAppid, String funcInfo) {
+        Date createAt = new Date();
+        String wechatPublicId = UUIDUtil.getUUID();
+        String sql = "INSERT into wechat_public (wechat_public_id,authorization_appid,func_info,create_at) VALUES (?,?,?,?)";
+        jdbcBaseDao.executeUpdate(sql,authorizationAppid,funcInfo);
+        return  wechatPublicId;
     }
 
 
