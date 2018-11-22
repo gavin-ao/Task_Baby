@@ -420,6 +420,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
         logger.info("发送海报完成。。。");
+        joinActivity(wechatAccount, openId, activityId);
         return "success";
     }
 

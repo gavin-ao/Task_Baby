@@ -8,6 +8,7 @@ import data.driven.cm.business.taskBaby.WechatUserInfoService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
+import data.driven.cm.thread.TaskBabyThread;
 import data.driven.cm.util.WeChatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,25 +59,35 @@ public class WeChatServiceImpl  implements WeChatService {
             if("aes".equals(encryptType)){ //解析加密信息
                 requestMap=WeChatUtil.parseRequest(request);
                 WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(requestMap.get(WeChatConstant.ToUserName));
-                WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.TOKEN,WeChatConstant.EncodingAESKey,wechatPublicEntity.getAppid());
+                WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.TOKEN,WeChatConstant.EncodingAESKey,wechatPublicEntity.getAuthorizationAppid());
                 String format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
                 String fromXML = String.format(format, requestMap.get("Encrypt"));
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce,fromXML);
                 requestMap=WeChatUtil.parseXml(respXml);
-                if (deDuplication(requestMap)){ //排重
-                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-                    }
-                     wechatResponseService.notify(requestMap);
-                }
+//                if (deDuplication(requestMap)){ //排重
+//                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
+//                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//                    }
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap);
+                Thread thread = new Thread(taskBabyThread);
+                thread.start();
+//                wechatResponseService.notify(requestMap);
+                return "";
+//                 wechatResponseService.notify(requestMap);
+//                }
             }else{ //处理明文
                 requestMap=WeChatUtil.parseRequest(request);
-                if (deDuplication(requestMap)){
-                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-                    }
-                    wechatResponseService.notify(requestMap);
-                }
+//                if (deDuplication(requestMap)){
+//                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
+//                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//                    }
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap);
+                Thread thread = new Thread(taskBabyThread);
+                thread.start();
+//                wechatResponseService.notify(requestMap);
+                return "";
+//                wechatResponseService.notify(requestMap);
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
