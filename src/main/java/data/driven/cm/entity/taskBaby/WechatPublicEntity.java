@@ -14,76 +14,44 @@ public class WechatPublicEntity {
     /**
      * 主键
      */
-    private String id;
-
-    /**
-     * 公众号名称
-     */
-    private String wechatPublicName;
+    private String wechatPublicId;
 
     /**
      * 开发者ID
      */
-    private String appid;
+    private String authorizationAppid;
 
     /**
-     * 开发者密码
+     * 授权给开发者的权限集列表,微信公众号给的是数组的，现改为用逗号存储
      */
-    private String secret;
-
-    /**
-     * 公众号原始ID
-     */
-    private String wechatAccount;
-
+    private String funcInfo;
     /**
      * 创建时间
      */
     private Date createAt;
 
-    /**
-     * 令牌
-     */
-    private String token;
-
-    public String getId() {
-        return id;
+    public String getWechatPublicId() {
+        return wechatPublicId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setWechatPublicId(String wechatPublicId) {
+        this.wechatPublicId = wechatPublicId;
     }
 
-    public String getWechatPublicName() {
-        return wechatPublicName;
+    public String getAuthorizationAppid() {
+        return authorizationAppid;
     }
 
-    public void setWechatPublicName(String wechatPublicName) {
-        this.wechatPublicName = wechatPublicName;
+    public void setAuthorizationAppid(String authorizationAppid) {
+        this.authorizationAppid = authorizationAppid;
     }
 
-    public String getAppid() {
-        return appid;
+    public String getFuncInfo() {
+        return funcInfo;
     }
 
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public String getWechatAccount() {
-        return wechatAccount;
-    }
-
-    public void setWechatAccount(String wechatAccount) {
-        this.wechatAccount = wechatAccount;
+    public void setFuncInfo(String funcInfo) {
+        this.funcInfo = funcInfo;
     }
 
     public Date getCreateAt() {
@@ -92,13 +60,5 @@ public class WechatPublicEntity {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }
