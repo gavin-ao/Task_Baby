@@ -1,5 +1,7 @@
 package data.driven.cm.business.taskBaby.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import data.driven.cm.aes.AesException;
 import data.driven.cm.aes.WXBizMsgCrypt;
 import data.driven.cm.business.taskBaby.ThirdPartyService;
 import data.driven.cm.component.WeChatConstant;
@@ -20,11 +22,12 @@ import java.util.Map;
  * @Version 1.0
  */
 @Service
-public class ThirdPartyServiceImpl implements ThirdPartyService{
+public class ThirdPartyServiceImpl implements ThirdPartyService {
     Logger logger = LoggerFactory.getLogger(ThirdPartyServiceImpl.class);
 
     /**
      * 解密第三方发送的xml
+     *
      * @param request
      * @param response
      * @throws Exception
@@ -34,31 +37,38 @@ public class ThirdPartyServiceImpl implements ThirdPartyService{
         String timestamp = request.getParameter("timestamp");
         String encrypt_type = request.getParameter("encrypt_type");
         String nonce = request.getParameter("nonce");
-        String msg_signature=request.getParameter("msg_signature");
-        logger.info("------------------------timestamp "+ timestamp +"------------------------" );
-        logger.info("------------------------encrypt_type "+ encrypt_type +"------------------------" );
-        logger.info("------------------------nonce "+ nonce +"------------------------" );
-        logger.info("------------------------msg_signature "+ msg_signature +"------------------------" );
-
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader in = request.getReader();
-        String line;
-        while((line = in.readLine()) != null){
-            stringBuilder.append(line);
+        String msg_signature = request.getParameter("msg_signature");
+        logger.info("------------------------timestamp " + timestamp + "------------------------");
+        logger.info("------------------------encrypt_type " + encrypt_type + "------------------------");
+        logger.info("------------------------nonce " + nonce + "------------------------");
+        logger.info("------------------------msg_signature " + msg_signature + "------------------------");
+        try {
+            String encodingAesKey = WeChatConstant.THIRD_PARTY_ENCODINGAESKEY;
+            String appId = WeChatConstant.THIRD_PARTY_APPID;
+            //解密
+            Map<String, String> requestMap = WeChatUtil.parseRequest(request);
+            WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.THIRD_PARTY_TOKEN, encodingAesKey, appId);
+            String format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
+            String fromXML = String.format(format, requestMap.get("Encrypt"));
+            String xml = pc.decryptMsg(msg_signature, timestamp, nonce, fromXML);
+            logger.info("第三方平台解析后的xml: " + xml);
+            requestMap = WeChatUtil.parseXml(xml);
+            //得到tickon
+//            for (Map.Entry<String, String> entry : requestMap.entrySet()) {
+//                System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//            }
+            String componentVerifyiTcket = requestMap.get("ComponentVerifyTicket");
+            WeChatUtil.setComponentVerifyTicket(componentVerifyiTcket); //保存ticket到redis
+            componentVerifyiTcket = WeChatUtil.getComponentVerifyTicket();
+            //获取 第三方平台 Ticket 并且需保存到redis中
+            String componentAccessToken = WeChatUtil.getComponentAccessToken();
+            //获取预授权码pre_auth_code
+            String preAuthCode = WeChatUtil.getPreAuthCode();
+            logger.info("-----------------component_verify_ticket : " + componentVerifyiTcket + "----------------------");
+            logger.info("-----------------component_access_token : " + componentAccessToken + "----------------------");
+            logger.info("-----------------pre_auth_code : " + preAuthCode + "----------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        String xml = stringBuilder.toString();
-        logger.info("第三方平台收到的原生: "+ xml);
-        String encodingAesKey = WeChatConstant.THIRD_PARTY_ENCODINGAESKEY;
-        String appId = WeChatConstant.THIRD_PARTY_APPID;
-        //解密
-        WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.THIRD_PARTY_TOKEN,encodingAesKey,appId);
-        String format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
-//        String fromXML = String.format(format, requestMap.get("Encrypt"));
-        xml = pc.decryptMsg(msg_signature, timestamp, nonce,xml);
-        logger.info("第三方平台解析后的xml: "+xml);
-        Map<String,String> requestMap= WeChatUtil.parseXml(xml);
-        //得到tickon
-        String component_verify_ticket = requestMap.get("ComponentVerifyTicket");
-        logger.info("-----------------ticket : "+component_verify_ticket + "----------------------");
     }
 }
