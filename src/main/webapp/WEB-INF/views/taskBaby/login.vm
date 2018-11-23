@@ -67,6 +67,23 @@
 
 </style>
 <body>
-    <input type="button" id="loginbtn" value="第三方授权"/>
+<input type="hidden" id="dataUrl" data-url="$!{url}">
+<button id="btn">第三方授权</button>
+    <script>
+        $("#btn").off("click");
+        $("#btn").on("click",function () {
+            console.log($("#dataUrl").attr("data-url").trim());
+            if($("#dataUrl").attr("data-url").trim()){
+                window.location.href = $("#dataUrl").attr("data-url").trim();
+//                $.ajax({
+//                    url:$("#dataUrl").attr("data-url").trim(),
+//                    success:function (res) {
+//                        console.log(res);
+//                    }
+//                })
+            }
+
+        })
+    </script>
 </body>
 </html>
