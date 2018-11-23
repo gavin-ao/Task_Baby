@@ -112,7 +112,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             RedisFactory.setString(
                     WeChatConstant.getRefreshTokenCacheKey(authorizerAppid),
                     authorizerRefreshToken,
-                    WeChatConstant.CATCH_VALUE_EXPIRE_REFRESH_TOKEN * 1000);
+                    WeChatConstant.CACHE_VALUE_EXPIRE_REFRESH_TOKEN * 1000);
         }else{
             logger.error("获取refresToken失败");
         }
