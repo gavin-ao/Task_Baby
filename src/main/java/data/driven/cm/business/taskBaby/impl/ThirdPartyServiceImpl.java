@@ -38,15 +38,19 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
      *
      * @author: Logan
      * @date: 2018/11/23 11:25
-     * @params: [infoStr, authCode]
+     * @params: [authCode]
      * @return: void
      **/
     @Override
-    public void saveCallbackAuthInfo(String infoStr, String authCode) {
-        JSONObject authInfo = JSONObject.parseObject(infoStr).
+    public void saveCallbackAuthInfo(String authCode) {
+
+        //获取授权信息
+        String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
+        logger.info(String.format("返回授权码后，获取授权详细信息:%s",authInfoStr));
+        JSONObject authInfo = JSONObject.parseObject(authInfoStr).
                 getJSONObject(WeChatConstant.API_JSON_KEY_AUTH_INFO);
         if (authInfo != null) {
-            saveAuthToCache(authInfo);
+            saveAuthToCache(authInfo,authCode);
             String authorizerAppid =
                     authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_APPID);
             JSONArray funcCategory = authInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNCSCOPE_CATEGORY);
@@ -91,13 +95,17 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
      * @params:     [authInfo]
      * @return:     void
     **/
-    private void saveAuthToCache(JSONObject authInfo) {
+    private void saveAuthToCache(JSONObject authInfo,String authCode) {
         logger.info("--------开始保存授权信息到缓存--------------");
         String authorizer_access_token =
                 authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_ACCESS_TOKEN);
         String authorizerRefreshToken = authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN);
         String authorizerAppid =
                 authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_APPID);
+        if(StringUtils.isNotEmpty(authCode)){
+            RedisFactory.setString(
+                    WeChatConstant.getAuthCodeCacheKey(authorizerAppid),authCode,WeChatConstant.CACHE_VALUE_EXPIRE_AUTH_CODE*1000);
+        }
         if(StringUtils.isNotEmpty(authorizer_access_token)) {
             logger.info("------保存accessToken到缓存----------");
             RedisFactory.setString(
@@ -131,7 +139,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
  * @return:     java.lang.String
 **/
     @Override
-    public String getAuthAccessToke(String authAppId) throws Exception {
+    public String getAuthAccessToken(String authAppId) throws Exception {
       //1.从缓存中取
         String accessToken =
                 RedisFactory.get(

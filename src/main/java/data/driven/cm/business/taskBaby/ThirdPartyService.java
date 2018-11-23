@@ -21,10 +21,10 @@ public interface ThirdPartyService {
      * 处理授权后的回调服务
      * @author:     Logan
      * @date:       2018/11/23 11:24
-     * @params:     [infoStr, authCode]
+     * @params:     [authCode]
      * @return:     void
     **/
-    public void saveCallbackAuthInfo(String infoStr, String authCode);
+    public void saveCallbackAuthInfo(String authCode);
 
     /**
      * 根据授权的微信公众号appID，获取AuthAccessToken，
@@ -35,5 +35,5 @@ public interface ThirdPartyService {
      * @params:     [authAppId]
      * @return:     java.lang.String
     **/
-    public String getAuthAccessToke(String authAppId) throws Exception;
+    public String getAuthAccessToken(String authAppId) throws Exception;
 }

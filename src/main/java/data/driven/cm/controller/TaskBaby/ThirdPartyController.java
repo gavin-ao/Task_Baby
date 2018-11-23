@@ -51,13 +51,8 @@ public class ThirdPartyController {
     **/
     public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
-        log.info("-----------响应授权回调----------------");
-        String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
-        if(StringUtils.isEmpty(authInfoStr)){
-            log.error("-------授权回调返回空串---------------");
-        }
-        log.info("----------返回授权信息：-------------------");
-        log.info(authInfoStr);
-        thirdPartyService.saveCallbackAuthInfo(authInfoStr,authCode);
+        log.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
+
+        thirdPartyService.saveCallbackAuthInfo(authCode);
     }
 }
