@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
+import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
 import data.driven.cm.entity.wechat.WechatCSImgMsgEntity;
@@ -31,6 +32,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.xml.sax.InputSource;
 
 
@@ -746,7 +748,86 @@ public class WeChatUtil {
         log.info(String.format(
                 "---------------%s完成，总耗时:%f秒----------------",info,duration));
     }
-    public static final String access_token = "access_token_";
+
+    /**
+     * 存入第三方平台接口调用凭据
+     * @param componentVerifyTicket 第三方平台接口调用凭据
+     * @return
+     */
+    public static void setComponentVerifyTicket(String componentVerifyTicket){
+        RedisFactory.setString(WeChatConstant.THIRD_PARTY_TICKET, componentVerifyTicket, 600 * 1000);
+    }
+
+    /**
+     * 获取第三方平台接口调用凭据
+     * @return ticket
+     */
+    public static String getComponentVerifyTicket(){
+        return RedisFactory.get(WeChatConstant.THIRD_PARTY_TICKET);
+    }
+
+    /**
+     * 返回 第三方 component_access_token
+     * @author lxl
+      * @return
+     */
+    public static String getComponentAccessToken(){
+        String key =WeChatConstant.THIRD_PARTY_ACCESS_TOKEN;
+        String componentAccessToken = RedisFactory.get(key);
+        log.info("-----------component_access_token start ------------- "+componentAccessToken + "  end");
+        if (componentAccessToken != null && componentAccessToken.trim().length() > 0){
+            return componentAccessToken;
+        }
+        Map<String, Object> paramMap = new HashMap<>();
+        String componentVerifyTicket = getComponentVerifyTicket();
+        log.info("-----------componentVerifyTicket start ------------- "+componentVerifyTicket + " end");
+        paramMap.put("component_appid",WeChatConstant.THIRD_PARTY_APPID);
+        paramMap.put("component_appsecret",WeChatConstant.THIRD_PARTY_SECRET);
+        paramMap.put("component_verify_ticket",componentVerifyTicket);
+        String data = JSON.toJSONString(paramMap);
+        String resultStr = HttpUtil.doPost(WeChatConstant.COMPONENT_TOKEN_URL, data);
+        if(resultStr == null){
+            log.info("------------------获取component_access_token失败！-----------------");
+            return "";
+        }
+        JSONObject resultJson = parseObject(resultStr);
+        log.info("------------------resultJson -----------------" + resultJson.toString());
+        if (resultJson.getString("component_access_token") != null &&
+                resultJson.getString("component_access_token").trim().length() > 0){
+            log.info("------------------获取component_access_token: "+resultJson.getString("component_access_token")+"-----------------");
+            RedisFactory.setString(key,resultJson.getString("component_access_token"),WeChatConstant.CATCH_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN * 1000);
+        }
+        return resultJson.getString("component_access_token");
+    }
+    /**
+     * 获取预授权码pre_auth_code
+     * @author lxl
+     * @return
+     */
+    public static String getPreAuthCode(){
+        String key =WeChatConstant.THIRD_PARTY_PRE_AUTH_CODE;
+        String preAuthCode = RedisFactory.get(key);
+        log.info("-----------preAuthCode start ------------- "+preAuthCode + "  end");
+        if (preAuthCode != null && preAuthCode.trim().length() > 0){
+            return preAuthCode;
+        }
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("component_appid",WeChatConstant.THIRD_PARTY_APPID);
+        String thirdPartyAccessToken = getComponentAccessToken();
+        String data = JSON.toJSONString(paramMap);
+        String resultStr = HttpUtil.doPost(WeChatConstant.getPreAuthCode(thirdPartyAccessToken), data);
+        if(resultStr == null){
+            log.info("------------------获取pre_auth_code失败！-----------------");
+            return "";
+        }
+        JSONObject resultJson = parseObject(resultStr);
+        if (resultJson.getString("pre_auth_code") != null &&
+                resultJson.getString("pre_auth_code").trim().length() > 0){
+            log.info("------------------pre_auth_code: "+resultJson.getString("pre_auth_code")+"-----------------");
+            RedisFactory.setString(key,resultJson.getString("pre_auth_code"),WeChatConstant.CATCH_VALUE_EXPIRE_PRE_AUTH_CODE * 1000);
+        }
+        return resultJson.getString("pre_auth_code");
+    }
 
 //    /**
 //     * 根据wechatAccount获取 appid、secret
