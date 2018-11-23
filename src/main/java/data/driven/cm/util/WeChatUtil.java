@@ -758,15 +758,16 @@ public class WeChatUtil {
     **/        
     public static String getAuthoInfo(String authCode){
        String thirdPartyAccessToken =WeChatUtil.getComponentAccessToken();
-       String postBodyStr = String.format("{\"%s\":\"%s\",\"%s:\"%s}",
+       String postBodyStr = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
                 WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
                 WeChatConstant.API_JSON_KEY_AUTH_CODE,authCode);
+        log.info(String.format("-----------获取授权信息postBody %s ",postBodyStr));
        log.info("----------调用获取公众号授权信息接口,参数：------------------------");
        log.info(postBodyStr);
         String url = WeChatConstant.getAPIAddressAuthInfoURL(thirdPartyAccessToken);
-       log.info(String.format("-------------接口地址:%s"),url);
+       log.info(String.format("-------------接口地址:%s",url));
        JSONObject postJSON = JSONObject.parseObject(postBodyStr);
-       return HttpUtil.doPost(url, postJSON);
+       return HttpUtil.doPost(url, postBodyStr);
 
     }
     /**
