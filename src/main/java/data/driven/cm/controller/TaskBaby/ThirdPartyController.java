@@ -2,6 +2,7 @@ package data.driven.cm.controller.TaskBaby;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,5 +28,10 @@ public class ThirdPartyController {
             e.printStackTrace();
         }
 
+    }
+
+    public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
+                                  @RequestParam(value="expires_in") String expriesIn){
+        
     }
 }
