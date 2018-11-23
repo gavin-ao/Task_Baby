@@ -97,7 +97,7 @@ public class WeChatConstant {
     //REDIS KEY
    public static String getReAuthCodeCacheKey(String appid){
        //预授权码 key
-       String CACHE_KEY_PRE_AUTH_CODE="ACCESS_TOKEN_%s";//%s:微信公众号appid；
+       String CACHE_KEY_PRE_AUTH_CODE="PRE_AUTH_CODE_%s";//%s:微信公众号appid；
 
        return String.format(CACHE_KEY_PRE_AUTH_CODE,appid);
     }
@@ -112,10 +112,10 @@ public class WeChatConstant {
         String CACHE_KEY_ACCESS_TOKEN="ACCESS_TOKEN_%s";//%s:微信公众号appid；
        return String.format(CACHE_KEY_ACCESS_TOKEN,appid);
     }
-   public static String getRefreshAccessTokenCacheKey(String appid){
+   public static String getRefreshTokenCacheKey(String appid){
        //微信公众号访问刷新凭证 key
-        String CACHE_KEY_REFRESH_ACCESS_TOKEN="REFRESH_ACCESS_TOKEN_%s";//%s:微信公众号appid；
-        return String.format(CACHE_KEY_REFRESH_ACCESS_TOKEN,appid);
+        String CACHE_KEY_REFRESH_TOKEN="REFRESH_TOKEN_%s";//%s:微信公众号appid；
+        return String.format(CACHE_KEY_REFRESH_TOKEN,appid);
    }
     //REDIS VALUE
     //授权码过期时间
