@@ -143,6 +143,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         }
         return accessToken;
     }
+
+
     /**
      * 刷新authorizerAccessToken
      * @author:     Logan
@@ -153,26 +155,15 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     private String refreshAccessToken(String authAppId) throws Exception {
         String newAccessToken = "";
         String thirdPartyAccessToken = "";//todo:获取第三方平台的accessToken
-       //当前redis里面存的refreshToken
+
         logger.info("--------得到旧的refreshToken---------------");
+        //当前redis里面存的refreshToken
         String oldAuthRefreshToken =
                 RedisFactory.get(
                         WeChatConstant.getRefreshTokenCacheKey(authAppId));
         if(StringUtils.isNotEmpty(oldAuthRefreshToken)){
             logger.info("-------------oldRefreshToken存在，准备刷新token,postStr：--------------------");
-            //组织post的消息体
-            String postStr =
-                    String.format("{\"%s\":\"%s\",\"%s\":\"%s\",\"%s\":\"%s\"}",
-                    WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
-                            WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId,
-                            WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN,oldAuthRefreshToken);
-            logger.info(postStr);
-            JSONObject postObject = JSONObject.parseObject(postStr);
-            //获取刷新Token的URL
-            String refreshTokenUrl =
-                    WeChatConstant.getRefreshTokenURL(thirdPartyAccessToken);//获取刷新token的url地址
-            logger.info(String.format("-------------调用刷新token，url:%s-----------",refreshTokenUrl));
-            String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
+            String newTokenResult = WeChatUtil.accessFreshTokenAPI(authAppId,oldAuthRefreshToken);
             if(StringUtils.isNotEmpty(newTokenResult)) {
                 logger.info(String.format(
                         "---------------调用刷新tokenApi返回：%s",newTokenResult));

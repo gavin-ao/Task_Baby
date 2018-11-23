@@ -766,5 +766,29 @@ public class WeChatUtil {
        return HttpUtil.doPost(url, postJSON);
 
     }
-
+    /**
+     * 访问刷新authorizerToken的接口
+     * @author:     Logan
+     * @date:       2018/11/23 14:42
+     * @params:     [authAppId, reFreshToken]
+     * @return:     JSON格式字符串 刷新接口的返回值
+    **/
+    public static String accessFreshTokenAPI(String authAppId, String reFreshToken){
+        log.info("-----------调用刷新token的接口---------------");
+        //组织post的消息体
+        String postStr =
+                String.format("{\"%s\":\"%s\",\"%s\":\"%s\",\"%s\":\"%s\"}",
+                        WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
+                        WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId,
+                        WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN,reFreshToken);
+        log.info(postStr);
+        JSONObject postObject = JSONObject.parseObject(postStr);
+        //获取刷新Token的URL
+        String thirdPartyAccessToken ="";//todo: 获取第三放accessToken
+        String refreshTokenUrl =
+                WeChatConstant.getRefreshTokenURL(thirdPartyAccessToken);//获取刷新token的url地址
+        log.info(String.format("-------------调用刷新token，url:%s-----------",refreshTokenUrl));
+        String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
+        return newTokenResult;
+    }
 }
