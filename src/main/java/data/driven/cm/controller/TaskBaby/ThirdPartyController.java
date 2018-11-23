@@ -1,5 +1,12 @@
 package data.driven.cm.controller.TaskBaby;
 
+import data.driven.cm.business.taskBaby.ThirdPartyService;
+import data.driven.cm.component.WeChatConstant;
+import data.driven.cm.util.WeChatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,7 +71,7 @@ public class ThirdPartyController {
     **/
     public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
-        log.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
+        logger.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
 
         thirdPartyService.saveCallbackAuthInfo(authCode);
 
