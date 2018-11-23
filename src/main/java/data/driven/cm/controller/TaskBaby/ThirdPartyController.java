@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.business.taskBaby.ThirdPartyService;
 import data.driven.cm.util.WeChatUtil;
 import jdk.nashorn.internal.runtime.options.LoggingOption;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public class ThirdPartyController {
                                   @RequestParam(value="expires_in") String expriesIn){
         log.info("-----------响应授权回调----------------");
         String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
+        if(StringUtils.isEmpty(authInfoStr)){
+            log.error("-------授权回调返回空串---------------");
+        }
         log.info("----------返回授权信息：-------------------");
         log.info(authInfoStr);
         thirdPartyService.saveCallbackAuthInfo(authInfoStr,authCode);

@@ -759,9 +759,12 @@ public class WeChatUtil {
        String postBodyStr = String.format("{\"%s\":\"%s\",\"%s:\"%s}",
                 WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
                 WeChatConstant.API_JSON_KEY_AUTH_CODE,authCode);
+       log.info("----------调用获取公众号授权信息接口,参数：------------------------");
+       log.info(postBodyStr);
+        String url = WeChatConstant.getAPIAddressAuthInfo(thirdPartyAccessToken);
+       log.info(String.format("-------------接口地址:%s"),url);
        JSONObject postJSON = JSONObject.parseObject(postBodyStr);
-       return HttpUtil.doPost(WeChatConstant.getAPIAddressAuthInfo(thirdPartyAccessToken),
-                              postJSON);
+       return HttpUtil.doPost(url, postJSON);
 
     }
 
