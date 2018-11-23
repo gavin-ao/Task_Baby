@@ -17,6 +17,13 @@ public class WeChatConstant {
     public static final String TOKEN = "xkb";
     public static final String EncodingAESKey = "CJpofN6kdTJmCwXksXL3NYV4Oi2yw69CEwUPNjnU4De";
 
+    //第三方平台appid、EncodingAESKey
+    public static final String THIRD_PARTY_APPID = "wxe67b87e6f254b78d";
+    public static final String THIRD_PARTY_ENCODINGAESKEY = "123456789xinkebao123456789xinkebao123456789";
+    public static final String THIRD_PARTY_TOKEN = "xkbXKB123";
+    public static final String THIRD_PARTY_SECRET = "a735ffc4ee824360243ec8cfb52c909d";
+
+
     public static final String RESP_MESSAGE_TYPE_TEXT = "text";
     public static final String REQ_MESSAGE_TYPE_TEXT = "text";
     public static final String REQ_MESSAGE_TYPE_IMAGE = "image";
