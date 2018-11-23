@@ -20,6 +20,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
@@ -887,4 +889,22 @@ public class WeChatUtil {
         return resultJson.getString("pre_auth_code");
     }
 
+   /**
+    * 根据授权微信公众号的appId,获取此公众号的账号详情
+    * @author:     Logan
+    * @date:       2018/11/23 16:36
+    * @params:     [authAppId]
+    * @return:     java.lang.String
+   **/
+    public static String accessAuthAccountDetailAPI(String authAppId){
+        String urlTemplate = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=%s";
+        String thirdPartyAccessToken = WeChatUtil.getComponentAccessToken();
+        String url =String.format(urlTemplate,thirdPartyAccessToken);
+        String postStrTempate ="{\"%s\":\"%s\",\"%s\":\"%s\"}";
+        String postStr = String.format(postStrTempate,
+                WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
+                WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId);
+        JSONObject postObj = JSONObject.parseObject(postStr);
+        return HttpUtil.doPost(url,postObj);
+    }
 }

@@ -89,6 +89,19 @@ public class WeChatConstant {
     public static final String API_JSON_KEY_FUNC_INFO = "func_info";
     public static final String API_JSON_KEY_FUNCSCOPE_CATEGORY= "funcscope_category";
     public static final String API_JSON_KEY_FUNC_ID= "id";
+    public static final String API_JSON_KEY_AUTHORIZER_INFO ="authorizer_info";
+    public static final String API_JSON_KEY_NICK_NAME="nick_name";
+    public static final String API_JSON_KEY_HEAD_IMG="head_img";
+    public static final String API_JSON_KEY_SERVICE_TYPE_INFO="service_type_info";
+    public static final String API_JSON_KEY_VERIFY_TYPE_INFO="verify_type_info";
+    public static final String API_JSON_KEY_USER_NAME="user_name";
+    public static final String API_JSON_KEY_PRINCIPAL_NAME="principal_name";
+    public static final String API_JSON_KEY_ALIAS="alias";
+    public static final String API_JSON_KEY_BUSINESS_INFO="business_info";
+    public static final String API_JSON_KEY_QRCODE_URL="qrcode_url";
+    public static final String API_JSON_KEY_AUTHORIZATION_APPID="authorization_appid";
+    public static final String API_JSON_KEY_SERVICE_TYPE_ID= "id";
+    public static final String API_JSON_KEY_VERIFY_TYPE_ID= "id";
 
     //微信接口api地址
 

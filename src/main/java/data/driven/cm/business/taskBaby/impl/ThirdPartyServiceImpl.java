@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.aes.WXBizMsgCrypt;
 import data.driven.cm.business.taskBaby.ThirdPartyService;
-import data.driven.cm.business.taskBaby.WchatPublicDetailService;
+import data.driven.cm.business.taskBaby.WechatPublicDetailService;
 import data.driven.cm.business.taskBaby.WechatPublicService;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-
 /**
  * @Author: lxl
  * @describe 第三方平台Impl
@@ -31,6 +30,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     Logger logger = LoggerFactory.getLogger(ThirdPartyServiceImpl.class);
     @Autowired
     private WechatPublicService wechatPublicService;
+    @Autowired
+    private WechatPublicDetailService wechatPublicDetailService;
 
     /**
      * 处理授权后的回调
@@ -54,7 +55,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_APPID);
             JSONArray funcCategory = authInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNCSCOPE_CATEGORY);
             saveAuthToMysql(authorizerAppid, funcCategory);
-
+            saveWechatAccountDetail(authorizerAppid);
            //todo:以下代码是测试，需要删掉
             try {
                 String accessToken = getAuthAccessToken(authorizerAppid);
@@ -131,6 +132,78 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     WeChatConstant.CACHE_VALUE_EXPIRE_REFRESH_TOKEN * 1000);
         }else{
             logger.error("获取refresToken失败");
+        }
+    }
+
+    /**
+     * 根据authAppId，获取授权微信账号详情，存数据库
+     * @author:     Logan
+     * @date:       2018/11/23 16:40
+     * @params:     [authAppId]
+     * @return:     void
+    **/
+    private void saveWechatAccountDetail(String authAppId){
+        String detailStr = WeChatUtil.accessAuthAccountDetailAPI(authAppId);
+        JSONObject rootObj = JSONObject.parseObject(detailStr).getJSONObject("");
+        if(rootObj != null){
+            JSONObject detailObject = rootObj.getJSONObject(WeChatConstant.API_JSON_KEY_AUTHORIZER_INFO);
+           String nickName =
+                   detailObject.getString(WeChatConstant.API_JSON_KEY_NICK_NAME);
+           String headImg =
+                   detailObject.getString(WeChatConstant.API_JSON_KEY_HEAD_IMG);
+           JSONObject serviceTypeInfo =
+                   detailObject.getJSONObject(WeChatConstant.API_JSON_KEY_SERVICE_TYPE_INFO);
+           String serviceTypeInfoId = "";
+           if(serviceTypeInfo != null){
+               serviceTypeInfoId = serviceTypeInfo.getString(WeChatConstant.API_JSON_KEY_SERVICE_TYPE_ID);
+           }
+           String verifyTypeInfoId = "";
+           JSONObject verifyTypeInfo =
+                   detailObject.getJSONObject(WeChatConstant.API_JSON_KEY_VERIFY_TYPE_INFO);
+           if(verifyTypeInfo != null){
+               verifyTypeInfoId =
+                       verifyTypeInfo.getString(WeChatConstant.API_JSON_KEY_VERIFY_TYPE_INFO);
+           }
+           String userName = detailObject.getString(WeChatConstant.API_JSON_KEY_USER_NAME);
+           String principleName =
+                   detailObject.getString(WeChatConstant.API_JSON_KEY_PRINCIPAL_NAME);
+           JSONObject businessInfo =
+                   detailObject.getJSONObject(WeChatConstant.API_JSON_KEY_BUSINESS_INFO);
+           String bussinessInfoStr ="";
+           if(businessInfo != null){
+               bussinessInfoStr = businessInfo.toJSONString();
+           }
+           String alias = detailObject.getString(WeChatConstant.API_JSON_KEY_ALIAS);
+           String qrCode = detailObject.getString(WeChatConstant.API_JSON_KEY_QRCODE_URL);
+           JSONObject authorizationInfo =
+                   rootObj.getJSONObject(WeChatConstant.API_JSON_KEY_AUTH_INFO);
+           StringBuilder funcInfo = new StringBuilder();
+           JSONArray funcInfoArr =
+                    authorizationInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNC_INFO);
+           if(funcInfoArr != null){
+               for(int i = 0; i< funcInfoArr.size();i++){
+                   funcInfo.append(
+                           funcInfoArr.getJSONObject(i).getString(WeChatConstant.API_JSON_KEY_FUNC_ID)).
+                           append(";");
+               }
+           }
+           String funcInfoStr =funcInfo.toString();
+            WechatPublicEntity publicEntity =
+                    wechatPublicService.getEntityByAuthorizationAppid(authAppId);
+            String publicId = publicEntity.getWechatPublicId();
+            String detailId=
+                  wechatPublicDetailService.getWechatPublicDetailIdByAppId(authAppId);
+
+            if(StringUtils.isEmpty(detailId)){
+
+              wechatPublicDetailService.insertWechatPublicDetailEntity(publicId,nickName,
+                      headImg,serviceTypeInfoId,verifyTypeInfoId,userName,principleName,
+                      alias,bussinessInfoStr, qrCode,authAppId,funcInfoStr);
+          }else{
+                wechatPublicDetailService.insertWechatPublicDetailEntity(
+                        publicId,nickName,headImg,serviceTypeInfoId,verifyTypeInfoId,
+                        userName,principleName,alias,bussinessInfoStr,qrCode,authAppId,funcInfoStr);
+          }
         }
     }
 /**
