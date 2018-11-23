@@ -31,7 +31,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 
 
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -761,7 +760,7 @@ public class WeChatUtil {
                 WeChatConstant.API_JSON_KEY_AUTH_CODE,authCode);
        log.info("----------调用获取公众号授权信息接口,参数：------------------------");
        log.info(postBodyStr);
-        String url = WeChatConstant.getAPIAddressAuthInfo(thirdPartyAccessToken);
+        String url = WeChatConstant.getAPIAddressAuthInfoURL(thirdPartyAccessToken);
        log.info(String.format("-------------接口地址:%s"),url);
        JSONObject postJSON = JSONObject.parseObject(postBodyStr);
        return HttpUtil.doPost(url, postJSON);

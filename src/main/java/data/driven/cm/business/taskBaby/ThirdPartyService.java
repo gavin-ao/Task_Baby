@@ -25,4 +25,15 @@ public interface ThirdPartyService {
      * @return:     void
     **/
     public void saveCallbackAuthInfo(String infoStr, String authCode);
+
+    /**
+     * 根据授权的微信公众号appID，获取AuthAccessToken，
+     * 并将刷新后的保存到缓存中
+     * 如果refresToken丢失，则抛出异常，提示需要重新授权
+     * @author:     Logan
+     * @date:       2018/11/23 14:11
+     * @params:     [authAppId]
+     * @return:     java.lang.String
+    **/
+    public String getAuthAccessToke(String authAppId) throws Exception;
 }

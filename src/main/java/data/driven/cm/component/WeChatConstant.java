@@ -88,10 +88,16 @@ public class WeChatConstant {
      * @params:     [thirdPartyAccessToken] 第三放平台的accessToken
      * @return:     授权信息api地址
     **/
-    public static String getAPIAddressAuthInfo(String thirdPartyAccessToken){
-      String API_ADDRESS_AUTH_INFO=
+    public static String getAPIAddressAuthInfoURL(String thirdPartyAccessToken){
+      String API_AUTH_INFO_URL=
                 "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=%s";
-        return String.format(API_ADDRESS_AUTH_INFO,thirdPartyAccessToken);
+        return String.format(API_AUTH_INFO_URL,thirdPartyAccessToken);
+    }
+
+    public static String getRefreshTokenURL(String thirdPartyAccessToken){
+      String API_REFRESH_TOKEN_URL=
+              "https:// api.weixin.qq.com /cgi-bin/component/api_authorizer_token?component_access_token=%s";
+      return String.format(API_REFRESH_TOKEN_URL,thirdPartyAccessToken);
     }
 
     //REDIS KEY
@@ -121,9 +127,9 @@ public class WeChatConstant {
     //授权码过期时间
     public static int CACHE_VALUE_EXPIRE_AUTH_CODE= 60*10-60;//比微信平台少预留60s
     //access_token 过期时间
-    public static int CATCH_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    public static int CACHE_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
     //refresh_access_token 过期时间
-    public static int CATCH_VALUE_EXPIRE_REFRESH_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    public static int CACHE_VALUE_EXPIRE_REFRESH_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
 
 
 }

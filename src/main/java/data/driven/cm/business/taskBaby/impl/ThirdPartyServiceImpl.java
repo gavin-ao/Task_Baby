@@ -8,6 +8,7 @@ import data.driven.cm.business.taskBaby.WechatPublicService;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
+import data.driven.cm.util.HttpUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -102,7 +103,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             RedisFactory.setString(
                     WeChatConstant.getAccessTokenCacheKey(authorizerAppid),
                     authorizer_access_token,
-                    WeChatConstant.CATCH_VALUE_EXPIRE_ACCESS_TOKEN * 1000);
+                    WeChatConstant.CACHE_VALUE_EXPIRE_ACCESS_TOKEN * 1000);
         }else{
             logger.error("获取accessToken失败");
         }
@@ -116,8 +117,93 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             logger.error("获取refresToken失败");
         }
     }
+/**
+ * 根据授权的微信公众号的appId，获取accessToken，
+ * 并且将刷新后的token更新到缓存中（如果有必要）
+ * 1.先从缓存中去accessToken，
+ * 2.如果没有取到，或者redis中已过期，则调用接口重新刷新accessToken，和refreshToken
+ * 并更新到缓存中去
+ * 如果refresToken丢失，则抛出异常，提示需要重新授权
+ *
+ * @author:     Logan
+ * @date:       2018/11/23 13:35
+ * @params:     [authAppId]
+ * @return:     java.lang.String
+**/
+    @Override
+    public String getAuthAccessToke(String authAppId) throws Exception {
+      //1.从缓存中取
+        String accessToken =
+                RedisFactory.get(
+                        WeChatConstant.getAccessTokenCacheKey(authAppId));
+        if(StringUtils.isNotEmpty(accessToken)){//token没有过期
+            return accessToken;
+        }else{ //token过期了
+            accessToken = refreshAccessToken(authAppId);
+        }
+        return accessToken;
+    }
+    /**
+     * 刷新authorizerAccessToken
+     * @author:     Logan
+     * @date:       2018/11/23 13:43
+     * @params:     [authAppId]
+     * @return:     java.lang.String
+    **/
+    private String refreshAccessToken(String authAppId) throws Exception {
+        String newAccessToken = "";
+        String thirdPartyAccessToken = "";//todo:获取第三方平台的accessToken
+       //当前redis里面存的refreshToken
+        logger.info("--------得到旧的refreshToken---------------");
+        String oldAuthRefreshToken =
+                RedisFactory.get(
+                        WeChatConstant.getRefreshTokenCacheKey(authAppId));
+        if(StringUtils.isNotEmpty(oldAuthRefreshToken)){
+            logger.info("-------------oldRefreshToken存在，准备刷新token,postStr：--------------------");
+            //组织post的消息体
+            String postStr =
+                    String.format("{\"%s\":\"%s\",\"%s\":\"%s\",\"%s\":\"%s\"}",
+                    WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
+                            WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId,
+                            WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN,oldAuthRefreshToken);
+            logger.info(postStr);
+            JSONObject postObject = JSONObject.parseObject(postStr);
+            //获取刷新Token的URL
+            String refreshTokenUrl =
+                    WeChatConstant.getRefreshTokenURL(thirdPartyAccessToken);//获取刷新token的url地址
+            logger.info(String.format("-------------调用刷新token，url:%s-----------",refreshTokenUrl));
+            String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
+            if(StringUtils.isNotEmpty(newTokenResult)) {
+                logger.info(String.format(
+                        "---------------调用刷新tokenApi返回：%s",newTokenResult));
+                JSONObject newTokenObj = JSONObject.parseObject(newTokenResult);
+                newAccessToken =newTokenObj.getString(
+                        WeChatConstant.API_JSON_KEY_AUTH_ACCESS_TOKEN);
 
+                if(StringUtils.isNotEmpty(newAccessToken)){
+                    logger.info("--------保存newToken到缓存------------------");
+                    RedisFactory.setString(
+                            WeChatConstant.getAccessTokenCacheKey(authAppId),newAccessToken,
+                            WeChatConstant.CACHE_VALUE_EXPIRE_ACCESS_TOKEN *1000);
+                }
 
+                String newRefreshToken = newTokenObj.getString(
+                        WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN);
+
+                if(StringUtils.isNotEmpty(newRefreshToken)){
+                    logger.info("--------保存newRefreshToken到缓存------------------");
+                    RedisFactory.setString(
+                            WeChatConstant.getRefreshTokenCacheKey(authAppId),newRefreshToken,
+                            WeChatConstant.CACHE_VALUE_EXPIRE_REFRESH_TOKEN *1000);
+                }
+            }
+
+        }else{
+            throw new Exception("旧的AuthRefreshToken丢失，需要重新授权");
+
+        }
+       return newAccessToken;
+    }
 
     /**
      * 解密第三方发送的xml
