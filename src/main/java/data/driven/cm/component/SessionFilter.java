@@ -31,6 +31,8 @@ public class SessionFilter implements Filter{
         EXCLUDE_URL_SET.add("/static");
         //微信接口不需要过滤
         EXCLUDE_URL_SET.add("/wechatapi");
+        //微信第三方平台
+        EXCLUDE_URL_SET.add("/thirdParty");
     }
 
     @Override
