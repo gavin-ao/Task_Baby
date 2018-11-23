@@ -7,10 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +20,7 @@ import java.io.PrintWriter;
  * @Date: 2018/11/23 9:21
  * @Version 1.0
  */
+@CrossOrigin
 @Controller
 @RequestMapping(path = "/thirdParty")
 public class ThirdPartyController {
@@ -52,13 +51,20 @@ public class ThirdPartyController {
      * 得到扫码URL
      * @return
      */
-    @ResponseBody
+
     @RequestMapping(value = "/getPreAuthCode", method = {RequestMethod.GET})
-    public String getPreAuthCode(){
+    public ModelAndView getPreAuthCode(){
+        logger.info("----------------------进入得到扫码URL----------------------");
         String componentloginpageURL ="https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=3";
         String preAuthCode = WeChatUtil.getPreAuthCode();
-        String.format(componentloginpageURL, WeChatConstant.THIRD_PARTY_APPID,preAuthCode,"http://easy7share.com/thirdParty/authcallback");
-        return componentloginpageURL;
+        logger.info("----------------------得到的URL"+String.format(componentloginpageURL, WeChatConstant.THIRD_PARTY_APPID,preAuthCode,"http://easy7share.com/thirdParty/authcallback").toString()+"----------------------");
+        ModelAndView modelAndView = new ModelAndView("/taskBaby/login");
+        modelAndView.addObject("url","https://mp.weixin.qq.com/cgi-bin/componentloginpage?"+
+                "component_appid="+WeChatConstant.THIRD_PARTY_APPID +
+                "&pre_auth_code=" + preAuthCode +
+                "&redirect_uri=" +"http://easy7share.com/thirdParty/authcallback"
+        );
+        return modelAndView;
     }
 
     @RequestMapping("/authcallback")
