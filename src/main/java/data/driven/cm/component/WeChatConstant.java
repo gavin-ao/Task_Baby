@@ -1,5 +1,7 @@
 package data.driven.cm.component;
 
+import data.driven.cm.common.RedisFactory;
+
 /**
  * @Author: lxl
  * @describe 微信公众号基础配置
@@ -65,4 +67,23 @@ public class WeChatConstant {
     public static final String KEY_APP_ID ="appId";
     public static final String KEY_SECRET_CODE="secretCode";
     public static final String KEY_MEDIA_ID="media_id";
+
+
+    //REDIS KEY
+    //预授权码 key
+    public static String CACHE_KEY_PRE_AUTH_CODE="ACCESS_TOKEN_%s";//%s:微信公众号appid；
+    //授权码 Key
+    public static String CACHE_KEY_AUTH_CODE="AUTH_CODE_%s";//%s:微信公众号appid;
+   //微信公众号访问凭证 key
+    public static String CACHE_KEY_ACCESS_TOKEN="ACCESS_TOKEN_%s";//%s:微信公众号appid；
+    //微信公众号访问刷新凭证 key
+    public static String CACHE_KEY_REFRESH_ACCESS_TOKEN="REFRESH_ACCESS_TOKEN_%s";//%s:微信公众号appid；
+
+    //REDIS VALUE
+    //授权码过期时间
+    public static int CACHE_VALUE_EXPIRE_AUTH_CODE= 60*10-60;//比微信平台少预留60s
+    //access_token 过期时间
+    public static int CATCH_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    //refresh_access_token 过期时间
+    public static int CATCH_VALUE_EXPIRE_REFRESH_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
 }
