@@ -69,7 +69,7 @@ public class ThirdPartyController {
      * @params:     [authCode, expriesIn]
      * @return:     void
     **/
-    public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
+    public void authorizeCallback(@RequestParam(value="auth_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
         logger.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
 
