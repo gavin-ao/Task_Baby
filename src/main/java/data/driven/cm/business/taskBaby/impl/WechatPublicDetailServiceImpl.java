@@ -4,6 +4,7 @@ import data.driven.cm.business.taskBaby.WchatPublicDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import java.util.Date;
  * @Date: 2018/11/22 17:40
  * @Version 1.0
  */
+@Service
 public class WechatPublicDetailServiceImpl implements WchatPublicDetailService{
 
     @Autowired
@@ -35,10 +37,10 @@ public class WechatPublicDetailServiceImpl implements WchatPublicDetailService{
      * @return 公众号详细信息ID
      */
     @Override
-    public String insertWechatPublicEntity(String wechatPublicId, String nickName, String headImg, String serviceTypeInfo,
-                                           String verifyTypeInfo, String userName, String principalName, String alias,
-                                           String businessInfo, String qrcodeUrl, String authorizationAppid,
-                                           String funcInfo) {
+    public String insertWechatPublicDetailEntity(String wechatPublicId, String nickName, String headImg, String serviceTypeInfo,
+                                                 String verifyTypeInfo, String userName, String principalName, String alias,
+                                                 String businessInfo, String qrcodeUrl, String authorizationAppid,
+                                                 String funcInfo) {
         Date createAt = new Date();
         String id = UUIDUtil.getUUID();
         String sql = "INSERT INTO wechat_public_detail (id,wechat_public_id,nick_name,head_img,service_type_info," +
@@ -47,5 +49,36 @@ public class WechatPublicDetailServiceImpl implements WchatPublicDetailService{
         jdbcBaseDao.executeUpdate(sql,id,wechatPublicId,nickName,headImg,serviceTypeInfo,verifyTypeInfo,userName,
                 principalName,alias,businessInfo,qrcodeUrl,authorizationAppid,funcInfo,createAt);
         return id;
+    }
+    /**
+     * 根据AppId,查询detialId
+     * @author:     Logan
+     * @date:       2018/11/23 17:26
+     * @params:     [wechatPublicId]
+     * @return:     java.lang.String
+    **/
+   public String getWechatPublicDetailIdByAppId(String authorizationAppid){
+        String sql ="select id from wechat_public_detail where authorization_appid=?";
+        Object id = jdbcBaseDao.getColumn(sql,authorizationAppid);
+        if(id != null){
+            return id.toString();
+        }else{
+            return null;
+        }
+   }
+
+    @Override
+    public void updateWechatPublicDetail(String wechatPublicId, String nickName,
+                                           String headImg, String serviceTypeInfo,
+                                           String verifyTypeInfo, String userName,
+                                           String principalName, String alias,
+                                           String businessInfo, String qrcodeUrl,
+                                           String authorizationAppid, String funcInfo) {
+       String sql = "update wechat_public_detail set nick_name=?,head_img=?,service_type_info=?,\" +\n" +
+               "                \"verify_type_info=?,user_name=?,principal_name=?,alias=?,business_info=?,qrcode_url=?,authorization_appid=?,\" +\n" +
+               "                \"func_info=? where wechatPublicId=?";
+
+       jdbcBaseDao.executeUpdate(sql,nickName,headImg,serviceTypeInfo,verifyTypeInfo,
+               userName,principalName,alias,businessInfo,qrcodeUrl, authorizationAppid,funcInfo);
     }
 }
