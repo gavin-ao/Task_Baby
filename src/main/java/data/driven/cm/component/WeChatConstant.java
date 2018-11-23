@@ -123,7 +123,7 @@ public class WeChatConstant {
     //access_token 过期时间
     public static int CATCH_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
     //refresh_access_token 过期时间
-    public static int CATCH_VALUE_EXPIRE_REFRESH_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    public static int CATCH_VALUE_EXPIRE_REFRESH_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
 
 
 }

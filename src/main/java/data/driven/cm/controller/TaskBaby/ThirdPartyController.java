@@ -1,7 +1,13 @@
 package data.driven.cm.controller.TaskBaby;
 
 import com.alibaba.fastjson.JSONObject;
+import data.driven.cm.business.taskBaby.ThirdPartyService;
 import data.driven.cm.util.WeChatUtil;
+import jdk.nashorn.internal.runtime.options.LoggingOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +21,11 @@ import javax.servlet.http.HttpServletResponse;
  * @Date: 2018/11/23 9:21
  * @Version 1.0
  */
+@Controller
 public class ThirdPartyController {
-
+    private static Logger log = LoggerFactory.getLogger(ThirdPartyController.class);
+    @Autowired
+     private ThirdPartyService thirdPartyService;
 
     /**
      * 微信第三方授权事件的接收
@@ -31,11 +40,20 @@ public class ThirdPartyController {
         }
 
     }
-
+    @RequestMapping("/authcallback")
+    /**
+     * 第三个授权回调
+     * @author:     Logan
+     * @date:       2018/11/23 12:31
+     * @params:     [authCode, expriesIn]
+     * @return:     void
+    **/
     public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
+        log.info("-----------响应授权回调----------------");
         String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
-        JSONObject.parseObject(authInfoStr);
-
+        log.info("----------返回授权信息：-------------------");
+        log.info(authInfoStr);
+        thirdPartyService.saveCallbackAuthInfo(authInfoStr,authCode);
     }
 }

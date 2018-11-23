@@ -9,6 +9,7 @@ import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
      * @return: void
      **/
     @Override
-    public void authCallback(String infoStr, String authCode) {
+    public void saveCallbackAuthInfo(String infoStr, String authCode) {
         JSONObject authInfo = JSONObject.parseObject(infoStr).
                 getJSONObject(WeChatConstant.API_JSON_KEY_AUTH_INFO);
         if (authInfo != null) {
@@ -62,6 +63,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
      * @return: void
      **/
     private void saveAuthToMysql(String authAppId, JSONArray funcCategory) {
+        logger.info("---------保存授权信息到Mysql-------------");
         WechatPublicEntity wechatPublicEntity =
                 wechatPublicService.getEntityByAuthorizationAppid(authAppId);
         if (wechatPublicEntity == null) {
@@ -77,6 +79,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                 }
             }
             wechatPublicService.insertWechatPublicEntity(authAppId, funcCategoryIds.toString());
+            logger.info("-------授权信息插入数据库完成-----------");
         }
     }
     /**
@@ -88,11 +91,30 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
      * @return:     void
     **/
     private void saveAuthToCache(JSONObject authInfo) {
+        logger.info("--------开始保存授权信息到缓存--------------");
         String authorizer_access_token =
                 authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_ACCESS_TOKEN);
-        int expiresIn = authInfo.getInteger(WeChatConstant.API_JSON_KEY_AUTH_EXPIRES_IN);
         String authorizerRefreshToken = authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN);
-
+        String authorizerAppid =
+                authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_APPID);
+        if(StringUtils.isNotEmpty(authorizer_access_token)) {
+            logger.info("------保存accessToken到缓存----------");
+            RedisFactory.setString(
+                    WeChatConstant.getAccessTokenCacheKey(authorizerAppid),
+                    authorizer_access_token,
+                    WeChatConstant.CATCH_VALUE_EXPIRE_ACCESS_TOKEN * 1000);
+        }else{
+            logger.error("获取accessToken失败");
+        }
+        if(StringUtils.isNotEmpty(authorizerRefreshToken)) {
+            logger.info("-------保存refreshToken到缓存------------");
+            RedisFactory.setString(
+                    WeChatConstant.getRefreshTokenCacheKey(authorizerAppid),
+                    authorizerRefreshToken,
+                    WeChatConstant.CATCH_VALUE_EXPIRE_REFRESH_TOKEN * 1000);
+        }else{
+            logger.error("获取refresToken失败");
+        }
     }
 
 

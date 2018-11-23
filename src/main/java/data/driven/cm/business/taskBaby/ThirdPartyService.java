@@ -24,5 +24,5 @@ public interface ThirdPartyService {
      * @params:     [infoStr, authCode]
      * @return:     void
     **/
-    public void authCallback(String infoStr,String authCode);
+    public void saveCallbackAuthInfo(String infoStr, String authCode);
 }
