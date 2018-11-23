@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.aes.WXBizMsgCrypt;
 import data.driven.cm.business.taskBaby.ThirdPartyService;
+import data.driven.cm.business.taskBaby.WchatPublicDetailService;
 import data.driven.cm.business.taskBaby.WechatPublicService;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
@@ -53,6 +54,15 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_APPID);
             JSONArray funcCategory = authInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNCSCOPE_CATEGORY);
             saveAuthToMysql(authorizerAppid, funcCategory);
+
+           //todo:以下代码是测试，需要删掉
+            try {
+                String accessToken = getAuthAccessToken(authorizerAppid);
+                logger.info(String.format("----------测试获取的authAccessToken:%s",accessToken));
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+            }
+
         }
     }
 
@@ -160,7 +170,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     **/
     private String refreshAccessToken(String authAppId) throws Exception {
         String newAccessToken = "";
-        String thirdPartyAccessToken = "";//todo:获取第三方平台的accessToken
+        String thirdPartyAccessToken = WeChatUtil.getComponentAccessToken();
 
         logger.info("--------得到旧的refreshToken---------------");
         //当前redis里面存的refreshToken

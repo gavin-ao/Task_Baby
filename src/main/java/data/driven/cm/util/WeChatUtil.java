@@ -32,8 +32,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.xml.sax.InputSource;
 
 
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -753,11 +751,11 @@ public class WeChatUtil {
      * 使用授权码换取公众号或小程序的接口调用凭据和授权信息
      * @author:     Logan
      * @date:       2018/11/23 10:16
-     * @params:     []
+     * @params:     [authCode]
      * @return:     授权信息JSONStr
-    **/
+    **/        
     public static String getAuthoInfo(String authCode){
-       String thirdPartyAccessToken ="";//todo:调用接口获取第三方平台的acecssToken;
+       String thirdPartyAccessToken =WeChatUtil.getComponentAccessToken();
        String postBodyStr = String.format("{\"%s\":\"%s\",\"%s:\"%s}",
                 WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
                 WeChatConstant.API_JSON_KEY_AUTH_CODE,authCode);
@@ -787,13 +785,20 @@ public class WeChatUtil {
         log.info(postStr);
         JSONObject postObject = JSONObject.parseObject(postStr);
         //获取刷新Token的URL
-        String thirdPartyAccessToken ="";//todo: 获取第三放accessToken
+        String thirdPartyAccessToken =WeChatUtil.getComponentAccessToken();
         String refreshTokenUrl =
                 WeChatConstant.getRefreshTokenURL(thirdPartyAccessToken);//获取刷新token的url地址
         log.info(String.format("-------------调用刷新token，url:%s-----------",refreshTokenUrl));
         String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
         return newTokenResult;
     }
+    /**
+     * 获取授权扫码url
+     * @author:     Logan
+     * @date:       2018/11/23 16:08
+     * @params:     [preAuthCode]
+     * @return:     授权扫码url
+    **/
     public static String getAuthorizeWebsite(String preAuthCode){
         String apiURL="https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s";
         String callBackURL = "http://easy7share.com/authcallback";
