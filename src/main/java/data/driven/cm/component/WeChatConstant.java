@@ -68,9 +68,21 @@ public class WeChatConstant {
     public static final String KEY_SECRET_CODE="secretCode";
     public static final String KEY_MEDIA_ID="media_id";
 
+    //微信接口json参数的names
+    public static final String API_JSON_KEY_COMPONET_APPID="component_appid";
+    public static final String API_JSON_KEY_AUTH_CODE="authorization_code";
+    public static final String API_JSON_KEY_AUTH_INFO="authorization_info";
+    public static final String API_JSON_KEY_AUTH_APPID="authorizer_appid";
+    public static final String API_JSON_KEY_AUTH_ACCESS_TOKEN="authorizer_access_token";
+    public static final String API_JSON_KEY_AUTH_EXPIRES_IN="expires_in";
+    public static final String API_JSON_KEY_AUTH_REFRESH_TOKEN="authorizer_refresh_token";
+    public static final String API_JSON_KEY_FUNC_INFO = "func_info";
+    public static final String API_JSON_KEY_FUNCSCOPE_CATEGORY= "funcscope_category";
+    public static final String API_JSON_KEY_FUNC_ID= "id";
+
     //微信接口api地址
     /**
-     * 使用授权码换取公众号或小程序的接口调用凭据和授权信息的接口地址
+     * 使用授权码换取公众号或小程序的接口调用凭据和授权信息
      * @author:     Logan
      * @date:       2018/11/23 10:32
      * @params:     [thirdPartyAccessToken] 第三放平台的accessToken

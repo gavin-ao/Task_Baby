@@ -17,4 +17,12 @@ public interface ThirdPartyService {
      * @throws Exception
      */
     public void hadleAuthorize(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    /**
+     * 处理授权后的回调服务
+     * @author:     Logan
+     * @date:       2018/11/23 11:24
+     * @params:     [infoStr, authCode]
+     * @return:     void
+    **/
+    public void authCallback(String infoStr,String authCode);
 }

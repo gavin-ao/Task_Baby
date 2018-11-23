@@ -1,5 +1,7 @@
 package data.driven.cm.controller.TaskBaby;
 
+import com.alibaba.fastjson.JSONObject;
+import data.driven.cm.util.WeChatUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +34,8 @@ public class ThirdPartyController {
 
     public void authorizeCallback(@RequestParam(value="autho_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
-        
+        String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
+        JSONObject.parseObject(authInfoStr);
+
     }
 }

@@ -746,28 +746,23 @@ public class WeChatUtil {
         log.info(String.format(
                 "---------------%s完成，总耗时:%f秒----------------",info,duration));
     }
-    public static final String access_token = "access_token_";
 
-//    /**
-//     * 根据wechatAccount获取 appid、secret
-//     * @param wechatAccount 原始公众号ID
-//     * @return
-//     */
-//    public static Map<String, Object> getAppIdAndSecret(String wechatAccount,String appid,String secret){
-//
-//        Map<String, Object> redisMap = RedisFactory.get(wechatAccount,Map.class);
-//        Map<String,Object> wechatAndSecretMap = new HashMap<>();
-//        if(redisMap != null && redisMap.size() > 1){
-//            wechatAndSecretMap.put(WeChatContants.APPID,redisMap.get(WeChatContants.APPID));
-//            wechatAndSecretMap.put(WeChatContants.SECRET,redisMap.get(WeChatContants.SECRET));
-//            return wechatAndSecretMap;
-//        }else{
-//            System.out.println(" appid "+appid);
-//            System.out.println(" secret "+secret);
-//            wechatAndSecretMap.put(WeChatContants.APPID,appid);
-//            wechatAndSecretMap.put(WeChatContants.SECRET,secret);
-//            RedisFactory.set(wechatAccount,Map.class,3600 * 2000);
-//        }
-//        return wechatAndSecretMap;
-//    }
+    /**
+     * 使用授权码换取公众号或小程序的接口调用凭据和授权信息
+     * @author:     Logan
+     * @date:       2018/11/23 10:16
+     * @params:     []   
+     * @return:     授权信息JSONStr
+    **/        
+    public static String getAuthoInfo(String authCode){
+       String thirdPartyAccessToken ="";//todo:调用接口获取第三方平台的acecssToken;
+       String postBodyStr = String.format("{\"%s\":\"%s\",\"%s:\"%s}",
+                WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
+                WeChatConstant.API_JSON_KEY_AUTH_CODE,authCode);
+       JSONObject postJSON = JSONObject.parseObject(postBodyStr);
+       return HttpUtil.doPost(WeChatConstant.getAPIAddressAuthInfo(thirdPartyAccessToken),
+                              postJSON);
+
+    }
+
 }
