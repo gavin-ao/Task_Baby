@@ -19,13 +19,21 @@ public class WeChatConstant {
     public static final String TOKEN = "xkb";
     public static final String EncodingAESKey = "CJpofN6kdTJmCwXksXL3NYV4Oi2yw69CEwUPNjnU4De";
 
-    //第三方平台appid、EncodingAESKey
+    //第三方平台
+    //第三方平台AppID
     public static final String THIRD_PARTY_APPID = "wxe67b87e6f254b78d";
     //第三方平台消息加解密Key
     public static final String THIRD_PARTY_ENCODINGAESKEY = "123456789xinkebao123456789xinkebao123456789";
     //第三方平台消息校验Token
     public static final String THIRD_PARTY_TOKEN = "xkbXKB123";
-    public static final String THIRD_PARTY_SECRET = "a735ffc4ee824360243ec8cfb52c909d";
+    //第三方平台AppSecret
+    public static final String THIRD_PARTY_SECRET = "b10c69ded74b945b7d1cb6c6a03501d1";
+    //第三方平台接口调用凭据
+    public static final String THIRD_PARTY_TICKET = "third_party_ticket";
+    //第三方平台component_access_token
+    public static final String THIRD_PARTY_ACCESS_TOKEN = "third_party_access_token";
+    //第三方平台 pre_auth_code
+    public static final String THIRD_PARTY_PRE_AUTH_CODE = "pre_auth_code";
 
 
     public static final String RESP_MESSAGE_TYPE_TEXT = "text";
@@ -91,7 +99,7 @@ public class WeChatConstant {
      * @params:     [thirdPartyAccessToken] 第三放平台的accessToken
      * @return:     授权信息api地址
     **/
-    public static String getAPIAddressAuthInfo(String thirdPartyAccessToken){
+    public static String getAPIAddressAuthInfoURL(String thirdPartyAccessToken){
       String API_ADDRESS_AUTH_INFO=
                 "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=%s";
         return String.format(API_ADDRESS_AUTH_INFO,thirdPartyAccessToken);
@@ -112,13 +120,6 @@ public class WeChatConstant {
 
 
     //REDIS KEY
-   public static String getReAuthCodeCacheKey(String appid){
-       //预授权码 key
-       String CACHE_KEY_PRE_AUTH_CODE="ACCESS_TOKEN_%s";//%s:微信公众号appid；
-
-       return String.format(CACHE_KEY_PRE_AUTH_CODE,appid);
-    }
-
     public static String getAuthCodeCacheKey(String  appid){
         //授权码 Key
         String CACHE_KEY_AUTH_CODE="AUTH_CODE_%s";//%s:微信公众号appid;
@@ -129,18 +130,28 @@ public class WeChatConstant {
         String CACHE_KEY_ACCESS_TOKEN="ACCESS_TOKEN_%s";//%s:微信公众号appid；
        return String.format(CACHE_KEY_ACCESS_TOKEN,appid);
     }
-   public static String getRefreshAccessTokenCacheKey(String appid){
+   public static String getRefreshTokenCacheKey(String appid){
        //微信公众号访问刷新凭证 key
         String CACHE_KEY_REFRESH_ACCESS_TOKEN="REFRESH_ACCESS_TOKEN_%s";//%s:微信公众号appid；
         return String.format(CACHE_KEY_REFRESH_ACCESS_TOKEN,appid);
    }
+    public static String getRefreshTokenURL(String thirdPartyAccessToken){
+        String API_REFRESH_TOKEN_URL=
+                "https:// api.weixin.qq.com /cgi-bin/component/api_authorizer_token?component_access_token=%s";
+        return String.format(API_REFRESH_TOKEN_URL,thirdPartyAccessToken);
+    }
+
     //REDIS VALUE
     //授权码过期时间
     public static int CACHE_VALUE_EXPIRE_AUTH_CODE= 60*10-60;//比微信平台少预留60s
     //access_token 过期时间
-    public static int CATCH_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    public static int CACHE_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
     //refresh_access_token 过期时间
-    public static int CATCH_VALUE_EXPIRE_REFRESH_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    public static int CACHE_VALUE_EXPIRE_REFRESH_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
+    //pre_auth_code 过期时间
+    public static int CATCE_VALUE_EXPIRE_PRE_AUTH_CODE = 550 ;//比微信平台10分钟少预留60s
+    //第三方 component_access_token
+    public static int CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN = 7000 ; //比微信平台2小时少200s
 
 
 }
