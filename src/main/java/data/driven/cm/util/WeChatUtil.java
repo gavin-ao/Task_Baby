@@ -791,4 +791,11 @@ public class WeChatUtil {
         String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
         return newTokenResult;
     }
+    public static String getAuthorizeWebsite(String preAuthCode){
+        String apiURL="https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s";
+        String callBackURL = "http://easy7share.com/authcallback";
+        String url = String.format(apiURL,THIRD_PARTY_APPID,preAuthCode,callBackURL);
+        log.info(String.format("--------------授权url%s",url));
+        return url;
+    }
 }

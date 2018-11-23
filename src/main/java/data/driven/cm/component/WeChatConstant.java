@@ -123,6 +123,7 @@ public class WeChatConstant {
         String CACHE_KEY_REFRESH_TOKEN="REFRESH_TOKEN_%s";//%s:微信公众号appid；
         return String.format(CACHE_KEY_REFRESH_TOKEN,appid);
    }
+
     //REDIS VALUE
     //授权码过期时间
     public static int CACHE_VALUE_EXPIRE_AUTH_CODE= 60*10-60;//比微信平台少预留60s
