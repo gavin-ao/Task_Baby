@@ -70,7 +70,7 @@ public class WeChatConstant {
 
     //微信接口api地址
     /**
-     * 使用授权码换取公众号或小程序的接口调用凭据和授权信息
+     * 使用授权码换取公众号或小程序的接口调用凭据和授权信息的接口地址
      * @author:     Logan
      * @date:       2018/11/23 10:32
      * @params:     [thirdPartyAccessToken] 第三放平台的accessToken
