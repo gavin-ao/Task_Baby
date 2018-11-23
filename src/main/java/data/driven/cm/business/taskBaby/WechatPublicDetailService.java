@@ -6,7 +6,7 @@ package data.driven.cm.business.taskBaby;
  * @Date: 2018/11/22 17:39
  * @Version 1.0
  */
-public interface WchatPublicDetailService {
+public interface WechatPublicDetailService {
 
     /**
      * 增加公众号详细信息

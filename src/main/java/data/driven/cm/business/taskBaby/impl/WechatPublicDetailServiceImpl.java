@@ -1,6 +1,6 @@
 package data.driven.cm.business.taskBaby.impl;
 
-import data.driven.cm.business.taskBaby.WchatPublicDetailService;
+import data.driven.cm.business.taskBaby.WechatPublicDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Date;
  * @Version 1.0
  */
 @Service
-public class WechatPublicDetailServiceImpl implements WchatPublicDetailService{
+public class WechatPublicDetailServiceImpl implements WechatPublicDetailService {
 
     @Autowired
     JDBCBaseDao jdbcBaseDao;
