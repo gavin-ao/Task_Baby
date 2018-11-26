@@ -313,20 +313,35 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             String xml = pc.decryptMsg(msg_signature, timestamp, nonce, fromXML);
             logger.info("第三方平台解析后的xml: " + xml);
             requestMap = WeChatUtil.parseXml(xml);
-            //得到tickon
-//            for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-//                System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-//            }
-            String componentVerifyiTcket = requestMap.get("ComponentVerifyTicket");
-            WeChatUtil.setComponentVerifyTicket(componentVerifyiTcket); //保存ticket到redis
-            componentVerifyiTcket = WeChatUtil.getComponentVerifyTicket();
-            //获取 第三方平台 Ticket 并且需保存到redis中
-            String componentAccessToken = WeChatUtil.getComponentAccessToken();
-            //获取预授权码pre_auth_code
-            String preAuthCode = WeChatUtil.getPreAuthCode();
-            logger.info("-----------------component_verify_ticket : " + componentVerifyiTcket + "----------------------");
-            logger.info("-----------------component_access_token : " + componentAccessToken + "----------------------");
-            logger.info("-----------------pre_auth_code : " + preAuthCode + "----------------------");
+            String InfoType = requestMap.get("InfoType");
+            switch (InfoType){
+                //授权成功
+                case "authorized":
+                    wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),1);
+                    break;
+                //取消授权
+                case "unauthorized":
+                    wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),0);
+                    break;
+                //更新授权
+                case "updateauthorized":
+                    wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),2);
+                    break;
+                //得到tickon
+                default:
+                    //得到tickon
+                    String componentVerifyiTcket = requestMap.get("ComponentVerifyTicket");
+                    //保存ticket到redis
+                    WeChatUtil.setComponentVerifyTicket(componentVerifyiTcket);
+                    componentVerifyiTcket = WeChatUtil.getComponentVerifyTicket();
+                    //获取 第三方平台 Ticket 并且需保存到redis中
+                    String componentAccessToken = WeChatUtil.getComponentAccessToken();
+                    //获取预授权码pre_auth_code
+                    String preAuthCode = WeChatUtil.getPreAuthCode();
+                    logger.info("-----------------component_verify_ticket : " + componentVerifyiTcket + "----------------------");
+                    logger.info("-----------------component_access_token : " + componentAccessToken + "----------------------");
+                    logger.info("-----------------pre_auth_code : " + preAuthCode + "----------------------");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
