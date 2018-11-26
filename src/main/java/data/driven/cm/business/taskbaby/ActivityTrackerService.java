@@ -5,12 +5,21 @@ import data.driven.cm.entity.taskbaby.ActHelpEntity;
 
 import java.util.Map;
 
+/**
+ * @author  lxl
+ */
 public interface ActivityTrackerService {
     String KEY_HELP_REQUIRE="require";
     String KEY_HELP_HELP="help";
     String KEY_HELP_REMAIN ="remain";
-    String KEY_HELP_FANS_OPENID = "fansOpenId";//被助力者的OpenId
-    String KEY_HELP_HELP_OPENID = "helpOpenId";//助力者的openId
+    /**
+     * 被助力者的OpenId
+     */
+    String KEY_HELP_FANS_OPENID = "fansOpenId";
+    /**
+     * 助力者的openId
+     */
+    String KEY_HELP_HELP_OPENID = "helpOpenId";
     String KEY_HELP_HELP_ID="helpId";
 
     public Map<String,Integer> getHelpCount(String helpId,String activityId);

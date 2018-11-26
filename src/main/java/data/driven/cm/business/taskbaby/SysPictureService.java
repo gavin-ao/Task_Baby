@@ -2,6 +2,10 @@ package data.driven.cm.business.taskbaby;
 
 import java.util.Map;
 
+/**
+ * @author lxl
+ * 图片信息Service
+ */
 public interface SysPictureService {
 
     /**

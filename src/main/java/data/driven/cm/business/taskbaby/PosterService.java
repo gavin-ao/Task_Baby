@@ -3,6 +3,7 @@ package data.driven.cm.business.taskbaby;
 import java.util.Map;
 
 /**
+ * @author  Logan
  * 海报处理服务
  */
 public interface PosterService {

@@ -6,12 +6,13 @@ import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
 import java.util.Map;
 
 /**
+ * @author  lxl
  * Activyty数据服务
  */
 public interface ActivityService {
        String KEY_ACT_ID = "actId";
        String KEY_PIC_ID = "pictureId";
-       String KEY_shareCoypwritting = "shareCopywriting";
+       String KEY_SHARECOYPWRITTING = "shareCopywriting";
     /**
      *
      * @param wechatAccount 微信账号
