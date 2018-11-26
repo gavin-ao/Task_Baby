@@ -39,12 +39,16 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private ActivityService activityService;
     @Autowired
     private SysPictureService sysPictureService;
-    //微信用户Service
+    /**
+     * 微信用户Service
+     */
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
     @Autowired
     private ActivityHelpService activityHelpService;
-    //活动助力详细表
+    /**
+     * 活动助力详细表
+     */
     @Autowired
     private ActHelpDetailService actHelpDetailService;
 
@@ -57,11 +61,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private ActivityPrizeMappingService prizeMappingService;
     @Autowired
     private ThirdPartyService thirdPartyService;
-    //助力刚好成功
+    /**
+     * 助力刚好成功
+     */
     private static final String ACTIVITY_HELP_PROCESS_SUCCESS = "success";
-    //还需要继续助力
+    /**
+     * 还需要继续助力
+     */
     private static final String ACTIVITY_HELP_PROCESS_INPROCESS = "inProcess";
-    //助力超过要求
+    /**
+     * 助力超过要求
+     */
     private static final String ACTIVITY_HELP_PROCESS_EXCEEDS = "exceeds";
 
     @Override
@@ -183,7 +193,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 logger.info("---------------老用户------------");
                 actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, actId, fromUserName);
                 MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
-                wechatEventMap.put(ActivityService.KEY_shareCoypwritting,
+                wechatEventMap.put(ActivityService.KEY_SHARECOYPWRITTING,
                         matActivityEntity.getActShareCopywriting());
                 //需要调用生成海报接口
                 wechatEventMap.put(ActivityService.KEY_ACT_ID,actId);
@@ -191,8 +201,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 activityReply(wechatEventMap,accessToken);
                 String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
             }
-
-        } else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) { //搜索直接关注
+            //搜索直接关注
+        } else if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) {
             //新增用户信息
             insertWechatUserInfo(wechatEventMap,appid);
             wechatEventMap.put(WeChatConstant.Content, "谢谢您的关注！");
@@ -316,7 +326,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Map<String, String> replyMap = new HashMap<String, String>();
 
         replyMap.put(KEY_CSMSG_TOUSER, openId);
-        Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_shareCoypwritting);
+        Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_SHARECOYPWRITTING);
         //发送活动介绍
         if (shareCoppywritting != null) {
             logger.info("--------发送活动介绍-----------");
@@ -400,7 +410,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Map<String, String> replyMap = new HashMap<String, String>();
         logger.info("发送文本中。。。");
         replyMap.put(KEY_CSMSG_TOUSER, openId);
-        Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_shareCoypwritting);
+        Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_SHARECOYPWRITTING);
         //发送活动介绍
         if (shareCoppywritting != null) {
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
