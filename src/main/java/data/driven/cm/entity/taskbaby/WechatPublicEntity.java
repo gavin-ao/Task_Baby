@@ -1,4 +1,4 @@
-package data.driven.cm.entity.taskBaby;
+package data.driven.cm.entity.taskbaby;
 
 import java.util.Date;
 
@@ -29,6 +29,19 @@ public class WechatPublicEntity {
      * 创建时间
      */
     private Date createAt;
+
+    /**
+     * 授权状态, 0 未授权 1 已授权 2 更新授权
+     */
+    private  Integer authorization_status;
+
+    public Integer getAuthorization_status() {
+        return authorization_status;
+    }
+
+    public void setAuthorization_status(Integer authorization_status) {
+        this.authorization_status = authorization_status;
+    }
 
     public String getWechatPublicId() {
         return wechatPublicId;
