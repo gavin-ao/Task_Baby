@@ -1,10 +1,9 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
-import data.driven.cm.business.taskBaby.ActivityService;
+import data.driven.cm.business.taskbaby.ActivityService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
-import data.driven.cm.entity.verification.WechatStoreVerificationAuthorizationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +60,7 @@ public class ActivityServiceImpl implements ActivityService {
      * @author:     Logan
      * @date:       2018/11/19 10:53
      * @params:     [actId]
-     * @return:     data.driven.cm.entity.taskBaby.MatActivityStatusEntity
+     * @return:     data.driven.cm.entity.taskbaby.MatActivityStatusEntity
     **/
     @Override
     public MatActivityStatusEntity getMacActivityStatusByActId(String actId) {

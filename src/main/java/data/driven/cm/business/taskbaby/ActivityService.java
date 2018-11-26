@@ -1,4 +1,4 @@
-package data.driven.cm.business.taskBaby;
+package data.driven.cm.business.taskbaby;
 
 import data.driven.cm.entity.taskBaby.MatActivityEntity;
 import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
@@ -52,7 +52,7 @@ public interface ActivityService {
      * @author:     Logan
      * @date:       2018/11/19 10:52
      * @params:     [actId]
-     * @return:     data.driven.cm.entity.taskBaby.MatActivityStatusEntity
+     * @return:     data.driven.cm.entity.taskbaby.MatActivityStatusEntity
     **/
     public MatActivityStatusEntity getMacActivityStatusByActId(String actId);
 

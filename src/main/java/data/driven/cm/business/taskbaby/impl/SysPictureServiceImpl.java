@@ -1,6 +1,6 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
-import data.driven.cm.business.taskBaby.SysPictureService;
+import data.driven.cm.business.taskbaby.SysPictureService;
 import data.driven.cm.dao.JDBCBaseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

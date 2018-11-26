@@ -1,13 +1,10 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
-import data.driven.cm.business.taskBaby.PosterService;
+import data.driven.cm.business.taskbaby.PosterService;
 import data.driven.cm.component.TaskBabyConstant;
-import data.driven.cm.entity.taskBaby.WechatPublicEntity;
 import data.driven.cm.util.UUIDUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +17,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.Buffer;
 import java.util.Map;
 
 import static data.driven.cm.component.WeChatConstant.KEY_HEADIMG_URL;

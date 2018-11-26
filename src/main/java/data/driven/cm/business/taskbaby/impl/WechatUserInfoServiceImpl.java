@@ -1,6 +1,6 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
-import data.driven.cm.business.taskBaby.WechatUserInfoService;
+import data.driven.cm.business.taskbaby.WechatUserInfoService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
 import data.driven.cm.util.UUIDUtil;

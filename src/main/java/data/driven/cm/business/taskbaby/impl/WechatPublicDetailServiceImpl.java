@@ -1,6 +1,6 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
-import data.driven.cm.business.taskBaby.WechatPublicDetailService;
+import data.driven.cm.business.taskbaby.WechatPublicDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
 import org.slf4j.Logger;

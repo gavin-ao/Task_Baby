@@ -1,10 +1,10 @@
-package data.driven.cm.business.taskBaby.impl;
+package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.aes.WXBizMsgCrypt;
-import data.driven.cm.business.taskBaby.WeChatService;
-import data.driven.cm.business.taskBaby.WechatPublicService;
-import data.driven.cm.business.taskBaby.WechatResponseService;
-import data.driven.cm.business.taskBaby.WechatUserInfoService;
+import data.driven.cm.business.taskbaby.WeChatService;
+import data.driven.cm.business.taskbaby.WechatPublicService;
+import data.driven.cm.business.taskbaby.WechatResponseService;
+import data.driven.cm.business.taskbaby.WechatUserInfoService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.WechatPublicEntity;
