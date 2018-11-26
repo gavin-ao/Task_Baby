@@ -17,17 +17,19 @@ public class TaskBabyThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(TaskBabyThread.class);
     private WechatResponseService wechatResponseService;
     private Map<String,String> map;
+    private String appid;
 
 
-    public TaskBabyThread(WechatResponseService wechatResponseService,Map<String,String> map){
+    public TaskBabyThread(WechatResponseService wechatResponseService,Map<String,String> map,String appid){
         super();
         this.wechatResponseService = wechatResponseService;
         this.map = map;
+        this.appid = appid;
     }
 
     public void run(){
         logger.info("-----------------线程调用--------------------");
-        wechatResponseService.notify(map);
+        wechatResponseService.notify(map,appid);
         logger.info("-----------------线程调用完成--------------------");
     }
 
