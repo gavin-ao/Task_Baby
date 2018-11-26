@@ -30,6 +30,8 @@ public class ThirdPartyController {
 
     @Autowired
     ThirdPartyService thirdPartyService;
+    @Autowired
+    WeChatService weChatService;
 
     /**
      * 微信第三方授权事件的接收
@@ -77,11 +79,13 @@ public class ThirdPartyController {
      * @params:     [authCode, expriesIn]
      * @return:     void
     **/
-    public void authorizeCallback(@RequestParam(value="auth_code") String authCode,
+    @ResponseBody
+    public String authorizeCallback(@RequestParam(value="auth_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
         logger.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
 
         thirdPartyService.saveCallbackAuthInfo(authCode);
+        return "success";
 
     }
 }

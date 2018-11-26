@@ -81,6 +81,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         WechatPublicEntity wechatPublicEntity =
                 wechatPublicService.getEntityByAuthorizationAppid(authAppId);
         if (wechatPublicEntity == null) {
+            logger.info(String.format("----------当前appId:%s下的publicEntity无记录------------",authAppId));
             StringBuilder funcCategoryIds = new StringBuilder();
             if (funcCategory != null) {
                 for (int i = 0; i < funcCategory.size(); i++) {
@@ -144,7 +145,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     **/
     private void saveWechatAccountDetail(String authAppId){
         String detailStr = WeChatUtil.accessAuthAccountDetailAPI(authAppId);
-        JSONObject rootObj = JSONObject.parseObject(detailStr).getJSONObject("");
+        logger.info(String.format("-----------wechatDetailStr:%s----------",detailStr));
+        JSONObject rootObj = JSONObject.parseObject(detailStr);
         if(rootObj != null){
             JSONObject detailObject = rootObj.getJSONObject(WeChatConstant.API_JSON_KEY_AUTHORIZER_INFO);
            String nickName =
@@ -175,6 +177,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
            }
            String alias = detailObject.getString(WeChatConstant.API_JSON_KEY_ALIAS);
            String qrCode = detailObject.getString(WeChatConstant.API_JSON_KEY_QRCODE_URL);
+           logger.info(String.format("---------------qrCode:%s",qrCode));
            JSONObject authorizationInfo =
                    rootObj.getJSONObject(WeChatConstant.API_JSON_KEY_AUTH_INFO);
            StringBuilder funcInfo = new StringBuilder();
@@ -182,8 +185,11 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     authorizationInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNC_INFO);
            if(funcInfoArr != null){
                for(int i = 0; i< funcInfoArr.size();i++){
+                   logger.info(String.format("---------------funcInfo:%s",funcInfoArr.getJSONObject(i).toJSONString()));
                    funcInfo.append(
-                           funcInfoArr.getJSONObject(i).getString(WeChatConstant.API_JSON_KEY_FUNC_ID)).
+                           funcInfoArr.getJSONObject(i).getJSONObject(
+                                   WeChatConstant.API_JSON_KEY_FUNCSCOPE_CATEGORY).
+                                      getString(WeChatConstant.API_JSON_KEY_FUNC_ID)).
                            append(";");
                }
            }
@@ -195,14 +201,17 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                   wechatPublicDetailService.getWechatPublicDetailIdByAppId(authAppId);
 
             if(StringUtils.isEmpty(detailId)){
-
+              logger.info("----------新插入wechatpublicDetail--------------");
               wechatPublicDetailService.insertWechatPublicDetailEntity(publicId,nickName,
                       headImg,serviceTypeInfoId,verifyTypeInfoId,userName,principleName,
                       alias,bussinessInfoStr, qrCode,authAppId,funcInfoStr);
+              logger.info("-----------新插入成功-----------");
           }else{
-                wechatPublicDetailService.insertWechatPublicDetailEntity(
+                logger.info("----------存在wechatpublicDetail，更新--------------");
+                wechatPublicDetailService.updateWechatPublicDetail(
                         publicId,nickName,headImg,serviceTypeInfoId,verifyTypeInfoId,
                         userName,principleName,alias,bussinessInfoStr,qrCode,authAppId,funcInfoStr);
+                logger.info("-----------更新成功--------------");
           }
         }
     }

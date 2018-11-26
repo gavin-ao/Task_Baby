@@ -900,6 +900,6 @@ public class WeChatUtil {
                 WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
                 WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId);
         JSONObject postObj = JSONObject.parseObject(postStr);
-        return HttpUtil.doPost(url,postObj);
+        return HttpUtil.doPost(url,postStr);
     }
 }
