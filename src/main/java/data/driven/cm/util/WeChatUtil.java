@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,8 +19,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskBaby.ArticleItem;
@@ -49,13 +46,13 @@ public class WeChatUtil {
     private static final Logger log = LoggerFactory.getLogger(WeChatUtil.class);
 
     /**微信用户**/
-    private static final String user_url = "https://api.weixin.qq.com/cgi-bin/user/info";
+    private static final String USER_URL = "https://api.weixin.qq.com/cgi-bin/user/info";
     /**生成代参二维码**/
-    private static final String qrcode_url = "https://api.weixin.qq.com/cgi-bin/qrcode/create";
+    private static final String QRCODE_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create";
     /**获取二维码**/
-    private static final String showqr_url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
+    private static final String SHOWQR_URL = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     /** 客服接口-发消息 **/
-    private static final String custom_url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+    private static final String CUSTOM_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
 
 
     public static final String QR_TYPE_TEMPORARY ="1";//临时码
@@ -123,10 +120,10 @@ public class WeChatUtil {
      * @return
      */
     private static String byteToHexStr(byte mByte) {
-        char[] Digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        char[] digit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
         char[] tempArr = new char[2];
-        tempArr[0] = Digit[(mByte >>> 4) & 0X0F];
-        tempArr[1] = Digit[mByte & 0X0F];
+        tempArr[0] = digit[(mByte >>> 4) & 0X0F];
+        tempArr[1] = digit[mByte & 0X0F];
 
         String s = new String(tempArr);
         return s;
@@ -165,8 +162,9 @@ public class WeChatUtil {
             // 得到根元素的所有子节点
             List<Element> elementList = root.elements();
             // 遍历所有子节点
-            for (Element e : elementList)
+            for (Element e : elementList){
                 map.put(e.getName(), e.getText());
+            }
         } catch (DocumentException e) {
             e.printStackTrace();
         }
@@ -195,8 +193,9 @@ public class WeChatUtil {
         // 得到根元素的所有子节点
         List<Element> elementList = root.elements();
         // 遍历所有子节点
-        for (Element e : elementList)
+        for (Element e : elementList){
             map.put(e.getName(), e.getText());
+        }
 
         // 释放资源
         inputStream.close();
@@ -224,8 +223,9 @@ public class WeChatUtil {
         for (Iterator it = set.iterator(); it.hasNext();) {
             String key = (String) it.next();
             Object value = map.get(key);
-            if (null == value)
+            if (null == value){
                 value = "";
+            }
             if (value.getClass().getName().equals("java.util.ArrayList")) {
                 ArrayList list = (ArrayList) map.get(key);
                 sb.append("<" + key + ">");
@@ -263,7 +263,7 @@ public class WeChatUtil {
         map.put("ToUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
         map.put("FromUserName",  requestMap.get(WeChatConstant.Reply_FromUserName));
         map.put("MsgType", WeChatConstant.RESP_MESSAGE_TYPE_TEXT);
-        map.put("CreateTime", new Date().getTime());
+        map.put("CreateTime", System.currentTimeMillis());
         map.put("Content", requestMap.get(WeChatConstant.Content));
         return  mapToXML(map);
     }
@@ -294,22 +294,22 @@ public class WeChatUtil {
      */
     public static void sendCustomMsg(JSONObject testJson,String appId,String secret){
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String access_token = jsonObject.getString("access_token");
-        String url = custom_url+access_token;
+        String accessToken = jsonObject.getString("access_token");
+        String url = CUSTOM_URL+accessToken;
         HttpUtil.doPost(url, testJson.toJSONString());
     }
     /**
-     * 
+     *
      * @author:     Logan
-     * @date:       2018/11/16 03:48 
-     * @params:     [JsonStr, appId, secret]   
+     * @date:       2018/11/16 03:48
+     * @params:     [JsonStr, appId, secret]
      * @return:     void
-    **/        
-    public static void sendCustomMsgByJsonStr(String JsonStr, String access_token){
-        String url = custom_url+access_token;
+    **/
+    public static void sendCustomMsgByJsonStr(String jsonStr, String accessToken){
+        String url = CUSTOM_URL+accessToken;
         log.debug("——————————调用微信接口发送图片客服信息——————————");
         long begin =System.currentTimeMillis();
-        HttpUtil.doPost(url, JsonStr);
+        HttpUtil.doPost(url, jsonStr);
         WeChatUtil.log(log,begin,"调用微信接口发送图片客服信息");
     }
 /**
@@ -325,22 +325,22 @@ public class WeChatUtil {
  *
  * @return:     void
 **/
-    public static void sendCustomMsg(Map<String,String> requestMap,String access_token){
+    public static void sendCustomMsg(Map<String,String> requestMap,String accessToken){
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
         String msgType = requestMap.get(KEY_CSMSG_TYPE);
         if(StringUtils.isNotEmpty(touser) && StringUtils.isNotEmpty(msgType) &&
-                StringUtils.isNotEmpty(access_token)) {
+                StringUtils.isNotEmpty(accessToken)) {
             switch (msgType) {
                 case "text":
                     String msg = getCSJsonTxtMsg(requestMap);//得到客服消息的json字符串；
                     if(StringUtils.isNotEmpty(msg)) {
-                        sendCustomMsgByJsonStr(msg, access_token);
+                        sendCustomMsgByJsonStr(msg, accessToken);
                     }
                     break;
                 case "image":
-                    String imgMsg = getCSJsonImgMsg(requestMap,access_token);
+                    String imgMsg = getCSJsonImgMsg(requestMap,accessToken);
                     if(StringUtils.isNotEmpty(imgMsg)) {
-                        sendCustomMsgByJsonStr(imgMsg, access_token);
+                        sendCustomMsgByJsonStr(imgMsg, accessToken);
                     }
                     break;
                 default:
@@ -367,17 +367,17 @@ public class WeChatUtil {
           }
     }
 
-    private static String getCSJsonImgMsg(Map<String,String> requestMap,String access_token){
+    private static String getCSJsonImgMsg(Map<String,String> requestMap,String accessToken){
         String filePath = requestMap.get(KEY_FILE_PATH);
         String fileType =WeChatConstant.REQ_MESSAGE_TYPE_IMAGE;
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
-        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(access_token)) {
+        if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(accessToken)) {
             try {
                 log.debug("-----------开始上传临时素材--------------");
                 long begin=System.currentTimeMillis();
                 //先新增临时素材，返回media_id
                 Map<String, Object> uploadInfoMap = UploadMeida(
-                        fileType, filePath, access_token);
+                        fileType, filePath, accessToken);
                 WeChatUtil.log(log,begin,"上传临时素材");
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
@@ -410,7 +410,7 @@ public class WeChatUtil {
         Map<String,Object> mediaId = new HashMap<>();
         mediaId.put("MediaId",requestMap.get(WeChatConstant.MediaId));
         map.put("Image",mediaId);
-        map.put("CreateTime", new Date().getTime());
+        map.put("CreateTime", System.currentTimeMillis());
         return mapToXML(map);
     }
 
@@ -429,8 +429,8 @@ public class WeChatUtil {
         map.put(WeChatConstant.ToUserName, requestMap.get(WeChatConstant.Reply_ToUserName));
         map.put(WeChatConstant.FromUserName, requestMap.get(WeChatConstant.Reply_FromUserName));
         map.put(WeChatConstant.MsgType, "news");
-        map.put("CreateTime", new Date().getTime());
-        List<Map<String,Object>> Articles=new ArrayList<Map<String,Object>>();
+        map.put("CreateTime", System.currentTimeMillis());
+        List<Map<String,Object>> articles=new ArrayList<Map<String,Object>>();
         for(ArticleItem itembean : items){
             Map<String,Object> item=new HashMap<String, Object>();
             Map<String,Object> itemContent=new HashMap<String, Object>();
@@ -439,10 +439,10 @@ public class WeChatUtil {
             itemContent.put("PicUrl", itembean.getPicUrl());
             itemContent.put("Url", itembean.getUrl());
             item.put("item",itemContent);
-            Articles.add(item);
+            articles.add(item);
         }
-        map.put("Articles", Articles);
-        map.put("ArticleCount", Articles.size());
+        map.put("Articles", articles);
+        map.put("ArticleCount", articles.size());
         return mapToXML(map);
     }
 
@@ -456,11 +456,11 @@ public class WeChatUtil {
      */
     public static Map<String,String> getUserInfo(String fromUserName,String appId,String secret){
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String access_token = jsonObject.getString("access_token");
-        String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
+        String accessToken = jsonObject.getString("access_token");
+        String url = USER_URL+"?access_token="+accessToken+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
 
-        JSONObject result = parseObject(resultStr);
+//        JSONObject result = parseObject(resultStr);
         Map<String, String> map = JSONObject.parseObject(resultStr, new TypeReference<Map<String, String>>(){});
         return map;
     }
@@ -471,11 +471,11 @@ public class WeChatUtil {
      * @secret 开发者密码
      * @return 返回用户信息map格式
      */
-    public static Map<String,String> getUserInfo(String fromUserName,String access_token){
-        String url = user_url+"?access_token="+access_token+"&openid="+fromUserName+"&lang=zh_CN";
+    public static Map<String,String> getUserInfo(String fromUserName,String accessToken){
+        String url = USER_URL+"?access_token="+accessToken+"&openid="+fromUserName+"&lang=zh_CN";
         String resultStr = HttpUtil.doGetSSL(url);
 
-        JSONObject result = parseObject(resultStr);
+//        JSONObject result = parseObject(resultStr);
         Map<String, String> map = JSONObject.parseObject(resultStr, new TypeReference<Map<String, String>>(){});
         return map;
     }
@@ -492,8 +492,8 @@ public class WeChatUtil {
      */
     public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String appId,String secret) {
         JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String access_token = jsonObject.getString("access_token");
-        String url = qrcode_url+"?access_token="+access_token;
+        String accessToken = jsonObject.getString("access_token");
+        String url = QRCODE_URL+"?access_token="+accessToken;
 
         Map<String, Object> map = new HashMap<>();
         if ("1".equals(codeType)) { // 临时二维码
@@ -517,12 +517,9 @@ public class WeChatUtil {
         String resultStr = HttpUtil.doPost(url, data);
         JSONObject jsonticket = JSON.parseObject(resultStr);
         String ticket = jsonticket.getString("ticket");
-//                (String) jsonticket.get("ticket");
-//        System.out.println("ticket " +ticket);
-//         WXConstants.QRCODE_SAVE_URL: 填写存放图片的路径
-        String showqrUrl = showqr_url + URLEncoder.encode(ticket);
+        String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
         return showqrUrl;
-//        HttpUtil.httpsRequestPicture(showqr_url + URLEncoder.encode(ticket),
+//        HttpUtil.httpsRequestPicture(SHOWQR_URL + URLEncoder.encode(ticket),
 //                "GET", null, "F:\\testProject",fileName, "jpg");
     }
     /**
@@ -532,8 +529,8 @@ public class WeChatUtil {
      * @params:     [codeType, expireSeconds, actionName, sceneStr, access_token]
      * @return:     java.lang.String
     **/
-    public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String access_token) {
-        String url = qrcode_url+"?access_token="+access_token;
+    public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String accessToken) {
+        String url = QRCODE_URL+"?access_token="+accessToken;
 
         Map<String, Object> map = new HashMap<>();
         if ("1".equals(codeType)) { // 临时二维码
@@ -557,7 +554,7 @@ public class WeChatUtil {
         String resultStr = HttpUtil.doPost(url, data);
         JSONObject jsonticket = JSON.parseObject(resultStr);
         String ticket = jsonticket.getString("ticket");
-        String showqrUrl = showqr_url + URLEncoder.encode(ticket);
+        String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
         return showqrUrl;
     }
     /**
@@ -592,17 +589,16 @@ public class WeChatUtil {
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("Charset", "UTF-8");
         //设置边界
-        String BOUNDARY = "----------" + System.currentTimeMillis();
-        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        String bounDay = "----------" + System.currentTimeMillis();
+        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + bounDay);
         //请求正文信息
         //第一部分
         StringBuilder sb = new StringBuilder();
         sb.append("--");//必须多两条道
-        sb.append(BOUNDARY);
+        sb.append(bounDay);
         sb.append("\r\n");
         sb.append("Content-Disposition: form-data;name=\"media\"; filename=\"" + file.getName() + "\"\r\n");
         sb.append("Content-Type:application/octet-stream\r\n\r\n");
-//        System.out.println("sb:" + sb);
 
         //获得输出流
         OutputStream out = new DataOutputStream(conn.getOutputStream());
@@ -618,7 +614,7 @@ public class WeChatUtil {
         }
         din.close();
         //结尾部分
-        byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
+        byte[] foot = ("\r\n--" + bounDay + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
         out.write(foot);
         out.flush();
         out.close();
@@ -636,10 +632,8 @@ public class WeChatUtil {
                 }
                 if (result == null) {
                     result = strbuffer.toString();
-//                    System.out.println("result:" + result);
                 }
             } catch (IOException e) {
-//                System.out.println("发送POST请求出现异常！" + e);
                 e.printStackTrace();
             } finally {
                 if (reader != null) {
@@ -653,7 +647,7 @@ public class WeChatUtil {
         map = JSONObject.toJavaObject(resultJson,Map.class);
         return map;
     }
-    public static Map<String,Object> UploadMeida(String fileType,String filePath,String access_token) throws IOException {
+    public static Map<String,Object> UploadMeida(String fileType,String filePath,String accessToken) throws IOException {
         long begin = System.currentTimeMillis();
         //返回结果
         String result = null;
@@ -662,7 +656,7 @@ public class WeChatUtil {
             throw new IOException("文件不存在");
         }
 //        String token = WechatUtil.getToken();
-        String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + access_token + "&type=" + fileType;
+        String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + accessToken + "&type=" + fileType;
         URL url = new URL(urlString);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         log.debug("----------------openConnection End---------------");
@@ -674,13 +668,13 @@ public class WeChatUtil {
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("Charset", "UTF-8");
         //设置边界
-        String BOUNDARY = "----------" + System.currentTimeMillis();
-        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+        String bounDay = "----------" + System.currentTimeMillis();
+        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + bounDay);
         //请求正文信息
         //第一部分
         StringBuilder sb = new StringBuilder();
         sb.append("--");//必须多两条道
-        sb.append(BOUNDARY);
+        sb.append(bounDay);
         sb.append("\r\n");
         sb.append("Content-Disposition: form-data;name=\"media\"; filename=\"" + file.getName() + "\"\r\n");
         sb.append("Content-Type:application/octet-stream\r\n\r\n");
@@ -703,7 +697,7 @@ public class WeChatUtil {
         float duration = (System.currentTimeMillis()-begin)/1000f;
         log.debug("------------上传素材的写入文件结束，耗时：",duration,"————————————");
         //结尾部分
-        byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
+        byte[] foot = ("\r\n--" + bounDay + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
         out.write(foot);
         out.flush();
         out.close();
@@ -755,7 +749,7 @@ public class WeChatUtil {
      * @date:       2018/11/23 10:16
      * @params:     [authCode]
      * @return:     授权信息JSONStr
-    **/        
+    **/
     public static String getAuthoInfo(String authCode){
        String thirdPartyAccessToken =WeChatUtil.getComponentAccessToken();
        String postBodyStr = String.format("{\"%s\":\"%s\",\"%s\":\"%s\"}",
