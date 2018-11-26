@@ -1,9 +1,6 @@
 package data.driven.cm.business.taskBaby.impl;
 
-import data.driven.cm.business.taskBaby.ActivityService;
-import data.driven.cm.business.taskBaby.ActivityTrackerService;
-import data.driven.cm.business.taskBaby.WechatPublicService;
-import data.driven.cm.business.taskBaby.WechatUserInfoService;
+import data.driven.cm.business.taskBaby.*;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskBaby.ActHelpDetailEntity;
@@ -33,6 +30,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     private ActivityService activityService;
     @Autowired
     private WechatPublicService wechatPublicService;
+
     /**
      * 跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
      * @author:     Logan
@@ -65,7 +63,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
        return result;
     }
 
-
+    @Override
     public ActHelpDetailEntity getTrackDetail(String helpIdDetialId){
         String sql = "select act_help_detail_id,help_id,help_status,help_openid," +
                 "fans_status,act_id,create_at,help_openid " +
@@ -76,13 +74,15 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
 
     }
 
+    @Override
     public ActHelpEntity getTrack(String helpId){
         String sql = "select help_id,act_id,wechat_account,fans_id,help_at," +
                 "help_success_status,help_number from act_help where help_id=?";
         ActHelpEntity actHelpEntity = jdbcBaseDao.executeQuery(ActHelpEntity.class,sql,helpId);
         return actHelpEntity;
     }
-    public Map<String,Object> getTrackInfo(String helpDetailId, String activityId){
+    @Override
+    public Map<String,Object> getTrackInfo(String helpDetailId, String activityId,String access_token){
         ActHelpDetailEntity detailEntity = getTrackDetail(helpDetailId);
         if(detailEntity == null){
             return null;
@@ -102,10 +102,11 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             return null;
         }
 
-        String appId = wechatPublicEntity.getAppid();
-        String secretCode = wechatPublicEntity.getSecret();
+//        String appId = wechatPublicEntity.getAppid();
+//        String secretCode = wechatPublicEntity.getSecret();
         //获取粉丝个人信息存入到userPersonalInfoMap
-        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),appId,secretCode);
+//        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),appId,secretCode);
+        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),access_token);
         Map<String,Object> resultMap = new HashMap<String,Object>();
         resultMap.put(KEY_HELP_REQUIRE,helpCountMap.get(KEY_HELP_REQUIRE));
         resultMap.put(KEY_HELP_HELP,helpCountMap.get(KEY_HELP_HELP));
@@ -116,7 +117,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         resultMap.put(KEY_HELP_HELP_ID,helpEntity.getHelpId());
         return resultMap;
     }
-
+    @Override
     public void updateActHelpStatus(String helpId,int status){
         String sql = "update act_help set help_success_status=? where help_id=?";
         jdbcBaseDao.executeUpdate(sql,status,helpId);
