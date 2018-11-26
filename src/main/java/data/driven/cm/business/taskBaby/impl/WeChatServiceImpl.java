@@ -41,7 +41,16 @@ public class WeChatServiceImpl  implements WeChatService {
     @Autowired
     private WechatResponseService wechatResponseService;
 
-    public String processRequest(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+    /**
+     *  调用核心服务类接收处理请求
+     * @param request
+     * @param response
+     * @param appid
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    @Override
+    public String processRequest(HttpServletRequest request, HttpServletResponse response,String appid) throws UnsupportedEncodingException {
         // 将请求、响应的编码均设置为UTF-8（防止中文乱码）
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -64,30 +73,16 @@ public class WeChatServiceImpl  implements WeChatService {
                 String fromXML = String.format(format, requestMap.get("Encrypt"));
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce,fromXML);
                 requestMap=WeChatUtil.parseXml(respXml);
-//                if (deDuplication(requestMap)){ //排重
-//                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-//                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-//                    }
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap);
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap,appid);
                 Thread thread = new Thread(taskBabyThread);
                 thread.start();
-//                wechatResponseService.notify(requestMap);
                 return "";
-//                 wechatResponseService.notify(requestMap);
-//                }
             }else{ //处理明文
                 requestMap=WeChatUtil.parseRequest(request);
-//                if (deDuplication(requestMap)){
-//                    for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-//                        System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-//                    }
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap);
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService,requestMap,appid);
                 Thread thread = new Thread(taskBabyThread);
                 thread.start();
-//                wechatResponseService.notify(requestMap);
                 return "";
-//                wechatResponseService.notify(requestMap);
-//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
