@@ -23,7 +23,7 @@ import java.io.IOException;
 @Controller
 @RequestMapping(path = "/wechatapi")
 public class Task_BabyController {
-
+    Logger logger = LoggerFactory.getLogger(Task_BabyController.class);
     @Autowired
     private WeChatService weChatService;
     /**
@@ -50,8 +50,9 @@ public class Task_BabyController {
      * 处理微信服务器发来的post请求，进行签名的验证
      */
     @ResponseBody
-    @PostMapping(value = "/wechat")
-    public String processMsg(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @RequestMapping(value = "/wechat/{appid}/callback", method = {RequestMethod.GET, RequestMethod.POST})
+    public String processMsg(@PathVariable String appid, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("appid: "+appid);
         // 微信加密签名
         String signature = request.getParameter("signature");
         // 时间戳
