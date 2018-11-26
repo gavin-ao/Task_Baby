@@ -61,7 +61,7 @@ public class Task_BabyController {
         String nonce = request.getParameter("nonce");
         if (WeChatUtil.checkSignature(signature, timestamp, nonce)){
             // 调用核心服务类接收处理请求
-        return weChatService.processRequest(request,response);
+        return weChatService.processRequest(request,response,appid);
         }
         return "";
     }
