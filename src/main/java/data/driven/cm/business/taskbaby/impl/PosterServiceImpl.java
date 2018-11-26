@@ -90,11 +90,6 @@ public class PosterServiceImpl implements PosterService {
                 begin =System.currentTimeMillis();
                 g.setFont(font);
                 g.setColor(Color.BLACK);
-                // 截取用户名称的最后一个字符
-//                    String lastChar = userName.substring(userName.length() - 1);
-                // 拼接新的用户名称
-//                    String newUserName = userName.substring(0, 1) + "**" + lastChar + " 的邀请二维码";
-                // 添加用户名称
                 g.drawString(nickName, 60 + 100 + 30, 130);
                WeChatUtil.log(log,begin,"写入昵称");
                 // 完成模板修改
@@ -114,7 +109,8 @@ public class PosterServiceImpl implements PosterService {
             }
 
         }
-        return null;//TODO:暂时只返回二维码图片，后面要改成合成后的图片
+        //TODO:暂时只返回二维码图片，后面要改成合成后的图片
+        return null;
     }
 
     /***
@@ -128,7 +124,8 @@ public class PosterServiceImpl implements PosterService {
     private BufferedImage getBufferedImage(String imgAddress){
         log.info(String.format("-------根据图片地址加载图片，地址：%s",imgAddress));
         long beign = System.currentTimeMillis();
-        if(imgAddress.startsWith("http")){//imgAddres是url
+        //imgAddres是url
+        if(imgAddress.startsWith("http")){
             URL url = null;
             InputStream is= null;
             try {
@@ -182,7 +179,8 @@ public class PosterServiceImpl implements PosterService {
         InputStreamReader inReader = null;
         try {
             url = new URL(imgUrl);
-            String fileName = UUIDUtil.getUUID();//生成一个随机的文件名
+            //生成一个随机的文件名
+            String fileName = UUIDUtil.getUUID();
             //将download根路径和随机文件名拼接成一个完整的filePath,作为临时文件的路径
             StringBuilder pathStrBuilder = new StringBuilder();
             pathStrBuilder.append(downloadPath).append(File.separator).append(fileName);

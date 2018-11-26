@@ -46,6 +46,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return null;
     }
+    @Override
     public Integer getMacActivityType(String actId){
         String sql = "select act_type from mat_activity where act_id=?";
         Object result = dao.getColumn(sql,actId);
@@ -76,7 +77,8 @@ public class ActivityServiceImpl implements ActivityService {
 }
     @Override
     public String getMatActivityId(String wechatAccount, String keyWord, Integer status) {
-        int statusValue = 1;//默认活动开启
+        //默认活动开启
+        int statusValue = 1;
         if(status != null){
            statusValue = status;
         }
@@ -114,7 +116,8 @@ public class ActivityServiceImpl implements ActivityService {
      */
     @Override
     public Map<String, Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord, Integer status) {
-        int statusValue = 1;//默认活动开启
+        //默认活动开启
+        int statusValue = 1;
         if(status != null){
             statusValue = status;
         }

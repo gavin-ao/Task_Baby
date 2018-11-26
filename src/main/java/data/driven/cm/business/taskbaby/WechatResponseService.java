@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * 活动接口
- *
+ * @author lxl
  */
 public interface WechatResponseService {
 

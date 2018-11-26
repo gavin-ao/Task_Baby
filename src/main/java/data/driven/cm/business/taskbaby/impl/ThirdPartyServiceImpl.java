@@ -234,7 +234,8 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         String accessToken =
                 RedisFactory.get(
                         WeChatConstant.getAccessTokenCacheKey(authAppId));
-        if(StringUtils.isNotEmpty(accessToken)){//token没有过期
+        //token没有过期
+        if(StringUtils.isNotEmpty(accessToken)){
             return accessToken;
         }else{ //token过期了
             accessToken = refreshAccessToken(authAppId);

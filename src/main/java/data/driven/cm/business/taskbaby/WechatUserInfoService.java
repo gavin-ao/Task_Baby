@@ -3,12 +3,19 @@ package data.driven.cm.business.taskbaby;
 
 import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
 
+/**
+ * @author: lxl
+ * @program: Task_Baby
+ * @description: 从数据库里面获取微信粉丝的服务
+ * @create: 2018-11-15 11:49
+ **/
 public interface WechatUserInfoService {
 
     /**
      *  得到微信用户实体类
      * @param wechatAccount 公众号原始ID
      * @param openId 微信用户在公众号中唯一标示
+     * @author: lxl
      * @return WechatUserInfoEntity 实体类
      */
     public WechatUserInfoEntity getWechatUserInfoEntityByAcountOpenId(String wechatAccount, String openId);

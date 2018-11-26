@@ -75,6 +75,7 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
      * @params:     [wechatPublicId]
      * @return:     java.lang.String
     **/
+    @Override
    public String getWechatPublicDetailIdByAppId(String authorizationAppid){
         String sql ="select id from wechat_public_detail where authorization_appid=?";
         Object id = jdbcBaseDao.getColumn(sql,authorizationAppid);

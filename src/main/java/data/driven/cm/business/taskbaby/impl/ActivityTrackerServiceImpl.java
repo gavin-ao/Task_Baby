@@ -102,10 +102,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             return null;
         }
 
-//        String appId = wechatPublicEntity.getAppid();
-//        String secretCode = wechatPublicEntity.getSecret();
         //获取粉丝个人信息存入到userPersonalInfoMap
-//        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),appId,secretCode);
         Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),access_token);
         Map<String,Object> resultMap = new HashMap<String,Object>();
         resultMap.put(KEY_HELP_REQUIRE,helpCountMap.get(KEY_HELP_REQUIRE));

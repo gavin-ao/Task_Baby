@@ -39,12 +39,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private ActivityService activityService;
     @Autowired
     private SysPictureService sysPictureService;
+    //微信用户Service
     @Autowired
-    private WechatUserInfoService wechatUserInfoService; //微信用户Service
+    private WechatUserInfoService wechatUserInfoService;
     @Autowired
     private ActivityHelpService activityHelpService;
+    //活动助力详细表
     @Autowired
-    private ActHelpDetailService actHelpDetailService; //活动助力详细表
+    private ActHelpDetailService actHelpDetailService;
 
     @Autowired
     private ActivityTrackerService activityTrackerService;
@@ -55,10 +57,12 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private ActivityPrizeMappingService prizeMappingService;
     @Autowired
     private ThirdPartyService thirdPartyService;
-
-    private static final String ACTIVITY_HELP_PROCESS_SUCCESS = "success"; //助力刚好成功
-    private static final String ACTIVITY_HELP_PROCESS_INPROCESS = "inProcess";//还需要继续助力
-    private static final String ACTIVITY_HELP_PROCESS_EXCEEDS = "exceeds";//助力超过要求
+    //助力刚好成功
+    private static final String ACTIVITY_HELP_PROCESS_SUCCESS = "success";
+    //还需要继续助力
+    private static final String ACTIVITY_HELP_PROCESS_INPROCESS = "inProcess";
+    //助力超过要求
+    private static final String ACTIVITY_HELP_PROCESS_EXCEEDS = "exceeds";
 
     @Override
     public String notify(Map wechatEventMap,String appid) {
@@ -119,8 +123,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 StringUtils.isNotEmpty(msgContent) && StringUtils.isNotEmpty(fromUserName) &&
                 StringUtils.isNotEmpty(wechatAccount)) {
             String actId = matchKeyWord(msgContent, wechatAccount);
+            //判读活动是否有效
             if (actId != null &&
-                    checkActiveAvailable(actId)) {//判读活动是否有效
+                    checkActiveAvailable(actId)) {
                 insertWechatUserInfo(wechatEventMap,appid);
                 return keyWordReply(wechatEventMap,accessToken);
             } else {//发送活动已经结束的消息
@@ -139,17 +144,20 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //    2.通过带参数二维进行关注
         if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) &&
                 event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&
-                StringUtils.isNoneEmpty(eventKey)) { //二维码关注
+                //二维码关注
+                StringUtils.isNoneEmpty(eventKey)) {
             logger.info("----------------扫二维码进入------------------------");
             //新增用户信息
             insertWechatUserInfo(wechatEventMap,appid);
             logger.info("----------------插入新增用户信息------------------------");
             logger.info(String.format("------------EventKey%s-------------------",eventKey));
             //增加助力详细表
-            String eventKeyValue = wechatEventMap.get(WeChatConstant.EventKey); //得到传参的信息
+            //得到传参的信息
+            String eventKeyValue = wechatEventMap.get(WeChatConstant.EventKey);
             String helpOpenId = eventKeyValue.split("&&")[0];
             logger.info(String.format("----------助力的helpid:%s----------",helpOpenId));
-            helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_") + 1);//第一个下划线后面的就是openId
+            //第一个下划线后面的就是openId
+            helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_") + 1);
             String actId = eventKeyValue.split("&&")[1];
             if (!checkActiveAvailable(actId)) {
                 Map<String, String> msgReply = new HashMap<String, String>();
@@ -309,7 +317,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         replyMap.put(KEY_CSMSG_TOUSER, openId);
         Object shareCoppywritting = activitySimpleInfoMap.get(ActivityService.KEY_shareCoypwritting);
-        if (shareCoppywritting != null) {//发送活动介绍
+        //发送活动介绍
+        if (shareCoppywritting != null) {
             logger.info("--------发送活动介绍-----------");
             begin = System.currentTimeMillis();
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
@@ -329,7 +338,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //得到合成图片的filePath
         String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
         WeChatUtil.log(logger,begin,"3张图片合成");
-        if ( customizedPosterPath!= null) {//发送个性化海报
+        //发送个性化海报
+        if ( customizedPosterPath!= null) {
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             begin = System.currentTimeMillis();
@@ -391,7 +401,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         logger.info("发送文本中。。。");
         replyMap.put(KEY_CSMSG_TOUSER, openId);
         Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_shareCoypwritting);
-        if (shareCoppywritting != null) {//发送活动介绍
+        //发送活动介绍
+        if (shareCoppywritting != null) {
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
@@ -413,8 +424,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
         //得到合成图片的filePath
        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
-
-        if (customizedPosterPath != null) {//发送个性化海报
+        //发送个性化海报
+        if (customizedPosterPath != null) {
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
@@ -501,7 +512,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return
      */
     private boolean fansSubScribe(String wechatAccount, String fansOpenId) {
-        Map<String, String> userInfoMap = null;//TODO: 调用微信api获取用户基本信息的接口，返回给userInfoMap；
+        //TODO: 调用微信api获取用户基本信息的接口，返回给userInfoMap；
+        Map<String, String> userInfoMap = null;
 
         //TODO:根据userInfoMap 如果是新来的粉丝，调用数据库接口插入粉丝数据 如果是之前关注过的，就更新关注状态
         return true;
