@@ -12,10 +12,10 @@ public interface ActivityTrackerService {
     String KEY_HELP_FANS_OPENID = "fansOpenId";//被助力者的OpenId
     String KEY_HELP_HELP_OPENID = "helpOpenId";//助力者的openId
     String KEY_HELP_HELP_ID="helpId";
+
     public Map<String,Integer> getHelpCount(String helpId,String activityId);
 
-
-    public Map<String,Object> getTrackInfo(String helpDetailId,String activityId);
+    public Map<String,Object> getTrackInfo(String helpDetailId,String activityId,String access_token);
 
     public ActHelpEntity getTrack(String helpId);
 
