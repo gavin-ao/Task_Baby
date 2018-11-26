@@ -26,7 +26,7 @@ public class TaskBabyThread implements Runnable {
         this.map = map;
         this.appid = appid;
     }
-
+    @Override
     public void run(){
         logger.info("-----------------线程调用--------------------");
         wechatResponseService.notify(map,appid);
