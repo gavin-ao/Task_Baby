@@ -122,7 +122,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             if (actId != null &&
                     checkActiveAvailable(actId)) {//判读活动是否有效
                 insertWechatUserInfo(wechatEventMap,appid);
-                return keyWordReply(wechatEventMap);
+                return keyWordReply(wechatEventMap,accessToken);
             } else {//发送活动已经结束的消息
                 Map<String, String> msgReply = new HashMap<String, String>();
                 msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
@@ -180,7 +180,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 //需要调用生成海报接口
                 wechatEventMap.put(ActivityService.KEY_ACT_ID,actId);
                 wechatEventMap.put(ActivityService.KEY_PIC_ID,matActivityEntity.getPictureId());
-                activityReply(wechatEventMap);
+                activityReply(wechatEventMap,accessToken);
                 String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
             }
 
@@ -267,7 +267,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @params: [wechatEventMap]
      * @return: java.lang.String
      **/
-    private String keyWordReply(Map<String, String> wechatEventMap) {
+    private String keyWordReply(Map<String, String> wechatEventMap,String accessToken) {
         long start = System.currentTimeMillis();
         String openId = wechatEventMap.get(WeChatConstant.FromUserName);
         String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
@@ -277,8 +277,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
 
         //获取粉丝个人信息存入到userPersonalInfoMap
-        String access_token = getAccessToken(wechatAccount);
-        Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, access_token);
+//        String access_token = getAccessToken(wechatAccount);
+        Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, accessToken);
         long begin = System.currentTimeMillis();
         //获取带参数的二维码
         Map<String, Object> activitySimpleInfoMap =
@@ -314,13 +314,13 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             begin = System.currentTimeMillis();
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-            WeChatUtil.sendCustomMsg(replyMap, access_token);
+            WeChatUtil.sendCustomMsg(replyMap, accessToken);
             WeChatUtil.log(logger,start,"回复文字信息全部动作");
         }
         logger.info("--------发送图片中。。。。。。----------------");
         begin = System.currentTimeMillis();
         String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
-                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), access_token);
+                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), accessToken);
          long urlbegin = System.currentTimeMillis();
         WeChatUtil.log(logger,urlbegin,"获取带参数的二维码的url");
         //将二维码url put到userPersonalInfoMap中
@@ -333,7 +333,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
             begin = System.currentTimeMillis();
-            WeChatUtil.sendCustomMsg(replyMap, access_token);
+            WeChatUtil.sendCustomMsg(replyMap, accessToken);
             WeChatUtil.log(logger,begin,"发送图片全部动作");
         }
         logger.info("--------插入粉丝加入活动的数据---------------");
@@ -364,7 +364,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @params: [wechatEventMap]
      * @return: java.lang.String
      **/
-    private String activityReply(Map<String, String> wechatEventMap) {
+    private String activityReply(Map<String, String> wechatEventMap,String accessToken) {
         String openId = wechatEventMap.get(WeChatConstant.FromUserName);
         String wechatAccount = wechatEventMap.get(WeChatConstant.ToUserName);
         if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)) {
@@ -374,7 +374,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if (wechatPublicEntity == null) {
             return "";
         }
-        String accessToken = getAccessToken(wechatAccount);
+//        String accessToken = getAccessToken(wechatAccount);
         if (accessToken == null) {
             return "";
         }
