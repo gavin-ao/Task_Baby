@@ -68,6 +68,21 @@ public class WechatPublicServiceImpl implements WechatPublicService{
         return  wechatPublicId;
     }
 
+    /**
+     *  更新公众号授权状态
+     * @param authorizationAppid 公众号 appid
+     * @param authorizationStatus 授权状态 0 未授权 1 已授权 2 更新授权
+     * @return
+     */
+    @Override
+    public void updateWechatPublicEntity(String authorizationAppid, Integer authorizationStatus) {
+        WechatPublicEntity wechatPublicEntity = getEntityByAuthorizationAppid(authorizationAppid);
+        if (wechatPublicEntity != null){
+            String updateSql = "UPDATE wechat_public set authorization_status = ? where authorization_appid = ?";
+            jdbcBaseDao.executeUpdate(updateSql,authorizationStatus,authorizationAppid);
+        }
+    }
+
 
     /**
      * 通过 wechatAccount(原始Id)得到微信公众号实体类
