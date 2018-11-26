@@ -14,6 +14,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface WeChatService {
 
-    public String processRequest(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
+    /**
+     *  调用核心服务类接收处理请求
+     * @param request
+     * @param response
+     * @param appid
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public String processRequest(HttpServletRequest request, HttpServletResponse response,String appid) throws UnsupportedEncodingException;
 
 }
