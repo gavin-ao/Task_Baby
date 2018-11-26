@@ -1,6 +1,7 @@
 package data.driven.cm.controller.TaskBaby;
 
 import data.driven.cm.business.taskBaby.ThirdPartyService;
+import data.driven.cm.business.taskBaby.WeChatService;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.util.WeChatUtil;
 import org.slf4j.Logger;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -28,6 +31,8 @@ public class ThirdPartyController {
 
     @Autowired
     ThirdPartyService thirdPartyService;
+    @Autowired
+    WeChatService weChatService;
 
     /**
      * 微信第三方授权事件的接收
@@ -75,12 +80,33 @@ public class ThirdPartyController {
      * @params:     [authCode, expriesIn]
      * @return:     void
     **/
-    public void authorizeCallback(@RequestParam(value="auth_code") String authCode,
+    @ResponseBody
+    public String authorizeCallback(@RequestParam(value="auth_code") String authCode,
                                   @RequestParam(value="expires_in") String expriesIn){
         logger.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
 
         thirdPartyService.saveCallbackAuthInfo(authCode);
+        return "success";
 
+    }
+    /**
+     * 此处是处理微信服务器的消息转发的
+     * 处理微信服务器发来的post请求，进行签名的验证
+     */
+    @ResponseBody
+    @PostMapping(value = "/wechat")
+    public String processMsg(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 微信加密签名
+        String signature = request.getParameter("signature");
+        // 时间戳
+        String timestamp = request.getParameter("timestamp");
+        // 随机数
+        String nonce = request.getParameter("nonce");
+        if (WeChatUtil.checkSignature(signature, timestamp, nonce)){
+            // 调用核心服务类接收处理请求
+            return weChatService.processRequest(request,response);
+        }
+        return "";
     }
 
 }

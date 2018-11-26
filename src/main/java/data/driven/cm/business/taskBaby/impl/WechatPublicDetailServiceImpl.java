@@ -3,6 +3,8 @@ package data.driven.cm.business.taskBaby.impl;
 import data.driven.cm.business.taskBaby.WechatPublicDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,7 @@ import java.util.Date;
  */
 @Service
 public class WechatPublicDetailServiceImpl implements WechatPublicDetailService {
+    private static Logger log = LoggerFactory.getLogger(WechatPublicDetailServiceImpl.class);
 
     @Autowired
     JDBCBaseDao jdbcBaseDao;
@@ -46,9 +49,24 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
         String sql = "INSERT INTO wechat_public_detail (id,wechat_public_id,nick_name,head_img,service_type_info," +
                 "verify_type_info,user_name,principal_name,alias,business_info,qrcode_url,authorization_appid," +
                 "func_info,create_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+         log("webchatPublicId",wechatPublicId);
+         log("nickName",nickName);
+         log("headImg",headImg);
+         log("serviceTypeInfo",serviceTypeInfo);
+         log("verifyTypeInfo",verifyTypeInfo);
+         log("userName",userName);
+         log("principalName",principalName);
+         log("alias",alias);
+         log("businessInfo",businessInfo);
+         log("qrcodeUrl",qrcodeUrl);
+         log("authorizationAppid",authorizationAppid);
+         log("funcInfo",funcInfo);
         jdbcBaseDao.executeUpdate(sql,id,wechatPublicId,nickName,headImg,serviceTypeInfo,verifyTypeInfo,userName,
                 principalName,alias,businessInfo,qrcodeUrl,authorizationAppid,funcInfo,createAt);
         return id;
+    }
+    private void log(String name,String value){
+        log.info(String.format("--------------%s:%s",name,value));
     }
     /**
      * 根据AppId,查询detialId
