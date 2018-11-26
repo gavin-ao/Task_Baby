@@ -1,7 +1,6 @@
 package data.driven.cm.thread;
 
-import data.driven.cm.business.taskBaby.WechatResponseService;
-import data.driven.cm.business.taskBaby.impl.WechatResponseServiceImpl;
+import data.driven.cm.business.taskbaby.WechatResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
