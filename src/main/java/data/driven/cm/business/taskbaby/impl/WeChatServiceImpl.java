@@ -7,7 +7,7 @@ import data.driven.cm.business.taskbaby.WechatResponseService;
 import data.driven.cm.business.taskbaby.WechatUserInfoService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.entity.taskBaby.WechatPublicEntity;
+import data.driven.cm.entity.taskbaby.WechatPublicEntity;
 import data.driven.cm.thread.TaskBabyThread;
 import data.driven.cm.util.WeChatUtil;
 import org.springframework.beans.factory.annotation.Autowired;

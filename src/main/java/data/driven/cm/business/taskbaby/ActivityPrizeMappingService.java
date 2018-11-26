@@ -1,6 +1,6 @@
 package data.driven.cm.business.taskbaby;
 
-import data.driven.cm.entity.taskBaby.ActivityPrizeMappingEntity;
+import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
 
 /**
  * @Author: lxl

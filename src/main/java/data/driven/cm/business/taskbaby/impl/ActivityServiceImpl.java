@@ -2,8 +2,8 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.ActivityService;
 import data.driven.cm.dao.JDBCBaseDao;
-import data.driven.cm.entity.taskBaby.MatActivityEntity;
-import data.driven.cm.entity.taskBaby.MatActivityStatusEntity;
+import data.driven.cm.entity.taskbaby.MatActivityEntity;
+import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

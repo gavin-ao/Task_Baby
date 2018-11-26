@@ -1,7 +1,7 @@
 package data.driven.cm.business.taskbaby;
 
 
-import data.driven.cm.entity.taskBaby.WechatUserInfoEntity;
+import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
 
 public interface WechatUserInfoService {
 

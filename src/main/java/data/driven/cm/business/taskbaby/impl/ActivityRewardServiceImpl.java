@@ -2,7 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.ActivityRewardService;
 import data.driven.cm.dao.JDBCBaseDao;
-import data.driven.cm.entity.taskBaby.ActivityRewardEntity;
+import data.driven.cm.entity.taskbaby.ActivityRewardEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

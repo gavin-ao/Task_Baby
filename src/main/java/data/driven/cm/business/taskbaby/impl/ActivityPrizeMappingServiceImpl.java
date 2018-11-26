@@ -2,7 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.ActivityPrizeMappingService;
 import data.driven.cm.dao.JDBCBaseDao;
-import data.driven.cm.entity.taskBaby.ActivityPrizeMappingEntity;
+import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

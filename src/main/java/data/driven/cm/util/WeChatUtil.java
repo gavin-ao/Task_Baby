@@ -21,7 +21,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.entity.taskBaby.ArticleItem;
+import data.driven.cm.entity.taskbaby.ArticleItem;
 import data.driven.cm.entity.wechat.WechatCSImgMsgEntity;
 import data.driven.cm.entity.wechat.WechatCSTxtMsgEntity;
 import org.apache.commons.lang3.StringUtils;

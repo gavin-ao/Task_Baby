@@ -8,7 +8,7 @@ import data.driven.cm.business.taskbaby.WechatPublicDetailService;
 import data.driven.cm.business.taskbaby.WechatPublicService;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.entity.taskBaby.WechatPublicEntity;
+import data.driven.cm.entity.taskbaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
