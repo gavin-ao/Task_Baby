@@ -319,9 +319,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             String format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
             String fromXML = String.format(format, requestMap.get("Encrypt"));
             String xml = pc.decryptMsg(msg_signature, timestamp, nonce, fromXML);
-            logger.info("第三方平台解析后的xml: " + xml);
             requestMap = WeChatUtil.parseXml(xml);
             String InfoType = requestMap.get("InfoType");
+            logger.info("InfoType: "+InfoType);
             switch (InfoType){
                 //授权成功
                 case "authorized":
@@ -337,7 +337,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     break;
                 //得到tickon
                 default:
-                    //得到tickon
+                    //得到tickon,component_verify_ticket
                     String componentVerifyiTcket = requestMap.get("ComponentVerifyTicket");
                     //保存ticket到redis
                     WeChatUtil.setComponentVerifyTicket(componentVerifyiTcket);
