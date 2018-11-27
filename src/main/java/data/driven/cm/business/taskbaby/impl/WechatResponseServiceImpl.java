@@ -151,7 +151,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //     1.搜索公众号直接进行关注
         //    2.通过带参数二维进行关注
         if (StringUtils.isNoneEmpty(msgType) && "event".equals(msgType) &&
-                event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) &&
+                (event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) || event.equals(WeChatConstant.EVENT_TYPE_SCAN)) &&
                 //二维码关注
                 StringUtils.isNoneEmpty(eventKey)) {
             logger.info("----------------扫二维码进入------------------------");
@@ -188,7 +188,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
             } else {
                 //新用户
-                logger.info("---------------老用户------------");
+                logger.info("---------------新用户------------");
                 actHelpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, actId, fromUserName);
                 MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
                 wechatEventMap.put(ActivityService.KEY_SHARECOYPWRITTING,
