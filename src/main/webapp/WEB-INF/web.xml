@@ -52,18 +52,18 @@
     </filter-mapping>
 
     <!-- 微信请求过滤器 -->
-    <filter>
-        <filter-name>wechat-api-filter</filter-name>
-        <filter-class>data.driven.cm.component.WechatApiFilter</filter-class>
-    </filter>
+    <!--<filter>-->
+        <!--<filter-name>wechat-api-filter</filter-name>-->
+        <!--<filter-class>data.driven.cm.component.WechatApiFilter</filter-class>-->
+    <!--</filter>-->
 
-    <filter-mapping>
-        <filter-name>wechat-api-filter</filter-name>
-        <url-pattern>/wechatapi/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
+    <!--<filter-mapping>-->
+        <!--<filter-name>wechat-api-filter</filter-name>-->
+        <!--<url-pattern>/wechatapi/*</url-pattern>-->
+        <!--<dispatcher>REQUEST</dispatcher>-->
+        <!--<dispatcher>FORWARD</dispatcher>-->
+        <!--<dispatcher>INCLUDE</dispatcher>-->
+    <!--</filter-mapping>-->
 
     <!-- sitemesh配置 -->
     <filter>
@@ -91,7 +91,7 @@
         <url-pattern>*.vm</url-pattern>
     </servlet-mapping>
 
-    <welcome-file-list>
-        <welcome-file>/index.html</welcome-file>
-    </welcome-file-list>
+    <!--<welcome-file-list>-->
+        <!--<welcome-file>/index.html</welcome-file>-->
+    <!--</welcome-file-list>-->
 </web-app>
