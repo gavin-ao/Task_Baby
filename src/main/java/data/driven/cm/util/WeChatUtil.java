@@ -74,7 +74,7 @@ public class WeChatUtil {
      * @return
      */
     public static boolean checkSignature(String signature, String timestamp, String nonce) {
-        String[] arr = new String[] { WeChatConstant.TOKEN, timestamp, nonce };
+        String[] arr = new String[] { WeChatConstant.THIRD_PARTY_TOKEN, timestamp, nonce };
         // 将token、timestamp、nonce三个参数进行字典序排序
         // Arrays.sort(arr);
         sort(arr);
