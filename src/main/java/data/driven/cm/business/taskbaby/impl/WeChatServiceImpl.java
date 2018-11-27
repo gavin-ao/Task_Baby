@@ -36,17 +36,16 @@ public class WeChatServiceImpl implements WeChatService {
     private WechatResponseService wechatResponseService;
 
     /**
-     * 调用核心服务类接收处理请求
-     *
-     * @author lxl
-     * @param request
-     * @param response
-     * @param appid
-     * @return
+     *  调用核心服务类接收处理请求
+     * @Author: lxl
+     * @param request request内容
+     * @param response response内容
+     * @param appId 公众号appid
+     * @return 返回信息
      * @throws UnsupportedEncodingException
      */
     @Override
-    public String processRequest(HttpServletRequest request, HttpServletResponse response, String appid) throws UnsupportedEncodingException {
+    public String processRequest(HttpServletRequest request, HttpServletResponse response, String appId) throws UnsupportedEncodingException {
         // 将请求、响应的编码均设置为UTF-8（防止中文乱码）
         logger.info("进入processRequest");
         request.setCharacterEncoding("UTF-8");
@@ -71,7 +70,7 @@ public class WeChatServiceImpl implements WeChatService {
                 String fromXML = String.format(format, requestMap.get("Encrypt"));
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
                 requestMap = WeChatUtil.parseXml(respXml);
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appid);
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appId);
                 Thread thread = new Thread(taskBabyThread);
                 thread.start();
 
@@ -94,7 +93,7 @@ public class WeChatServiceImpl implements WeChatService {
             } else { //处理明文
                 logger.info("处理明文");
                 requestMap = WeChatUtil.parseRequest(request);
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appid);
+                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appId);
                 Thread thread = new Thread(taskBabyThread);
                 thread.start();
                 return "";

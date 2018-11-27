@@ -30,10 +30,19 @@ import static data.driven.cm.component.WeChatConstant.*;
 @Service
 public class WechatResponseServiceImpl implements WechatResponseService {
     private static final Logger logger = LoggerFactory.getLogger(WechatResponseServiceImpl.class);
+    /**
+     * 海报处理服务
+     */
     @Autowired
     private PosterService posterService;
+    /**
+     * Activyty数据服务
+     */
     @Autowired
     private ActivityService activityService;
+    /**
+     * 图片信息Service
+     */
     @Autowired
     private SysPictureService sysPictureService;
     /**
@@ -41,6 +50,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
+    /**
+     * 活动助力Service
+     */
     @Autowired
     private ActivityHelpService activityHelpService;
     /**
@@ -52,10 +64,19 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     @Autowired
     private ActivityTrackerService activityTrackerService;
 
+    /**
+     * 活动奖励表Service
+     */
     @Autowired
     private ActivityRewardService activityRewardService;
+    /**
+     * 活动奖品关联表Service
+     */
     @Autowired
     private ActivityPrizeMappingService prizeMappingService;
+    /**
+     * 第三方平台Service
+     */
     @Autowired
     private ThirdPartyService thirdPartyService;
     /**
@@ -71,9 +92,17 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private static final String ACTIVITY_HELP_PROCESS_EXCEEDS = "exceeds";
 
+    /**
+     * 微信通知，将微信发送的xml转成map传进来
+     *
+     * @param wechatEventMap
+     * @param appId          公众号appid
+     * @return 返回微信发送的消息
+     * @author lxl
+     */
     @Override
-    public String notify(Map wechatEventMap, String appid) {
-        return dispatherAndReturn(wechatEventMap, appid);
+    public String notify(Map wechatEventMap, String appId) {
+        return dispatherAndReturn(wechatEventMap, appId);
     }
 
     /**
@@ -139,7 +168,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
                 getQrCode(event) && StringUtils.isNoneEmpty(eventKey)) {
             return subscribeScanKeyCustomMsg(wechatEventMap, appid, fromUserName, accessToken, eventKey);
-        //搜索直接关注
+            //搜索直接关注
         } else if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) {
             //新增用户信息
             insertWechatUserInfo(wechatEventMap, appid);
@@ -156,20 +185,21 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     /**
      * 判断事件类型
-     * @author lxl
+     *
      * @param event 事件类型 subscribe 或 scan
      * @return true 或 false
+     * @author lxl
      */
-    private boolean getQrCode(String event){
-        if (event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) || event.equals(WeChatConstant.EVENT_TYPE_SCAN)){
+    private boolean getQrCode(String event) {
+        if (event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) || event.equals(WeChatConstant.EVENT_TYPE_SCAN)) {
             return true;
         }
         return false;
     }
+
     /**
      * 用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
      *
-     * @author lxl
      * @param msgContent     文本信息
      * @param wechatAccount  始ID
      * @param appid          公众号appid
@@ -177,7 +207,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @param accessToken    公众号accessToken
      * @param fromUserName   发送者openid
      * @return 返回的信息
-     *
+     * @author lxl
      */
     private String sendKeyCustomMsg(String msgContent, String wechatAccount, String appid, Map<String, String> wechatEventMap, String accessToken, String fromUserName) {
         String actId = matchKeyWord(msgContent, wechatAccount);
@@ -197,13 +227,13 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
     /**
-     * @author lxl
      * @param wechatEventMap 发送过来的Map信息
-     * @param appid 公众号appid
-     * @param fromUserName 发送者openid
-     * @param accessToken 公众号accessToken
-     * @param eventKey 事件KEY值，qrscene_为前缀，后面为二维码的参数值
+     * @param appid          公众号appid
+     * @param fromUserName   发送者openid
+     * @param accessToken    公众号accessToken
+     * @param eventKey       事件KEY值，qrscene_为前缀，后面为二维码的参数值
      * @return 返回的信息
+     * @author lxl
      */
     private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String fromUserName, String accessToken, String eventKey) {
         logger.info("----------------扫二维码进入------------------------");
@@ -345,7 +375,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         String activityId = activitySimpleInfoMap.get(ActivityService.KEY_ACT_ID).toString();
         StringBuilder sceneStrBuilder = new StringBuilder();
         sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
-        begin = System.currentTimeMillis();
 
         //将活动的原始海报的url放入到userPersonalInfoMap中
         begin = System.currentTimeMillis();
@@ -366,7 +395,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //发送活动介绍
         if (shareCoppywritting != null) {
             logger.info("--------发送活动介绍-----------");
-            begin = System.currentTimeMillis();
             replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
@@ -432,7 +460,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         //获取粉丝个人信息存入到userPersonalInfoMap
         Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, accessToken);
-        String activityId = wechatEventMap.get(ActivityService.KEY_ACT_ID).toString();
+        String activityId = wechatEventMap.get(ActivityService.KEY_ACT_ID);
 
 
         userPersonalInfoMap.put(WeChatConstant.REPLY_TO_USER_NAME, openId);
@@ -461,7 +489,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //将二维码url put到userPersonalInfoMap中
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
         //将活动的原始海报的url放入到userPersonalInfoMap中
-        String picId = wechatEventMap.get(ActivityService.KEY_PIC_ID).toString();
+        String picId = wechatEventMap.get(ActivityService.KEY_PIC_ID);
         String posterUrl = sysPictureService.getPictureURL(picId);
         userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
         //得到合成图片的filePath
@@ -546,8 +574,4 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         return processStatus;
     }
-
-
-
 }
-

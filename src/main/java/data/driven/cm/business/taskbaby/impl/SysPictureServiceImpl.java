@@ -19,20 +19,10 @@ public class SysPictureServiceImpl implements SysPictureService {
     @Autowired
     private JDBCBaseDao dao;
     /**
-     * 获取系统图片的简要信息
-     * @param picId
-     * @return  Key：【picId, filePath,realName】
-     */
-    @Override
-    public Map<String, Object> getPictureSimpleInfo(String picId) {
-        String sql=" select picture_id as picId, file_path as filePath,real_name as realName where picture_id=?";
-        return dao.getMapResult(sql,picId);
-    }
-
-    /**
-     * TODO 根据picId主键获取图片的url
-     * @param picId
-     * @return
+     * 通过图片id返回图片的URL
+     * @author lxl
+     * @param picId 图片id,主键
+     * @return 返回图片的URL
      */
     @Override
     public String getPictureURL(String picId) {

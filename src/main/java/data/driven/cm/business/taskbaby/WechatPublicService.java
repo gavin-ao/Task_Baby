@@ -12,32 +12,27 @@ public interface WechatPublicService {
 
     /**
      * 通过 authorizationAppid(开发者ID)得到微信公众号信息表实体类
+     * @Author: lxl
      * @param authorizationAppid 开发者ID
-     * @return WechatPublicEntity
+     * @return WechatPublicEntity 公众号信息表Entity
      */
-    public WechatPublicEntity getEntityByAuthorizationAppid(String authorizationAppid);
-
-    /**
-     * 通过 wechat_public_id(微信公众号信息表id)得到微信公众号信息表实体类
-     * @param wechatPublicId 微信公众号信息表id
-     * @return WechatPublicEntity
-     */
-    public WechatPublicEntity getEntityByWechatPublicId(String wechatPublicId);
+     WechatPublicEntity getEntityByAuthorizationAppid(String authorizationAppid);
 
     /**
      * 新增微信公众号信息表
+     * @Author: lxl
      * @param authorizationAppid  开发者ID
      * @param funcInfo 授权给开发者的权限集列表,微信公众号给的是数组的，现改为用逗号存储
      * @return 微信公众号信息表id
      */
-    public String insertWechatPublicEntity(String authorizationAppid,String funcInfo);
+     String insertWechatPublicEntity(String authorizationAppid,String funcInfo);
 
     /**
      *  更新公众号授权状态
+     * @Author: lxl
      * @param authorizationAppid 公众号 appid
      * @param authorizationStatus 授权状态 0 未授权 1 已授权 2 更新授权
-     * @return
      */
-    public void updateWechatPublicEntity(String authorizationAppid,Integer authorizationStatus);
+     void updateWechatPublicEntity(String authorizationAppid,Integer authorizationStatus);
 
 }

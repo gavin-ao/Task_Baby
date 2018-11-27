@@ -1,7 +1,5 @@
 package data.driven.cm.business.taskbaby;
 
-import java.util.Map;
-
 /**
  * @author lxl
  * 图片信息Service
@@ -9,16 +7,10 @@ import java.util.Map;
 public interface SysPictureService {
 
     /**
-     * 获取图片的简要信息
-     * @param picId
-     * @return Key：【picId, filePath,realName】
-     */
-    public Map<String,Object> getPictureSimpleInfo(String picId);
-
-    /**
-     *
-     * @param picId
+     * 通过图片id返回图片的URL
+     * @author lxl
+     * @param picId 图片id,主键
      * @return 返回图片的URL
      */
-    public String getPictureURL(String picId);
+     String getPictureURL(String picId);
 }
