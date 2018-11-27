@@ -7,7 +7,6 @@ import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
 import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
-import data.driven.cm.entity.taskbaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,10 +73,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     @Override
     public String notify(Map wechatEventMap, String appid) {
-//        if(checkActive(wechatEventMap)) { // 当用户只是关注并没有参加活动的话，采用 checkActive方法就会拦截，用户就不能与公众号进行交互了
         return dispatherAndReturn(wechatEventMap, appid);
-//        }
-//        return "success";
     }
 
     /**
@@ -336,7 +332,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
 
         //获取粉丝个人信息存入到userPersonalInfoMap
-//        String access_token = getAccessToken(wechatAccount);
         Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, accessToken);
         long begin = System.currentTimeMillis();
         //获取带参数的二维码
@@ -553,45 +548,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
 
-    /**
-     * @param wechatAccount 微信公众号的账号id
-     * @param fansOpenId    粉丝的OpenId
-     * @return
-     */
-    private boolean fansSubScribe(String wechatAccount, String fansOpenId) {
-        //TODO: 调用微信api获取用户基本信息的接口，返回给userInfoMap；
-        Map<String, String> userInfoMap = null;
-
-        //TODO:根据userInfoMap 如果是新来的粉丝，调用数据库接口插入粉丝数据 如果是之前关注过的，就更新关注状态
-        return true;
-
-    }
-
-    private boolean fansUnsubscribe(String wechatAccount, String fansOpenId) {
-        //TODO:根据用户的openid和微信账号，将粉丝的关注状态置为未关注
-        return true;
-    }
-
-    /**
-     * TODO：活动被助力了
-     *
-     * @param wechatEventMap
-     * @return
-     */
-    private int activityHelp(Map<String, String> wechatEventMap) {
-        return 0;
-    }
-
-    /**
-     * TODO：调用模版消息接口
-     * 助力成功，助力中两种情况
-     *
-     * @param wechatEventMap
-     * @param helpcount      被助力个数
-     */
-    private void sendActivtyStateMsg(Map<String, String> wechatEventMap, int helpcount) {
-        //
-    }
 
 }
 
