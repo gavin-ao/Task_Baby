@@ -22,8 +22,8 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping(path = "/wechatapi")
-public class Task_BabyController {
-    Logger logger = LoggerFactory.getLogger(Task_BabyController.class);
+public class TaskBabyController {
+    Logger logger = LoggerFactory.getLogger(TaskBabyController.class);
     @Autowired
     private WeChatService weChatService;
     /**
