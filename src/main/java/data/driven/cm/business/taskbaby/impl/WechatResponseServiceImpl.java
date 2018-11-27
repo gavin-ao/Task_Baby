@@ -34,8 +34,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     @Autowired
     private PosterService posterService;
     @Autowired
-    private WechatPublicService wechatPublicService;
-    @Autowired
     private ActivityService activityService;
     @Autowired
     private SysPictureService sysPictureService;
@@ -390,11 +388,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)) {
             return "";
         }
-        WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatAccount);
-        if (wechatPublicEntity == null) {
-            return "";
-        }
-//        String accessToken = getAccessToken(wechatAccount);
+
         if (accessToken == null) {
             return "";
         }
