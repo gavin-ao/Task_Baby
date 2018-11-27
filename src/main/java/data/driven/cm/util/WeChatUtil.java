@@ -260,11 +260,11 @@ public class WeChatUtil {
     public static String sendTextMsg(Map<String,String> requestMap){
 
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("ToUserName", requestMap.get(WeChatConstant.Reply_ToUserName));
-        map.put("FromUserName",  requestMap.get(WeChatConstant.Reply_FromUserName));
+        map.put("ToUserName", requestMap.get(WeChatConstant.REPLY_TO_USER_NAME));
+        map.put("FromUserName",  requestMap.get(WeChatConstant.REPLY_FROM_USER_NAME));
         map.put("MsgType", WeChatConstant.RESP_MESSAGE_TYPE_TEXT);
         map.put("CreateTime", System.currentTimeMillis());
-        map.put("Content", requestMap.get(WeChatConstant.Content));
+        map.put("Content", requestMap.get(WeChatConstant.CONTENT));
         return  mapToXML(map);
     }
 
@@ -404,11 +404,11 @@ public class WeChatUtil {
      */
     public static String sendImageMsg(Map<String,String> requestMap){
         Map<String,Object> map = new HashMap<>();
-        map.put(WeChatConstant.ToUserName,requestMap.get(WeChatConstant.Reply_FromUserName));
-        map.put(WeChatConstant.FromUserName,requestMap.get(WeChatConstant.Reply_ToUserName));
+        map.put(WeChatConstant.TO_USER_NAME,requestMap.get(WeChatConstant.REPLY_FROM_USER_NAME));
+        map.put(WeChatConstant.FROM_USER_NAME,requestMap.get(WeChatConstant.REPLY_TO_USER_NAME));
         map.put("MsgType", WeChatConstant.REQ_MESSAGE_TYPE_IMAGE);
         Map<String,Object> mediaId = new HashMap<>();
-        mediaId.put("MediaId",requestMap.get(WeChatConstant.MediaId));
+        mediaId.put("MediaId",requestMap.get(WeChatConstant.MEDIA_ID));
         map.put("Image",mediaId);
         map.put("CreateTime", System.currentTimeMillis());
         return mapToXML(map);
@@ -426,9 +426,9 @@ public class WeChatUtil {
             return "";
         }
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put(WeChatConstant.ToUserName, requestMap.get(WeChatConstant.Reply_ToUserName));
-        map.put(WeChatConstant.FromUserName, requestMap.get(WeChatConstant.Reply_FromUserName));
-        map.put(WeChatConstant.MsgType, "news");
+        map.put(WeChatConstant.TO_USER_NAME, requestMap.get(WeChatConstant.REPLY_TO_USER_NAME));
+        map.put(WeChatConstant.FROM_USER_NAME, requestMap.get(WeChatConstant.REPLY_FROM_USER_NAME));
+        map.put(WeChatConstant.MSG_TYPE, "news");
         map.put("CreateTime", System.currentTimeMillis());
         List<Map<String,Object>> articles=new ArrayList<Map<String,Object>>();
         for(ArticleItem itembean : items){
