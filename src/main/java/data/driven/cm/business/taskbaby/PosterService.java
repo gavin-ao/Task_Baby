@@ -9,14 +9,14 @@ import java.util.Map;
 public interface PosterService {
     /**
      *
-     * @param OriginlPosterUrl
+     * @param originPosterUrl
      * @param headImgUrl
      * @param qrCodeUrl
      * @param nickName
      * @return 合成后海报在本地路径
      */
     public String getCombinedCustomiedPosterFilePath(
-            String OriginlPosterUrl,String headImgUrl, String qrCodeUrl, String nickName);
+            String originPosterUrl,String headImgUrl, String qrCodeUrl, String nickName);
 
     public String getCombinedCustomiedPosterFilePath(Map<String,String> personalInfo);
 
