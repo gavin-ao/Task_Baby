@@ -159,8 +159,6 @@ public class WeChatConstant {
     public static int CACHE_VALUE_EXPIRE_AUTH_CODE= 60*10-60;//比微信平台少预留60s
     //access_token 过期时间
     public static int CACHE_VALUE_EXPIRE_ACCESS_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
-    //refresh_access_token 过期时间
-    public static int CACHE_VALUE_EXPIRE_REFRESH_TOKEN =60*60*2-300;//比微信平台少预留5分钟时间
     //pre_auth_code 过期时间
     public static int CATCE_VALUE_EXPIRE_PRE_AUTH_CODE = 550 ;//比微信平台10分钟少预留60s
     //第三方 component_access_token

@@ -129,8 +129,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             logger.info("-------保存refreshToken到缓存------------");
             RedisFactory.setString(
                     WeChatConstant.getRefreshTokenCacheKey(authorizerAppid),
-                    authorizerRefreshToken,
-                    WeChatConstant.CACHE_VALUE_EXPIRE_REFRESH_TOKEN * 1000);
+                    authorizerRefreshToken,-1);
         }else{
             logger.error("获取refresToken失败");
         }
@@ -283,8 +282,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                 if(StringUtils.isNotEmpty(newRefreshToken)){
                     logger.info("--------保存newRefreshToken到缓存------------------");
                     RedisFactory.setString(
-                            WeChatConstant.getRefreshTokenCacheKey(authAppId),newRefreshToken,
-                            WeChatConstant.CACHE_VALUE_EXPIRE_REFRESH_TOKEN *1000);
+                            WeChatConstant.getRefreshTokenCacheKey(authAppId),newRefreshToken,-1);
                 }
             }
 
