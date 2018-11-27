@@ -2,13 +2,9 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.aes.WXBizMsgCrypt;
 import data.driven.cm.business.taskbaby.WeChatService;
-import data.driven.cm.business.taskbaby.WechatPublicService;
 import data.driven.cm.business.taskbaby.WechatResponseService;
-import data.driven.cm.business.taskbaby.WechatUserInfoService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.controller.taskbaby.Task_BabyController;
-import data.driven.cm.entity.taskbaby.WechatPublicEntity;
 import data.driven.cm.thread.TaskBabyThread;
 import data.driven.cm.util.WeChatUtil;
 import org.slf4j.Logger;
@@ -20,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
