@@ -93,11 +93,11 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
                                            String principalName, String alias,
                                            String businessInfo, String qrcodeUrl,
                                            String authorizationAppid, String funcInfo) {
-       String sql = "update wechat_public_detail set nick_name=?,head_img=?,service_type_info=?,\" +\n" +
-               "                \"verify_type_info=?,user_name=?,principal_name=?,alias=?,business_info=?,qrcode_url=?,authorization_appid=?,\" +\n" +
-               "                \"func_info=? where wechatPublicId=?";
+       String sql = "update wechat_public_detail set nick_name=?,head_img=?,service_type_info=?," +
+               "verify_type_info=?,user_name=?,principal_name=?,alias=?,business_info=?,qrcode_url=?,authorization_appid=?," +
+               "func_info=? where wechat_public_id=?";
 
        jdbcBaseDao.executeUpdate(sql,nickName,headImg,serviceTypeInfo,verifyTypeInfo,
-               userName,principalName,alias,businessInfo,qrcodeUrl, authorizationAppid,funcInfo);
+               userName,principalName,alias,businessInfo,qrcodeUrl, authorizationAppid,funcInfo,wechatPublicId);
     }
 }
