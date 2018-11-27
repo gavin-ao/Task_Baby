@@ -46,6 +46,7 @@ public class WeChatConstant {
     public static final String REQ_MESSAGE_TYPE_EVENT = "event";
     public static final String EVENT_TYPE_SUBSCRIBE = "subscribe";
     public static final String EVENT_TYPE_UNSUBSCRIBE = "unsubscribe";
+    public static final String HTTP_HEAD="http";
     public static final String EVENT_TYPE_SCAN = "SCAN";
     public static final String EVENT_TYPE_LOCATION = "LOCATION";
     public static final String EVENT_TYPE_CLICK = "CLICK";

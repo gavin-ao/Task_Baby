@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+import static data.driven.cm.component.WeChatConstant.HTTP_HEAD;
 import static data.driven.cm.component.WeChatConstant.KEY_HEADIMG_URL;
 import static data.driven.cm.component.WeChatConstant.KEY_NICKNAME;
 
@@ -125,7 +126,7 @@ public class PosterServiceImpl implements PosterService {
         log.info(String.format("-------根据图片地址加载图片，地址：%s",imgAddress));
         long beign = System.currentTimeMillis();
         //imgAddres是url
-        if(imgAddress.startsWith("http")){
+        if(imgAddress.startsWith(HTTP_HEAD)){
             URL url = null;
             InputStream is= null;
             try {
