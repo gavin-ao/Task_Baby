@@ -137,7 +137,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //    2.通过带参数二维进行关注
         //二维码关注
         if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
-                getQrCode(event) && StringUtils.isNoneEmpty(eventKey)) {
+                scanQrCode(event) && StringUtils.isNoneEmpty(eventKey)) {
             return subscribeScanKeyCustomMsg(wechatEventMap, appid, fromUserName, accessToken, eventKey);
         //搜索直接关注
         } else if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) {
@@ -160,7 +160,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @param event 事件类型 subscribe 或 scan
      * @return true 或 false
      */
-    private boolean getQrCode(String event){
+    private boolean scanQrCode(String event){
         if (event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) || event.equals(WeChatConstant.EVENT_TYPE_SCAN)){
             return true;
         }
