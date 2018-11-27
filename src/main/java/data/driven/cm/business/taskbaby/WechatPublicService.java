@@ -40,11 +40,4 @@ public interface WechatPublicService {
      */
     public void updateWechatPublicEntity(String authorizationAppid,Integer authorizationStatus);
 
-
-    /**
-     * 通过 wechatAccount(原始Id)得到微信公众号实体类
-     * @param wechatAccount wechatAccount(原始Id)
-     * @return WechatPublicEntity 实体
-     */
-    public WechatPublicEntity getEntityByWechatAccount(String wechatAccount);
 }

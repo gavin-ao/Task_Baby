@@ -63,7 +63,7 @@ public class WechatPublicServiceImpl implements WechatPublicService{
         Date createAt = new Date();
         String wechatPublicId = UUIDUtil.getUUID();
         String sql = "INSERT into wechat_public (wechat_public_id,authorization_appid,func_info,create_at) VALUES (?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql,authorizationAppid,funcInfo);
+        jdbcBaseDao.executeUpdate(sql,wechatPublicId,authorizationAppid,funcInfo,createAt);
         return  wechatPublicId;
     }
 
@@ -80,21 +80,5 @@ public class WechatPublicServiceImpl implements WechatPublicService{
             String updateSql = "UPDATE wechat_public set authorization_status = ? where authorization_appid = ?";
             jdbcBaseDao.executeUpdate(updateSql,authorizationStatus,authorizationAppid);
         }
-    }
-
-
-    /**
-     * 通过 wechatAccount(原始Id)得到微信公众号实体类
-     * @param wechatAccount wechatAccount(原始Id)
-     * @return WechatPublicEntity 实体
-     */
-    @Override
-    public WechatPublicEntity getEntityByWechatAccount(String wechatAccount) {
-        String sql = "select id,wechat_public_name,appid,secret,wechat_account,create_at,token from wechat_public where wechat_account = ? ";
-        List<WechatPublicEntity> wechatPublicEntityList = jdbcBaseDao.queryList(WechatPublicEntity.class,sql,wechatAccount);
-        if (wechatPublicEntityList != null && wechatPublicEntityList.size() > 0){
-            return wechatPublicEntityList.get(0);
-        }
-        return null;
     }
 }
