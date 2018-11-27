@@ -165,7 +165,7 @@ public class WeChatConstant {
 
     public static String getRefreshTokenURL(String thirdPartyAccessToken) {
         String apiRefreshTokenUrl =
-                "https:// api.weixin.qq.com /cgi-bin/component/api_authorizer_token?component_access_token=%s";
+                "https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=%s";
         return String.format(apiRefreshTokenUrl, thirdPartyAccessToken);
     }
 
