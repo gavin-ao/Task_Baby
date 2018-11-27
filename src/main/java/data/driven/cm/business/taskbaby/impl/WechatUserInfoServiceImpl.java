@@ -117,9 +117,9 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
     @Override
     public WechatUserInfoEntity getWechatUserInfoEntityByAcountOpenId(String wechatAccount, String openId) {
         String sql = "SELECT wechat_user_id,subscribe,nickname,sex,country,province,`language`,headimgurl,unionid,remark,subscribe_scene,wechat_account,create_at,city,qr_scene,qr_scene_str,openid from wechat_user_info where wechat_account = ? and openid = ? ";
-        List<WechatUserInfoEntity> WechatUserInfoEntityList = dao.queryList(WechatUserInfoEntity.class,sql,openId);
-        if (WechatUserInfoEntityList != null && WechatUserInfoEntityList.size() > 0){
-            return WechatUserInfoEntityList.get(0);
+        List<WechatUserInfoEntity> wechatUserInfoEntityList = dao.queryList(WechatUserInfoEntity.class,sql,openId);
+        if (wechatUserInfoEntityList != null && wechatUserInfoEntityList.size() > 0){
+            return wechatUserInfoEntityList.get(0);
         }
         return null;
     }

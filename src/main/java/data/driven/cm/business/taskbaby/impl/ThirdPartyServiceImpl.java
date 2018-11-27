@@ -107,7 +107,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     **/
     private void saveAuthToCache(JSONObject authInfo,String authCode) {
         logger.info("--------开始保存授权信息到缓存--------------");
-        String authorizer_access_token =
+        String authorizerAccessToken =
                 authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_ACCESS_TOKEN);
         String authorizerRefreshToken = authInfo.getString(WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN);
         String authorizerAppid =
@@ -116,11 +116,11 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             RedisFactory.setString(
                     WeChatConstant.getAuthCodeCacheKey(authorizerAppid),authCode,WeChatConstant.CACHE_VALUE_EXPIRE_AUTH_CODE*1000);
         }
-        if(StringUtils.isNotEmpty(authorizer_access_token)) {
+        if(StringUtils.isNotEmpty(authorizerAccessToken)) {
             logger.info("------保存accessToken到缓存----------");
             RedisFactory.setString(
                     WeChatConstant.getAccessTokenCacheKey(authorizerAppid),
-                    authorizer_access_token,
+                    authorizerAccessToken,
                     WeChatConstant.CACHE_VALUE_EXPIRE_ACCESS_TOKEN * 1000);
         }else{
             logger.error("获取accessToken失败");
@@ -303,13 +303,13 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
     @Override
     public void hadleAuthorize(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String timestamp = request.getParameter("timestamp");
-        String encrypt_type = request.getParameter("encrypt_type");
+        String encryptType = request.getParameter("encrypt_type");
         String nonce = request.getParameter("nonce");
-        String msg_signature = request.getParameter("msg_signature");
+        String msgSignature = request.getParameter("msg_signature");
         logger.info("------------------------timestamp " + timestamp + "------------------------");
-        logger.info("------------------------encrypt_type " + encrypt_type + "------------------------");
+        logger.info("------------------------encrypt_type " + encryptType + "------------------------");
         logger.info("------------------------nonce " + nonce + "------------------------");
-        logger.info("------------------------msg_signature " + msg_signature + "------------------------");
+        logger.info("------------------------msg_signature " + msgSignature + "------------------------");
         try {
             String encodingAesKey = WeChatConstant.THIRD_PARTY_ENCODINGAESKEY;
             String appId = WeChatConstant.THIRD_PARTY_APPID;
@@ -318,11 +318,11 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.THIRD_PARTY_TOKEN, encodingAesKey, appId);
             String format = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
             String fromXML = String.format(format, requestMap.get("Encrypt"));
-            String xml = pc.decryptMsg(msg_signature, timestamp, nonce, fromXML);
+            String xml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
             requestMap = WeChatUtil.parseXml(xml);
-            String InfoType = requestMap.get("InfoType");
-            logger.info("InfoType: "+InfoType);
-            switch (InfoType){
+            String infoType = requestMap.get("InfoType");
+            logger.info("InfoType: "+infoType);
+            switch (infoType){
                 //授权成功
                 case "authorized":
                     wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),1);

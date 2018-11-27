@@ -63,7 +63,7 @@ public class WeChatServiceImpl implements WeChatService {
         Map<String, String> requestMap = null;
         try {
             //解析加密信息
-            if ("aes".equals(encryptType)) {
+            if (WeChatConstant.AES.equals(encryptType)) {
                 logger.info("解析加密信息");
                 requestMap = WeChatUtil.parseRequest(request);
                 WXBizMsgCrypt pc = new WXBizMsgCrypt(WeChatConstant.THIRD_PARTY_TOKEN, WeChatConstant.THIRD_PARTY_ENCODINGAESKEY, WeChatConstant.THIRD_PARTY_APPID);
