@@ -779,14 +779,13 @@ public class WeChatUtil {
                         WeChatConstant.API_JSON_KEY_COMPONET_APPID,WeChatConstant.THIRD_PARTY_APPID,
                         WeChatConstant.API_JSON_KEY_AUTH_APPID,authAppId,
                         WeChatConstant.API_JSON_KEY_AUTH_REFRESH_TOKEN,reFreshToken);
-        log.info(postStr);
-        JSONObject postObject = JSONObject.parseObject(postStr);
+        log.info("------------postStr : "+postStr);
         //获取刷新Token的URL
         String thirdPartyAccessToken =WeChatUtil.getComponentAccessToken();
         String refreshTokenUrl =
                 WeChatConstant.getRefreshTokenURL(thirdPartyAccessToken);//获取刷新token的url地址
         log.info(String.format("-------------调用刷新token，url:%s-----------",refreshTokenUrl));
-        String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postObject);
+        String newTokenResult = HttpUtil.doPost(refreshTokenUrl,postStr);
         return newTokenResult;
     }
     /**
