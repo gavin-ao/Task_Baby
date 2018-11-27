@@ -46,23 +46,23 @@ public class PosterServiceImpl implements PosterService {
 
     @Override
     public String getCombinedCustomiedPosterFilePath(Map<String, String> personalInfo) {
-        String OriginlPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
+        String originPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
         String headImgUrl = personalInfo.get(KEY_HEADIMG_URL);
         String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_URL);
         String nickName = personalInfo.get(KEY_NICKNAME);
-        return getCombinedCustomiedPosterFilePath(OriginlPosterUrl, headImgUrl, qrCodeUrl, nickName);
+        return getCombinedCustomiedPosterFilePath(originPosterUrl, headImgUrl, qrCodeUrl, nickName);
     }
 
     /**
-     * @param OriginlPosterUrl
+     * @param originPosterUrl
      * @param headImgUrl
      * @param qrCodeUrl
      * @param nickName
      * @return
      */
     @Override
-    public String getCombinedCustomiedPosterFilePath(String OriginlPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
-        if (StringUtils.isNotEmpty(OriginlPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
+    public String getCombinedCustomiedPosterFilePath(String originPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
+        if (StringUtils.isNotEmpty(originPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
                 StringUtils.isNotEmpty(qrCodeUrl) && StringUtils.isNotEmpty(nickName)) {
             Font font = new Font("微软雅黑", Font.PLAIN, 50);
             StringBuilder tempFileNameBuider = new StringBuilder();
@@ -71,7 +71,7 @@ public class PosterServiceImpl implements PosterService {
             Graphics2D g = null;
             try {
                 long begin = System.currentTimeMillis();
-                BufferedImage imgPoster = getBufferedImage(OriginlPosterUrl);
+                BufferedImage imgPoster = getBufferedImage(originPosterUrl);
                 float duration = (System.currentTimeMillis()-begin)/1000f;
                 BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
                 BufferedImage imgHead = getBufferedImage(headImgUrl);
@@ -144,7 +144,6 @@ public class PosterServiceImpl implements PosterService {
                         log.error("---------读取图片文件错误：url：",imgAddress,"---------");
                         log.error(e.getMessage());
 
-                        return null;
                     }
                 }
 
@@ -227,7 +226,7 @@ public class PosterServiceImpl implements PosterService {
         return "";
     }
 
-    public boolean Clean(String filePath) {
+    public boolean cleanTempflie(String filePath) {
         File file = new File(filePath);
         if (file.exists() && file.isFile()) {
             file.delete();

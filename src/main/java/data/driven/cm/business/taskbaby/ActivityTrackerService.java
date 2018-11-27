@@ -24,7 +24,7 @@ public interface ActivityTrackerService {
 
     public Map<String,Integer> getHelpCount(String helpId,String activityId);
 
-    public Map<String,Object> getTrackInfo(String helpDetailId,String activityId,String access_token);
+    public Map<String,Object> getTrackInfo(String helpDetailId,String activityId,String accessToken);
 
     public ActHelpEntity getTrack(String helpId);
 

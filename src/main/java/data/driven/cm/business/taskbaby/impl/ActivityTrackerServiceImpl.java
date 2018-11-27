@@ -80,7 +80,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         return actHelpEntity;
     }
     @Override
-    public Map<String,Object> getTrackInfo(String helpDetailId, String activityId,String access_token){
+    public Map<String,Object> getTrackInfo(String helpDetailId, String activityId,String accessToken){
         ActHelpDetailEntity detailEntity = getTrackDetail(helpDetailId);
         if(detailEntity == null){
             return null;
@@ -95,7 +95,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             return null;
         }
         //获取粉丝个人信息存入到userPersonalInfoMap
-        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),access_token);
+        Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(), accessToken);
         Map<String,Object> resultMap = new HashMap<String,Object>();
         resultMap.put(KEY_HELP_REQUIRE,helpCountMap.get(KEY_HELP_REQUIRE));
         resultMap.put(KEY_HELP_HELP,helpCountMap.get(KEY_HELP_HELP));
