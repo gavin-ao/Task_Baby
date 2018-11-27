@@ -59,11 +59,14 @@ public class Task_BabyController {
         String timestamp = request.getParameter("timestamp");
         // 随机数
         String nonce = request.getParameter("nonce");
-        if (WeChatUtil.checkSignature(signature, timestamp, nonce)){
+        logger.info("nonce "+nonce);
+        logger.info("timestamp "+timestamp);
+        logger.info("signature "+signature);
+//        if (WeChatUtil.checkSignature(signature, timestamp, nonce)){
             // 调用核心服务类接收处理请求
         return weChatService.processRequest(request,response,appid);
-        }
-        return "";
+//        }
+//        return "";
     }
 
     /**
