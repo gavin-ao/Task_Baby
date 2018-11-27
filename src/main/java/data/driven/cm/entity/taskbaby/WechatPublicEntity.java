@@ -33,14 +33,14 @@ public class WechatPublicEntity {
     /**
      * 授权状态, 0 未授权 1 已授权 2 更新授权
      */
-    private  Integer authorization_status;
+    private  Integer authorizationStatus;
 
-    public Integer getAuthorization_status() {
-        return authorization_status;
+    public Integer getAuthorizationStatus() {
+        return authorizationStatus;
     }
 
-    public void setAuthorization_status(Integer authorization_status) {
-        this.authorization_status = authorization_status;
+    public void setAuthorizationStatus(Integer authorizationStatus) {
+        this.authorizationStatus = authorizationStatus;
     }
 
     public String getWechatPublicId() {

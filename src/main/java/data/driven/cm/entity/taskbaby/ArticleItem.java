@@ -7,32 +7,40 @@ package data.driven.cm.entity.taskbaby;
  * @Version 1.0
  */
 public class ArticleItem {
-    private String Title;
-    private String Description;
-    private String PicUrl;
-    private String Url;
+    private String title;
+    private String description;
+    private String picUrl;
+    private String url;
+
     public String getTitle() {
-        return Title;
+        return title;
     }
+
     public void setTitle(String title) {
-        Title = title;
+        this.title = title;
     }
+
     public String getDescription() {
-        return Description;
+        return description;
     }
+
     public void setDescription(String description) {
-        Description = description;
+        this.description = description;
     }
+
     public String getPicUrl() {
-        return PicUrl;
+        return picUrl;
     }
+
     public void setPicUrl(String picUrl) {
-        PicUrl = picUrl;
+        this.picUrl = picUrl;
     }
+
     public String getUrl() {
-        return Url;
+        return url;
     }
+
     public void setUrl(String url) {
-        Url = url;
+        this.url = url;
     }
 }

@@ -43,7 +43,7 @@ public class ActivityRewardEntity {
     /**
      * 活动奖品关联表
      */
-    private String prize_id;
+    private String prizeId;
 
     public String getRewardId() {
         return rewardId;
@@ -93,11 +93,11 @@ public class ActivityRewardEntity {
         this.wechatAccount = wechatAccount;
     }
 
-    public String getPrize_id() {
-        return prize_id;
+    public String getPrizeId() {
+        return prizeId;
     }
 
-    public void setPrize_id(String prize_id) {
-        this.prize_id = prize_id;
+    public void setPrizeId(String prizeId) {
+        this.prizeId = prizeId;
     }
 }
