@@ -7,7 +7,6 @@ import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
 import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
-import data.driven.cm.entity.taskbaby.WechatPublicEntity;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
