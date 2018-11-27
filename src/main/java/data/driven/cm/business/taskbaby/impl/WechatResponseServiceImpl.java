@@ -143,73 +143,140 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @author lxl
      */
     private String dispatherAndReturn(Map<String, String> wechatEventMap, String appid) {
-        String wechatAccount = wechatEventMap.get(WeChatConstant.TO_USER_NAME);
-        String fromUserName = wechatEventMap.get(WeChatConstant.FROM_USER_NAME);
-        String msgType = wechatEventMap.get(WeChatConstant.MSG_TYPE);
-        String msgContent = wechatEventMap.get(WeChatConstant.CONTENT);
-        String accessToken = getAccessToken(appid);
 
+        String accessToken = getAccessToken(appid);
+        String event =getEvent(wechatEventMap);
         if (accessToken == null) {
             return "";
         }
         //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
-        if (StringUtils.isNotEmpty(msgType) && msgType.equals(WeChatConstant.RESP_MESSAGE_TYPE_TEXT) &&
-                StringUtils.isNotEmpty(msgContent) && StringUtils.isNotEmpty(fromUserName) &&
-                StringUtils.isNotEmpty(wechatAccount)) {
-            return sendKeyCustomMsg(msgContent, wechatAccount, appid, wechatEventMap, accessToken, fromUserName);
+        if(textEvent(wechatEventMap)){
+            return sendKeyCustomMsg(appid, wechatEventMap, accessToken);
         }
-
-        String eventKey = wechatEventMap.get(WeChatConstant.EVENT_KEY);
-        String event = wechatEventMap.get(WeChatConstant.EVENT);
-        //3.用户关注公众号两种形式,具体如下：
-        //     1.搜索公众号直接进行关注
-        //    2.通过带参数二维进行关注
         //二维码关注
-        if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
-                scanQrCode(event) && StringUtils.isNoneEmpty(eventKey)) {
-            return subscribeScanKeyCustomMsg(wechatEventMap, appid, fromUserName, accessToken, eventKey);
-            //搜索直接关注
-        } else if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) && "".equals(eventKey)) {
+        if (scanQrCodeEvent(wechatEventMap)) {
+            return subscribeScanKeyCustomMsg(wechatEventMap, appid, accessToken);
+        }
+        //搜索直接关注
+        if (subscribeEvent(wechatEventMap)) {
             //新增用户信息
             insertWechatUserInfo(wechatEventMap, appid);
             wechatEventMap.put(WeChatConstant.CONTENT, "谢谢您的关注！");
             return WeChatUtil.sendTextMsg(wechatEventMap);
         }
-        //4. 用户取消公众号关注
-        if (StringUtils.isNoneEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) && event.equals(WeChatConstant.EVENT_TYPE_UNSUBSCRIBE)) {
-            wechatUserInfoService.updateSubscribe(wechatEventMap.get(WeChatConstant.TO_USER_NAME), wechatEventMap.get(WeChatConstant.FROM_USER_NAME), 0);
+        //用户取消公众号关注
+        if (unsubscribeEvent(wechatEventMap)) {
+            wechatUserInfoService.updateSubscribe(
+                    getWechatAccount(wechatEventMap),
+                    getFromUserName(wechatEventMap), 0);
         }
         return "success";
 
     }
-
-    /**
-     * 判断事件类型
-     *
-     * @param event 事件类型 subscribe 或 scan
-     * @return true 或 false
-     * @author lxl
-     */
-    private boolean scanQrCode(String event){
-       if (event.equals(WeChatConstant.EVENT_TYPE_SUBSCRIBE) || event.equals(WeChatConstant.EVENT_TYPE_SCAN)) {
-            return true;
-        }
-        return false;
+    private String getWechatAccount(Map<String,String> wechatEventMap){
+        return wechatEventMap.get(WeChatConstant.TO_USER_NAME);
+    }
+    private String getFromUserName(Map<String,String> wechatEventMap){
+        return  wechatEventMap.get(WeChatConstant.FROM_USER_NAME);
+    }
+    private String getMsgType(Map<String,String> wechatEventMap){
+        return wechatEventMap.get(WeChatConstant.MSG_TYPE);
+    }
+    private String getMsgContent(Map<String,String> wechatEventMap){
+       return  wechatEventMap.get(WeChatConstant.CONTENT);
+    }
+    private String getEventKey(Map<String,String> wechatEventMap){
+        return wechatEventMap.get(WeChatConstant.EVENT_KEY);
+    }
+    private String getEvent(Map<String,String> wechatEventMap){
+        return wechatEventMap.get(WeChatConstant.EVENT);
     }
 
+
     /**
-     * 用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
-     *
-     * @param msgContent     文本信息
-     * @param wechatAccount  始ID
-     * @param appid          公众号appid
-     * @param wechatEventMap 发送过来的Map信息
-     * @param accessToken    公众号accessToken
-     * @param fromUserName   发送者openid
-     * @return 返回的信息
-     * @author lxl
-     */
-    private String sendKeyCustomMsg(String msgContent, String wechatAccount, String appid, Map<String, String> wechatEventMap, String accessToken, String fromUserName) {
+    * @description  扫带参数二维码事件
+    * @author Logan
+    * @date 2018-11-27 17:28
+    * @param wechatEventMap
+
+    * @return
+    */
+    private boolean scanQrCodeEvent(Map<String, String> wechatEventMap){
+        String msgType = getMsgType(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if(StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType)
+                && StringUtils.isNotEmpty(eventKey)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    /**
+    * @description   判断是否输入文字事件
+    * @author Logan
+    * @date 2018-11-27 18:39
+    * @param wechatEventMap
+
+    * @return
+    */
+    private boolean textEvent(Map<String, String> wechatEventMap){
+        String msgType = getMsgType(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && msgType.equals(WeChatConstant.RESP_MESSAGE_TYPE_TEXT)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+    * @description 判断是否直接关注事件 区分是否扫码关注的点事，eventKey为空
+    * @author Logan
+    * @date 2018-11-27 18:39
+     * @param wechatEventMap
+
+    * @return
+    */
+    private boolean subscribeEvent(Map<String, String> wechatEventMap){
+        String msgType = getMsgType(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if(StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(msgType)
+                && StringUtils.isEmpty(eventKey)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    /**
+    * @description 判断是否取消关注事件
+    * @author Logan
+    * @date 2018-11-27 18:40
+     * @param wechatEventMap
+
+    * @return
+    */
+    private boolean unsubscribeEvent(Map<String, String> wechatEventMap) {
+        String msgType = getMsgType(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(msgType)
+                && StringUtils.isEmpty(eventKey)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+            /**
+             * 用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
+             *
+             * @param appid          公众号appid
+             * @param wechatEventMap 发送过来的Map信息
+             * @param accessToken    公众号accessToken
+             * @return 返回的信息
+             * @author lxl
+             */
+    private String sendKeyCustomMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+        String wechatAccount =getWechatAccount(wechatEventMap);
+        String msgContent =getMsgContent(wechatEventMap);
+        String fromUserName = getFromUserName(wechatEventMap);
         String actId = matchKeyWord(msgContent, wechatAccount);
         //判读活动是否有效
         if (actId != null &&
@@ -229,25 +296,24 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     /**
      * @param wechatEventMap 发送过来的Map信息
      * @param appid          公众号appid
-     * @param fromUserName   发送者openid
      * @param accessToken    公众号accessToken
-     * @param eventKey       事件KEY值，qrscene_为前缀，后面为二维码的参数值
      * @return 返回的信息
      * @author lxl
      */
-    private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String fromUserName, String accessToken, String eventKey) {
+    private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String accessToken) {
         logger.info("----------------扫二维码进入------------------------");
         //新增用户信息
         insertWechatUserInfo(wechatEventMap, appid);
         logger.info("----------------插入新增用户信息------------------------");
-        logger.info(String.format("------------EventKey%s-------------------", eventKey));
         //得到传参的信息
-        String eventKeyValue = wechatEventMap.get(WeChatConstant.EVENT_KEY);
+        //事件KEY值，qrscene_为前缀，后面为二维码的参数值
+        String eventKeyValue = getEventKey(wechatEventMap);
         String helpOpenId = eventKeyValue.split("&&")[0];
         logger.info(String.format("----------助力的helpid:%s----------", helpOpenId));
         //第一个下划线后面的就是openId
         helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_") + 1);
         String actId = eventKeyValue.split("&&")[1];
+        String fromUserName = getFromUserName(wechatEventMap);
         if (!checkActiveAvailable(actId)) {
             Map<String, String> msgReply = new HashMap<>();
             msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
