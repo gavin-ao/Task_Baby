@@ -10,11 +10,12 @@ public interface WechatResponseService {
 
     /**
      * 微信通知，将微信发送的xml转成map传进来
+     * @author lxl
      * @param wechatEventMap
-     * @param appid 公众号appid
+     * @param appId 公众号appid
      * @return 返回微信发送的消息
      */
-    public String notify(Map wechatEventMap,String appid);
+    String notify(Map wechatEventMap,String appId);
 
 
 }

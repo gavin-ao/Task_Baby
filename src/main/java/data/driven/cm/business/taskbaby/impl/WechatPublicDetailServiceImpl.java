@@ -18,25 +18,24 @@ import java.util.Date;
  */
 @Service
 public class WechatPublicDetailServiceImpl implements WechatPublicDetailService {
-    private static Logger log = LoggerFactory.getLogger(WechatPublicDetailServiceImpl.class);
-
     @Autowired
     JDBCBaseDao jdbcBaseDao;
 
     /**
      * 增加公众号详细信息
-     * @param wechatPublicId 公众号信息表外键
-     * @param nickName 授权方昵称
-     * @param headImg 授权方头像
-     * @param serviceTypeInfo 授权方公众号类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
-     * @param verifyTypeInfo 授权方认证类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
-     * @param userName 授权方公众号的原始ID
-     * @param principalName 公众号的主体名称
-     * @param alias 授权方公众号所设置的微信号
-     * @param businessInfo 能的开通状况，微信公众号发过来的是json格式的字符串，现直接存储到字段里
-     * @param qrcodeUrl 二维码图片的URL
+     * @author lxl
+     * @param wechatPublicId     公众号信息表外键
+     * @param nickName           授权方昵称
+     * @param headImg            授权方头像
+     * @param serviceTypeInfo    授权方公众号类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
+     * @param verifyTypeInfo     授权方认证类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
+     * @param userName           授权方公众号的原始ID
+     * @param principalName      公众号的主体名称
+     * @param alias              授权方公众号所设置的微信号
+     * @param businessInfo       能的开通状况，微信公众号发过来的是json格式的字符串，现直接存储到字段里
+     * @param qrcodeUrl          二维码图片的URL
      * @param authorizationAppid 授权方appid
-     * @param funcInfo 公众号授权给开发者的权限集列表
+     * @param funcInfo           公众号授权给开发者的权限集列表
      * @return 公众号详细信息ID
      */
     @Override
@@ -49,32 +48,16 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
         String sql = "INSERT INTO wechat_public_detail (id,wechat_public_id,nick_name,head_img,service_type_info," +
                 "verify_type_info,user_name,principal_name,alias,business_info,qrcode_url,authorization_appid," +
                 "func_info,create_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-         log("webchatPublicId",wechatPublicId);
-         log("nickName",nickName);
-         log("headImg",headImg);
-         log("serviceTypeInfo",serviceTypeInfo);
-         log("verifyTypeInfo",verifyTypeInfo);
-         log("userName",userName);
-         log("principalName",principalName);
-         log("alias",alias);
-         log("businessInfo",businessInfo);
-         log("qrcodeUrl",qrcodeUrl);
-         log("authorizationAppid",authorizationAppid);
-         log("funcInfo",funcInfo);
         jdbcBaseDao.executeUpdate(sql,id,wechatPublicId,nickName,headImg,serviceTypeInfo,verifyTypeInfo,userName,
                 principalName,alias,businessInfo,qrcodeUrl,authorizationAppid,funcInfo,createAt);
         return id;
     }
-    private void log(String name,String value){
-        log.info(String.format("--------------%s:%s",name,value));
-    }
     /**
      * 根据AppId,查询detialId
-     * @author:     Logan
-     * @date:       2018/11/23 17:26
-     * @params:     [wechatPublicId]
-     * @return:     java.lang.String
-    **/
+     * @author: Logan
+     * @param authorizationAppid  公众号appid
+     * @return id 公众号详细信息表id
+     */
     @Override
    public String getWechatPublicDetailIdByAppId(String authorizationAppid){
         String sql ="select id from wechat_public_detail where authorization_appid=?";
@@ -86,6 +69,23 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
         }
    }
 
+    /**
+     * 修改公众号详细信息表
+     * @param wechatPublicId     公众号信息表外键
+     * @param nickName           授权方昵称
+     * @param headImg            授权方头像
+     * @param serviceTypeInfo    授权方公众号类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
+     * @param verifyTypeInfo     授权方认证类型,在微信公众号上用的是数组，现改成用逗号拼接到一个字段里
+     * @param userName           授权方公众号的原始ID
+     * @param principalName      公众号的主体名称
+     * @param alias              授权方公众号所设置的微信号
+     * @param businessInfo       能的开通状况，微信公众号发过来的是json格式的字符串，现直接存储到字段里
+     * @param qrcodeUrl          二维码图片的URL
+     * @param authorizationAppid 授权方appid
+     * @param funcInfo           公众号授权给开发者的权限集列表*
+     * @author: Logan
+     * @date: 2018/11/23 17:27
+     **/
     @Override
     public void updateWechatPublicDetail(String wechatPublicId, String nickName,
                                            String headImg, String serviceTypeInfo,

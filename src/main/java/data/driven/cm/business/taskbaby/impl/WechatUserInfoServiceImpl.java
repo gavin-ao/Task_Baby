@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @program: Task_Baby
@@ -23,26 +22,30 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
 
     /**
      * 新增微信用户信息
-     * @param subscribe 是否订阅公众号,1 是 0 否
-     * @param nickname 用户昵称
-     * @param sex 性别,1 男 2 女 0 未知
-     * @param country 国家
-     * @param province 省份
-     * @param language 语言
-     * @param headimgurl 头像URL
-     * @param unionid 用户在公众号中的唯一id,只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段
-     * @param remark 备注,公众号对粉丝的备注
+     *
+     * @param subscribe      是否订阅公众号,1 是 0 否
+     * @param openId         微信用户在公众号中唯一的标示
+     * @param nickname       用户昵称
+     * @param sex            性别,1 男 2 女 0 未知
+     * @param country        国家
+     * @param province       省份
+     * @param language       语言
+     * @param headimgurl     头像URL
+     * @param unionid        用户在公众号中的唯一id,只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段
+     * @param remark         备注,公众号对粉丝的备注
      * @param subscribeScene 渠道来源
-     * @param wechatAccount 公众号信息表外键原始ID
-     * @param subscribeTime 用户关注时间
-     * @param city 城市
-     * @param qrScene 二维码扫码场景id
-     * @param qrSceneStr 二维码扫码场景描述
-     * @param openId 微信用户在公众号中唯一的标示
-     * @return
+     * @param wechatAccount  公众号信息表外键原始ID
+     * @param subscribeTime  用户关注时间
+     * @param city           城市
+     * @param qrScene        二维码扫码场景id
+     * @param qrSceneStr     二维码扫码场景描述
+     * @return wechatUserId
      */
     @Override
-    public String insertWechatUserInfoEntity(Integer subscribe,String openId, String nickname, Integer sex, String country, String province, String language, String headimgurl, String unionid, String remark, String subscribeScene, String wechatAccount, Integer subscribeTime, String city, Integer qrScene, String qrSceneStr) {
+    public String insertWechatUserInfoEntity(Integer subscribe,String openId, String nickname, Integer sex,
+                                             String country, String province, String language, String headimgurl,
+                                             String unionid, String remark, String subscribeScene, String wechatAccount,
+                                             Integer subscribeTime, String city, Integer qrScene, String qrSceneStr) {
         Date createUpdateAt = new Date();
         String wechatUserId = getUserInfoById(wechatAccount,openId);
         if(wechatUserId != null){
@@ -50,7 +53,6 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
             dao.executeUpdate(sql, subscribe,wechatUserId);
         }else{
             wechatUserId = UUIDUtil.getUUID();
-//            WechatStoreVerificationAuthorizationEntity wechatStoreVerificationAuthorizationEntity = new WechatStoreVerificationAuthorizationEntity();
             WechatUserInfoEntity wechatUserInfoEntity = new WechatUserInfoEntity();
             wechatUserInfoEntity.setWechatUserId(wechatUserId);
             wechatUserInfoEntity.setSubscribe(subscribe);
@@ -81,7 +83,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      * @param wechatAccount 公众号信息表外键原始ID
      * @param openId 微信用户在公众号中唯一的标示
      * @param subscribe 是否订阅公众号,1 是 0 否
-     * @return
+     * @return wechatUserId
      */
     @Override
     public String updateSubscribe(String wechatAccount, String openId, Integer subscribe) {
@@ -99,7 +101,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      * @param openId 微信用户在公众号中唯一标示
      * @return wechatUserId 微信用户id
      */
-    public String getUserInfoById(String wechatAccount, String openId) {
+    private String getUserInfoById(String wechatAccount, String openId) {
         String sql = "SELECT wechat_user_id from wechat_user_info where wechat_account = ? and openid = ?";
         Object wechatUserId = dao.getColumn(sql, wechatAccount,openId);
         if(wechatUserId != null){
@@ -107,21 +109,4 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
         }
         return null;
     }
-
-    /**
-     *  得到微信用户实体类
-     * @param wechatAccount 公众号原始ID
-     * @param openId 微信用户在公众号中唯一标示
-     * @return WechatUserInfoEntity 实体类
-     */
-    @Override
-    public WechatUserInfoEntity getWechatUserInfoEntityByAcountOpenId(String wechatAccount, String openId) {
-        String sql = "SELECT wechat_user_id,subscribe,nickname,sex,country,province,`language`,headimgurl,unionid,remark,subscribe_scene,wechat_account,create_at,city,qr_scene,qr_scene_str,openid from wechat_user_info where wechat_account = ? and openid = ? ";
-        List<WechatUserInfoEntity> wechatUserInfoEntityList = dao.queryList(WechatUserInfoEntity.class,sql,openId);
-        if (wechatUserInfoEntityList != null && wechatUserInfoEntityList.size() > 0){
-            return wechatUserInfoEntityList.get(0);
-        }
-        return null;
-    }
-
 }

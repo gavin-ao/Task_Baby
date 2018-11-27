@@ -12,28 +12,34 @@ import javax.servlet.http.HttpServletResponse;
 public interface ThirdPartyService {
     /**
      * 解密第三方发送的xml
-     * @param request
-     * @param response
+     * @author lxl
+     * @param request request 内容
+     * @param response response 内容
      * @throws Exception
      */
-    public void hadleAuthorize(HttpServletRequest request, HttpServletResponse response) throws Exception;
-    /**
-     * 处理授权后的回调服务
-     * @author:     Logan
-     * @date:       2018/11/23 11:24
-     * @params:     [authCode]
-     * @return:     void
-    **/
-    public void saveCallbackAuthInfo(String authCode);
+    void hadleAuthorize(HttpServletRequest request, HttpServletResponse response) throws Exception;
+
 
     /**
-     * 根据授权的微信公众号appID，获取AuthAccessToken，
-     * 并将刷新后的保存到缓存中
+     * 处理授权后的回调服务
+     * @author: Logan
+     * @date: 2018/11/23 11:24
+     * @param authCode 公众号授权码
+     */
+    void saveCallbackAuthInfo(String authCode);
+
+    /**
+     * *根据授权的微信公众号的appId，获取accessToken，
+     * 并且将刷新后的token更新到缓存中（如果有必要）
+     * 1.先从缓存中去accessToken，
+     * 2.如果没有取到，或者redis中已过期，则调用接口重新刷新accessToken，和refreshToken
+     * 并更新到缓存中去
      * 如果refresToken丢失，则抛出异常，提示需要重新授权
      * @author:     Logan
-     * @date:       2018/11/23 14:11
-     * @params:     [authAppId]
-     * @return:     java.lang.String
-    **/
-    public String getAuthAccessToken(String authAppId) throws Exception;
+     * @param authAppId 公众号appid
+     * @date:       2018/11/23 13:35
+     * @return accessToken
+     * @throws Exception
+     */
+    String getAuthAccessToken(String authAppId) throws Exception;
 }

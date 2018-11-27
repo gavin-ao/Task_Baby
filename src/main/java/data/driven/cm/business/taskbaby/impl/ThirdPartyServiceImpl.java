@@ -28,22 +28,25 @@ import java.util.Map;
 @Service
 public class ThirdPartyServiceImpl implements ThirdPartyService {
     Logger logger = LoggerFactory.getLogger(ThirdPartyServiceImpl.class);
+    /**
+     * 微信公众号 Service层
+     */
     @Autowired
     private WechatPublicService wechatPublicService;
+    /**
+     * 公众号详细信息表Service
+     */
     @Autowired
     private WechatPublicDetailService wechatPublicDetailService;
 
     /**
-     * 处理授权后的回调
-     *
+     * 处理授权后的回调服务
      * @author: Logan
-     * @date: 2018/11/23 11:25
-     * @params: [authCode]
-     * @return: void
-     **/
+     * @date: 2018/11/23 11:24
+     * @param authCode 公众号授权码
+     */
     @Override
     public void saveCallbackAuthInfo(String authCode) {
-
         //获取授权信息
         String authInfoStr = WeChatUtil.getAuthoInfo(authCode);
         logger.info(String.format("返回授权码后，获取授权详细信息:%s",authInfoStr));
@@ -56,26 +59,16 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             JSONArray funcCategory = authInfo.getJSONArray(WeChatConstant.API_JSON_KEY_FUNCSCOPE_CATEGORY);
             saveAuthToMysql(authorizerAppid, funcCategory);
             saveWechatAccountDetail(authorizerAppid);
-           //todo:以下代码是测试，需要删掉
-            try {
-                String accessToken = getAuthAccessToken(authorizerAppid);
-                logger.info(String.format("----------测试获取的authAccessToken:%s",accessToken));
-            } catch (Exception e) {
-                logger.info(e.getMessage());
-            }
-
         }
     }
 
     /**
      * 保存授权信息到mysql数据库
-     * authAppId,funcCategoryId
-     *
      * @author: Logan
      * @date: 2018/11/23 12:02
-     * @params: [authAppId, funcCategory]
-     * @return: void
-     **/
+     * @param authAppId 公众号appid
+     * @param funcCategory 授权给开发者的权限集列表
+     */
     private void saveAuthToMysql(String authAppId, JSONArray funcCategory) {
         logger.info("---------保存授权信息到Mysql-------------");
         WechatPublicEntity wechatPublicEntity =
@@ -97,14 +90,14 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             logger.info("-------授权信息插入数据库完成-----------");
         }
     }
+
     /**
      * 将授权信息保存到缓存中
-     * authorizer_access_token,authorizer_refresh_token
      * @author:     Logan
      * @date:       2018/11/23 12:10
-     * @params:     [authInfo]
-     * @return:     void
-    **/
+     * @param authInfo authJson信息
+     * @param authCode 授权code
+     */
     private void saveAuthToCache(JSONObject authInfo,String authCode) {
         logger.info("--------开始保存授权信息到缓存--------------");
         String authorizerAccessToken =
@@ -134,14 +127,12 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             logger.error("获取refresToken失败");
         }
     }
-
     /**
      * 根据authAppId，获取授权微信账号详情，存数据库
      * @author:     Logan
      * @date:       2018/11/23 16:40
-     * @params:     [authAppId]
-     * @return:     void
-    **/
+     * @param authAppId 公众号appid
+     */
     private void saveWechatAccountDetail(String authAppId){
         String detailStr = WeChatUtil.accessAuthAccountDetailAPI(authAppId);
         logger.info(String.format("-----------wechatDetailStr:%s----------",detailStr));
@@ -214,19 +205,20 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
           }
         }
     }
-/**
- * 根据授权的微信公众号的appId，获取accessToken，
- * 并且将刷新后的token更新到缓存中（如果有必要）
- * 1.先从缓存中去accessToken，
- * 2.如果没有取到，或者redis中已过期，则调用接口重新刷新accessToken，和refreshToken
- * 并更新到缓存中去
- * 如果refresToken丢失，则抛出异常，提示需要重新授权
- *
- * @author:     Logan
- * @date:       2018/11/23 13:35
- * @params:     [authAppId]
- * @return:     java.lang.String
-**/
+
+    /**
+     * *根据授权的微信公众号的appId，获取accessToken，
+     * 并且将刷新后的token更新到缓存中（如果有必要）
+     * 1.先从缓存中去accessToken，
+     * 2.如果没有取到，或者redis中已过期，则调用接口重新刷新accessToken，和refreshToken
+     * 并更新到缓存中去
+     * 如果refresToken丢失，则抛出异常，提示需要重新授权
+     * @author:     Logan
+     * @param authAppId 公众号appid
+     * @date:       2018/11/23 13:35
+     * @return accessToken
+     * @throws Exception
+     */
     @Override
     public String getAuthAccessToken(String authAppId) throws Exception {
       //1.从缓存中取
@@ -236,23 +228,23 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         //token没有过期
         if(StringUtils.isNotEmpty(accessToken)){
             return accessToken;
-        }else{ //token过期了
+        //token过期了
+        }else{
             accessToken = refreshAccessToken(authAppId);
         }
         return accessToken;
     }
 
-
     /**
      * 刷新authorizerAccessToken
-     * @author:     Logan
      * @date:       2018/11/23 13:43
-     * @params:     [authAppId]
-     * @return:     java.lang.String
-    **/
+     * @author:     Logan
+     * @param authAppId 公众号appid
+     * @return newAccessToken 新的AccessToken
+     * @throws Exception
+     */
     private String refreshAccessToken(String authAppId) throws Exception {
         String newAccessToken = "";
-        String thirdPartyAccessToken = WeChatUtil.getComponentAccessToken();
 
         logger.info("--------得到旧的refreshToken---------------");
         //当前redis里面存的refreshToken
@@ -295,9 +287,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
 
     /**
      * 解密第三方发送的xml
-     *
-     * @param request
-     * @param response
+     * @author lxl
+     * @param request request 内容
+     * @param response response 内容
      * @throws Exception
      */
     @Override

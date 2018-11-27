@@ -10,18 +10,19 @@ import javax.servlet.http.HttpServletResponse;
  * @Author: lxl
  * @describe 只是消息的自动回复
  * @Date: 2018/11/12 17:56
- * @Version 1.0
  */
 public interface WeChatService {
 
     /**
      *  调用核心服务类接收处理请求
-     * @param request
-     * @param response
-     * @param appid
-     * @return
+     * @author lxl
+     * @param request request内容
+     * @param response response内容
+     * @param appId 公众号appid
+     * @return 返回信息
      * @throws UnsupportedEncodingException
      */
-    public String processRequest(HttpServletRequest request, HttpServletResponse response,String appid) throws UnsupportedEncodingException;
+     String processRequest(HttpServletRequest request, HttpServletResponse response,String appId)
+             throws UnsupportedEncodingException;
 
 }
