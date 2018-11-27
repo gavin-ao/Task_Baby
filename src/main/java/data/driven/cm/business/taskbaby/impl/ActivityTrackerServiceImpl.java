@@ -28,8 +28,6 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     private JDBCBaseDao jdbcBaseDao;
     @Autowired
     private ActivityService activityService;
-    @Autowired
-    private WechatPublicService wechatPublicService;
 
     /**
      * 跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
@@ -96,12 +94,6 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         if(helpEntity == null){
             return null;
         }
-        String wechatAccount = helpEntity.getWechatAccount();
-        WechatPublicEntity wechatPublicEntity = wechatPublicService.getEntityByWechatAccount(wechatAccount);
-        if(wechatPublicEntity == null){
-            return null;
-        }
-
         //获取粉丝个人信息存入到userPersonalInfoMap
         Map<String,String> userPersonalInfoMap = WeChatUtil.getUserInfo(detailEntity.getHelpOpenId(),access_token);
         Map<String,Object> resultMap = new HashMap<String,Object>();
