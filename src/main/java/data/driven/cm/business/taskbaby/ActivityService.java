@@ -17,37 +17,26 @@ public interface ActivityService {
      *
      * @param wechatAccount 微信账号
      * @param keyWord 关键字
-     * @param status 0是关闭，1是开启
      * @return 主键
      */
-    public String getMatActivityId(String wechatAccount, String keyWord,Integer status);
+     String getMatActivityId(String wechatAccount, String keyWord);
 
     /**
      *
      * @param wechatAccount 微信账号
      * @param keyWord 关键字
-     * @param status 0是关闭，1是开启
      * @return key:[actId, pictureId,startAt,endAt,status,shareCopywriting];
      */
-    public Map<String,Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord,Integer status);
+     Map<String,Object> getMacActivitySimpleInfo(String wechatAccount, String keyWord);
 
-    public Integer countActivedActivity(String wechatAccount);
 
     /**
      * 通过任务ID得到任务实体
      * @param actId 任务ID
      * @return MatActivityEntity
      */
-    public MatActivityEntity getMatActivityEntityByActId(String actId);
+     MatActivityEntity getMatActivityEntityByActId(String actId);
 
-    /**
-     * 
-     * @author:     Logan
-     * @date:       2018/11/19 17:24
-     * @params:     [actId]   
-     * @return:     java.lang.Integer
-    **/        
-    public Integer getMacActivityType(String actId);
     /**根据活动Id获取活动状态实体
      *
      * @author:     Logan
@@ -55,7 +44,7 @@ public interface ActivityService {
      * @params:     [actId]
      * @return:     data.driven.cm.entity.taskbaby.MatActivityStatusEntity
     **/
-    public MatActivityStatusEntity getMacActivityStatusByActId(String actId);
+     MatActivityStatusEntity getMacActivityStatusByActId(String actId);
 
     /**
      * 获取活动要求助力数
@@ -64,5 +53,5 @@ public interface ActivityService {
      * @params:     [activityId]
      * @return:     java.lang.Integer
      **/
-    public Integer getRequiredHelpCount(String activityId);
+     Integer getRequiredHelpCount(String activityId);
 }

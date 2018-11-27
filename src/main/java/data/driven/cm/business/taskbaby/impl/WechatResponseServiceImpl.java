@@ -336,7 +336,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @return: 活动id；
      **/
     private String matchKeyWord(String keyWord, String wechatAccount) {
-        String activityId = activityService.getMatActivityId(wechatAccount, keyWord, null);
+        String activityId = activityService.getMatActivityId(wechatAccount, keyWord);
         if (StringUtils.isNotEmpty(activityId)) {
             return activityId;
         }
@@ -366,7 +366,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         long begin = System.currentTimeMillis();
         //获取带参数的二维码
         Map<String, Object> activitySimpleInfoMap =
-                activityService.getMacActivitySimpleInfo(wechatAccount, keyWord, null);
+                activityService.getMacActivitySimpleInfo(wechatAccount, keyWord);
         WeChatUtil.log(logger, begin, "getMacActivitySimpleInfo");
         if (activitySimpleInfoMap == null) {
             return "";
