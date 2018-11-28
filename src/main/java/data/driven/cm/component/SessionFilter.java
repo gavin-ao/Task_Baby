@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class SessionFilter implements Filter{
 
-    private static Logger logger = LoggerFactory.getLogger(WechatApiFilter.class);
+    private static Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
     /** 不过滤的url集合 **/
     public static Set<String> EXCLUDE_URL_SET = new HashSet<String>();

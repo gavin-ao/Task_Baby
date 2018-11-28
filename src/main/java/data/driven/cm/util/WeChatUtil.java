@@ -269,36 +269,6 @@ public class WeChatUtil {
     }
 
     /**
-     *  通过客服接口发送文本和图片
-     * @param testJson 需要发送的信息
-     *          文本：
-     *                 {
-                            "touser":"OPENID",
-                            "msgtype":"text",
-                            "text":
-                            {
-                            "content":"Hello World"
-                            }
-                        }
-                 图片：
-                        {
-                            "touser":"OPENID",
-                            "msgtype":"image",
-                            "image":
-                            {
-                            "media_id":"MEDIA_ID"
-                            }
-                        }
-     * @param appId
-     * @param secret
-     */
-    public static void sendCustomMsg(JSONObject testJson,String appId,String secret){
-        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String accessToken = jsonObject.getString("access_token");
-        String url = CUSTOM_URL+accessToken;
-        HttpUtil.doPost(url, testJson.toJSONString());
-    }
-    /**
      *
      * @author:     Logan
      * @date:       2018/11/16 03:48
@@ -446,24 +416,6 @@ public class WeChatUtil {
         return mapToXML(map);
     }
 
-
-    /**
-     * 通过微信用户OpenID 得到用户信息
-     * @param fromUserName 相当于用户Openid
-     * @appId 开发者ID
-     * @secret 开发者密码
-     * @return 返回用户信息map格式
-     */
-    public static Map<String,String> getUserInfo(String fromUserName,String appId,String secret){
-        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String accessToken = jsonObject.getString("access_token");
-        String url = USER_URL+"?access_token="+accessToken+"&openid="+fromUserName+"&lang=zh_CN";
-        String resultStr = HttpUtil.doGetSSL(url);
-
-//        JSONObject result = parseObject(resultStr);
-        Map<String, String> map = JSONObject.parseObject(resultStr, new TypeReference<Map<String, String>>(){});
-        return map;
-    }
     /**
      * 通过微信用户OpenID 得到用户信息
      * @param fromUserName 相当于用户Openid
@@ -480,48 +432,6 @@ public class WeChatUtil {
         return map;
     }
 
-    /**
-     * 获取微信公众号二维码 并保存
-     * @param codeType 二维码类型 "1": 临时二维码  "2": 永久二维码
-     * @param expireSeconds 临时二维码的过期时间，最多是2592000（即30天）
-     * @param actionName 二维码类型，QR_SCENE为临时的整型参数值，QR_STR_SCENE为临时的字符串参数值，QR_LIMIT_SCENE为永久的整型参数值，QR_LIMIT_STR_SCENE为永久的字符串参数值
-     * @param sceneStr 场景值ID（字符串形式的ID），字符串类型，长度限制为1到64,就是带参数的
-//     * @param fileName 图片名称
-     * @param appId 开发者ID
-     * @param secret 开发者密码
-     */
-    public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String appId,String secret) {
-        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String accessToken = jsonObject.getString("access_token");
-        String url = QRCODE_URL+"?access_token="+accessToken;
-
-        Map<String, Object> map = new HashMap<>();
-        if ("1".equals(codeType)) { // 临时二维码
-            map.put("expire_seconds", expireSeconds);
-            map.put("action_name", actionName);
-            Map<String, Object> sceneMap = new HashMap<>();
-            Map<String, Object> sceneIdMap = new HashMap<>();
-            sceneIdMap.put("scene_str", sceneStr);
-            sceneMap.put("scene", sceneIdMap);
-            map.put("action_info", sceneMap);
-        } else if ("2".equals(codeType)) { // 永久二维码
-            map.put("action_name", actionName);
-            Map<String, Object> sceneMap = new HashMap<>();
-            Map<String, Object> sceneIdMap = new HashMap<>();
-            sceneIdMap.put("scene_str", sceneStr);
-            sceneMap.put("scene", sceneIdMap);
-            map.put("action_info", sceneMap);
-        }
-        String data = JSON.toJSONString(map);
-        // 得到ticket票据,用于换取二维码图片
-        String resultStr = HttpUtil.doPost(url, data);
-        JSONObject jsonticket = JSON.parseObject(resultStr);
-        String ticket = jsonticket.getString("ticket");
-        String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
-        return showqrUrl;
-//        HttpUtil.httpsRequestPicture(SHOWQR_URL + URLEncoder.encode(ticket),
-//                "GET", null, "F:\\testProject",fileName, "jpg");
-    }
     /**
      * 获取微信公众号二维码 并保存
      * @author:     Logan
@@ -557,96 +467,7 @@ public class WeChatUtil {
         String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
         return showqrUrl;
     }
-    /**
-     * 新增临时素材
-     * @param fileType 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb）
-     * @param filePath 文件路径
-     * @param appId 开发者ID
-     * @param secret 开发者密码
-     * @return {"type":"TYPE","media_id":"MEDIA_ID","created_at":123456789}
-     *      type 媒体文件类型，分别有图片（image）、语音（voice）、视频（video）和缩略图（thumb，主要用于视频与音乐格式的缩略图）
-     *      media_id 媒体文件上传后，获取标识
-     *      created_at 媒体文件上传时间戳
-     * @throws IOException
-     */
-    public static Map<String,Object> UploadMeida(String fileType,String filePath,String appId,String secret) throws IOException {
-        //返回结果
-        String result = null;
-        File file = new File(filePath);
-        if (!file.exists() || !file.isFile()) {
-            throw new IOException("文件不存在");
-        }
-        JSONObject jsonObject = WXUtil.getAccessToken(appId,secret);
-        String token = jsonObject.getString("access_token");
-        String urlString = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=" + token + "&type=" + fileType;
-        URL url = new URL(urlString);
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");//以POST方式提交表单
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.setUseCaches(false);//POST方式不能使用缓存
-        //设置请求头信息
-        conn.setRequestProperty("Connection", "Keep-Alive");
-        conn.setRequestProperty("Charset", "UTF-8");
-        //设置边界
-        String bounDay = "----------" + System.currentTimeMillis();
-        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + bounDay);
-        //请求正文信息
-        //第一部分
-        StringBuilder sb = new StringBuilder();
-        sb.append("--");//必须多两条道
-        sb.append(bounDay);
-        sb.append("\r\n");
-        sb.append("Content-Disposition: form-data;name=\"media\"; filename=\"" + file.getName() + "\"\r\n");
-        sb.append("Content-Type:application/octet-stream\r\n\r\n");
 
-        //获得输出流
-        OutputStream out = new DataOutputStream(conn.getOutputStream());
-        //输出表头
-        out.write(sb.toString().getBytes("UTF-8"));
-        //文件正文部分
-        //把文件以流的方式 推送道URL中
-        DataInputStream din = new DataInputStream(new FileInputStream(file));
-        int bytes = 0;
-        byte[] buffer = new byte[1024];
-        while ((bytes = din.read(buffer)) != -1) {
-            out.write(buffer, 0, bytes);
-        }
-        din.close();
-        //结尾部分
-        byte[] foot = ("\r\n--" + bounDay + "--\r\n").getBytes("UTF-8");//定义数据最后分割线
-        out.write(foot);
-        out.flush();
-        out.close();
-        if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
-
-            StringBuffer strbuffer = null;
-            BufferedReader reader = null;
-            try {
-                strbuffer = new StringBuffer();
-                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String lineString = null;
-                while ((lineString = reader.readLine()) != null) {
-                    strbuffer.append(lineString);
-
-                }
-                if (result == null) {
-                    result = strbuffer.toString();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
-            }
-        }
-        //返回的字符串转成json
-        JSONObject resultJson = JSON.parseObject(result);
-        Map<String,Object> map = new HashMap<>();
-        map = JSONObject.toJavaObject(resultJson,Map.class);
-        return map;
-    }
     public static Map<String,Object> UploadMeida(String fileType,String filePath,String accessToken) throws IOException {
         long begin = System.currentTimeMillis();
         //返回结果
