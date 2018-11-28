@@ -145,7 +145,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String dispatherAndReturn(Map<String, String> wechatEventMap, String appid) {
 
         String accessToken = getAccessToken(appid);
-        String event =getEvent(wechatEventMap);
         if (accessToken == null) {
             return "";
         }
@@ -228,7 +227,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
     }
     /**
-    * @description 判断是否直接关注事件 区分是否扫码关注的点事，eventKey为空
+    * @description 判断是否直接关注事件 区分是否扫码关注的点是eventKey为空
     * @author Logan
     * @date 2018-11-27 18:39
      * @param wechatEventMap
@@ -420,9 +419,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      **/
     private String keyWordReply(Map<String, String> wechatEventMap, String accessToken) {
         long start = System.currentTimeMillis();
-        String openId = wechatEventMap.get(WeChatConstant.FROM_USER_NAME);
-        String wechatAccount = wechatEventMap.get(WeChatConstant.TO_USER_NAME);
-        String keyWord = wechatEventMap.get(WeChatConstant.CONTENT);
+        String openId = getFromUserName(wechatEventMap);
+        String wechatAccount = getWechatAccount(wechatEventMap);
+        String keyWord = getMsgContent(wechatEventMap);
         if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)) {
             return "";
         }
