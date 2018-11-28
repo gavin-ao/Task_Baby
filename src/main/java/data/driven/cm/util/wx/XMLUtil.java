@@ -5,6 +5,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +20,12 @@ import java.util.Map;
  **/
 
 public class XMLUtil {
-    public static Map<String,String> parseXML(HttpServletRequest request) throws Exception{
-        Map<String,String> map = new HashMap<String,String>();
-        InputStream inputStream = request.getInputStream();
+    public static Map<String, String> parseXML(HttpServletRequest request) throws Exception {
+
+        Map<String, String> map = new HashMap<>();
+        InputStream inputStream = null;
         try {
+            inputStream = request.getInputStream();
             //读取输入流
             SAXReader reader = new SAXReader();
             Document document = reader.read(inputStream);
@@ -33,9 +37,12 @@ public class XMLUtil {
                 map.put(e.getName(), e.getText());
             }
             return map;
-        }finally {
-            inputStream.close();
-            inputStream = null;
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException io) {
+                io.printStackTrace();
+            }
         }
     }
 }
