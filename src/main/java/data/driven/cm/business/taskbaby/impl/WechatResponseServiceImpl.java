@@ -227,7 +227,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
     }
     /**
-    * @description 判断是否直接关注事件 区分是否扫码关注的点事，eventKey为空
+    * @description 判断是否直接关注事件 区分是否扫码关注的点是eventKey为空
     * @author Logan
     * @date 2018-11-27 18:39
      * @param wechatEventMap
