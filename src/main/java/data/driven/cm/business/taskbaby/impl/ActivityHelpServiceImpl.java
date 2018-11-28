@@ -26,7 +26,7 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
      * 新增活动助力信息
      * @param actId 活动Id
      * @param wechatAccount 公众号原始ID
-     * @param formId 被助力者ID
+     * @param fansOpenId 被助力者ID
      * @param helpSuccessStatus 助力成功状态,0 助力未成功 1 助力成功
      * @param helpNumber 助力人数
      * @return
