@@ -1,14 +1,17 @@
 package data.driven.cm.component;
 
 public enum RewardTypeEnum {
-        TOKEN("TOKEN",0),//口令，京口令，淘口令
-        SECURECODE("SECURECODE",1), //卡密
-        IVITECODE("INVITECODE",2),//邀请码
-        GOODS("GOODS",3),//实物
-        LESSON("LESSON",4);//课程
+    //口令，京口令，淘口令
+        TOKEN("TOKEN",0),
+    //卡密
+        SECURECODE("SECURECODE",1),
+    //实物
+        GOODS("GOODS",2),
+    //图片(海报、二维码)
+        IMG("IMG",3);
         private String name;
         private int index;
-        private RewardTypeEnum(String name, int index){
+        RewardTypeEnum(String name, int index){
             this.name = name;
             this.index =index;
         }
