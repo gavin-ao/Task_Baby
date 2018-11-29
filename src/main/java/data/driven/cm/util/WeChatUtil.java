@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.ArticleItem;
@@ -331,7 +332,7 @@ public class WeChatUtil {
           String touser = requestMap.get(KEY_CSMSG_TOUSER);
           if(StringUtils.isNotEmpty(content)){
               WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
-              Gson gson = new Gson();
+              Gson gson = new GsonBuilder().disableHtmlEscaping().create(); ;
               return gson.toJson(msgEntity);
           }else{
               return null;
