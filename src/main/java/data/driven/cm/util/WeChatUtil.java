@@ -304,7 +304,6 @@ public class WeChatUtil {
             switch (msgType) {
                 case "text":
                     String msg = getCSJsonTxtMsg(requestMap);//得到客服消息的json字符串；
-                    log.info(String.format("发送客服消息的参数JSON:",msg));
                     if(StringUtils.isNotEmpty(msg)) {
                         sendCustomMsgByJsonStr(msg, accessToken);
                     }
