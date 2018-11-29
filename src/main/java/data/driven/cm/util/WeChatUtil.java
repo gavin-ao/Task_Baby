@@ -332,7 +332,7 @@ public class WeChatUtil {
           String touser = requestMap.get(KEY_CSMSG_TOUSER);
           if(StringUtils.isNotEmpty(content)){
               WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
-              Gson gson = new GsonBuilder().disableHtmlEscaping().create(); ;
+              Gson gson = new GsonBuilder().disableHtmlEscaping().create();
               return gson.toJson(msgEntity);
           }else{
               return null;
@@ -354,7 +354,7 @@ public class WeChatUtil {
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
                     WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
-                    Gson gson = new Gson();
+                    Gson gson = new GsonBuilder().disableHtmlEscaping().create();
                     return gson.toJson(imgMsgEntity);
                 }
             } catch (IOException e) {
