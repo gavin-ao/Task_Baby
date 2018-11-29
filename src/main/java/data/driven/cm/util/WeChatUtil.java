@@ -333,7 +333,7 @@ public class WeChatUtil {
           if(StringUtils.isNotEmpty(content)){
               WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
               Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-              return gson.toJson(msgEntity);
+              return  gson.toJson(msgEntity).replace("\\r\\n","\r\n");
           }else{
               return null;
           }
@@ -355,7 +355,7 @@ public class WeChatUtil {
                 if(StringUtils.isNotEmpty(mediaId)) {
                     WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                    return gson.toJson(imgMsgEntity);
+                    return gson.toJson(imgMsgEntity).replace("\\r\\n","\r\n");
                 }
             } catch (IOException e) {
                 log.error("---------------发送临时图片消息失败------------");
