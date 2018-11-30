@@ -376,6 +376,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             case TOKEN:
                 prizeMsg = String.format("口令：%s", prizeMappingEntity.getToken());
                 break;
+            case GOODS:
+                prizeMsg = String.format("\n%s", prizeMappingEntity.getLinkUrl());
+                break;
             case SECURECODE:
                 prizeMsg = String.format("地址:%s,口令:%s",
                         prizeMappingEntity.getLinkUrl(), prizeMappingEntity.getToken());
@@ -632,7 +635,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                     if (StringUtils.isNotEmpty(rewardInfo)) {
                         msg = String.format(msgSuccessTemplate,
                                 trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),
-                                activityEntity.getRewardUrl(), rewardInfo);
+                                activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", touser).replace("actId",activityId));
                     }
                 } else {
                     processStatus = ACTIVITY_HELP_PROCESS_EXCEEDS;
