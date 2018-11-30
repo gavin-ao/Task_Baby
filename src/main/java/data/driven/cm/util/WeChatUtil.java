@@ -304,7 +304,7 @@ public class WeChatUtil {
             switch (msgType) {
                 case "text":
                     String msg = getCSJsonTxtMsg(requestMap);//得到客服消息的json字符串；
-                    log.info(String.format("发送客服消息的参数JSON:",msg));
+                    log.info(String.format("--------------发送客服消息的参数JSON：%s:",msg));
                     if(StringUtils.isNotEmpty(msg)) {
                         sendCustomMsgByJsonStr(msg, accessToken);
                     }
@@ -332,8 +332,8 @@ public class WeChatUtil {
           String touser = requestMap.get(KEY_CSMSG_TOUSER);
           if(StringUtils.isNotEmpty(content)){
               WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
-              Gson gson = new GsonBuilder().disableHtmlEscaping().create(); ;
-              return gson.toJson(msgEntity);
+              Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+              return  gson.toJson(msgEntity).replace("\\\\r\\\\n","\\r\\n");
           }else{
               return null;
           }
@@ -354,8 +354,8 @@ public class WeChatUtil {
                 String mediaId = uploadInfoMap.get(KEY_MEDIA_ID).toString();
                 if(StringUtils.isNotEmpty(mediaId)) {
                     WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
-                    Gson gson = new Gson();
-                    return gson.toJson(imgMsgEntity);
+                    Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+                    return gson.toJson(imgMsgEntity).replace("\\\\r\\\\n","\\r\\n");
                 }
             } catch (IOException e) {
                 log.error("---------------发送临时图片消息失败------------");
