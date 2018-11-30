@@ -6,9 +6,9 @@ public enum RewardTypeEnum {
     //卡密
         SECURECODE("SECURECODE",1),
     //实物
-        GOODS("GOODS",2),
+        GOODS("GOODS",3),
     //图片(海报、二维码)
-        IMG("IMG",3);
+        IMG("IMG",4);
         private String name;
         private int index;
         RewardTypeEnum(String name, int index){
