@@ -1,0 +1,52 @@
+<doctype html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/service/css/receiving_address.css" type="text/css">
+        <script type="text/javascript" src="/static/plugins/taskbaby/jquery-1.7.2.js"></script>
+        <script type="text/javascript" src="/static/plugins/taskbaby/receiving_address.js"></script>
+        <title>添加收货地址</title>
+    </head>
+    <body>
+    <!--主体 -->
+    <div id="main">
+        <form action="saveAddress" method="post" autocomplete="on" onsubmit="return toVaild()"><!--onsubmit="return toVaild()"-->
+            <div id="content">
+                收货人 <input type="text" name="consignee" required id="consignee"/><br/>
+                <hr/>
+            </div>
+            <div id="content">
+                手机号码 <input type="text" name="phone"
+                            pattern="(\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$"
+                            required oninput="checkOnInput(this, '电话号码格式不正确！')"/><br/>
+                <hr/>
+            </div>
+            <div id="content">
+                所在地区
+                <select id="province" name ="province">
+                    <option >选择省</option>
+                    #foreach($province in $provinces)
+                        <option value="$province.province">$province.name</option>
+                    #end
+                </select>
+                <select id="city" name ="city">
+                    <option>选择市</option>
+                </select>
+                <select id="district" name ="district">
+                    <option>选择县</option>
+
+                </select>
+                <hr/>
+            </div>
+            <div id="content">
+                详细地址 <br/>
+                <textarea rows="3" cols="50" style="resize:none" id="detailedAddress" name = "detailedAddress"></textarea>
+                <hr/>
+            </div>
+            <div id="submit" style="text-decoration:underline">
+                <input type="submit" class="button blue" />
+            </div>
+        </form>
+    </div>
+    </body>
+    </html>

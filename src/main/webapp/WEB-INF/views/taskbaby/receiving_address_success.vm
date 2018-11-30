@@ -1,0 +1,17 @@
+<doctype html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/service/css/receiving_address.css" type="text/css">
+        <title>添加收货地址</title>
+    </head>
+    <body>
+    <!--主体 -->
+    <div id="main">
+        <div id="content" style="text-align:center">
+            <p style="align-content: center">我们将尽快安排发货</p>
+            <hr/>
+        </div>
+    </div>
+    </body>
+    </html>
