@@ -39,8 +39,8 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     @Override
     public Map<String, Integer> getHelpCount(String helpId,String activityId) {
         Integer require = activityService.getRequiredHelpCount(activityId);
-        String sql="select count(1) from act_help_detail where help_id=? and help_status=1";
-        Integer help = jdbcBaseDao.getCount(sql,helpId);
+        String sql="select count(1) from act_help_detail where help_openid = ? and act_id = ? and help_status=1";
+        Integer help = jdbcBaseDao.getCount(sql,helpId,activityId);
         Map<String,Integer> result = new HashMap<String,Integer>();
         int remain = 0;
         if (require == null){
