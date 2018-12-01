@@ -1,5 +1,6 @@
 package data.driven.cm.business.taskbaby.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.business.taskbaby.*;
 import data.driven.cm.component.RewardTypeEnum;
 import data.driven.cm.component.TaskBabyConstant;
@@ -345,9 +346,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             logger.info("---------------当老用户再次扫码时发送信息------------start");
             //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
             Map<String,Integer> helpCountMap = activityTrackerService.getHelpCount(helpId,actId);
+            Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
             String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
             String msg = String.format(msgSuccessTemplate,
-                    Integer.parseInt(helpCountMap.get("help").toString()), Integer.parseInt(helpCountMap.get("remain").toString()));
+                    Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
             Map<String, String> replyMap = new HashMap<>();
             replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
             replyMap.put(KEY_CSMSG_CONTENT, msg);
@@ -648,6 +650,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             if (remain > 0) {
                 msg = String.format(msgTemplate,
                         trackResult.get(WeChatConstant.KEY_NICKNAME).toString(), remain);
+                //回复信息
+                sendMsg( msg,touser, accessToken);
                 processStatus = ACTIVITY_HELP_PROCESS_INPROCESS;
             } else {
                 MatActivityEntity activityEntity =
@@ -667,21 +671,39 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                                 trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),
                                 activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", touser).replace("actId", activityId));
                     }
+                    //回复信息
+                    sendMsg( msg,touser, accessToken);
+                    JSONObject msgJson = new JSONObject();
+
+//                    //发送模版信息
+//                    WeChatUtil.sendTemplateMsg(,accessToken);
+
                 } else {
                     processStatus = ACTIVITY_HELP_PROCESS_EXCEEDS;
-                    actHelpDetailService.updateActHelpDetailEntity(helpDetailId, 0, 1);
+//                    actHelpDetailService.updateActHelpDetailEntity(helpDetailId, 0, 1); //当超出一助力人数后,在有用户助力的话就没法累加多少人助力，所以先去掉，等王总回来问问。
                 }
             }
-            //回复信息
-            if (StringUtils.isNotEmpty(msg)) {
-                Map<String, String> replyMap = new HashMap<>();
-                replyMap.put(KEY_CSMSG_TOUSER, touser);
-                replyMap.put(KEY_CSMSG_CONTENT, msg);
-                replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-                WeChatUtil.sendCustomMsg(replyMap, accessToken);
-            }
-
         }
         return processStatus;
+    }
+
+    /**
+     * @description 回复信息
+     * @author lxl
+     * @date 2018-12-01 16:42
+     * @param msg 回复的信息
+     * @param  touser   接收用户的openid
+     * @param  accessToken 令牌
+     * @return
+     */
+    private void sendMsg(String msg,String touser,String accessToken){
+        //回复信息
+        if (StringUtils.isNotEmpty(msg)) {
+            Map<String, String> replyMap = new HashMap<>();
+            replyMap.put(KEY_CSMSG_TOUSER, touser);
+            replyMap.put(KEY_CSMSG_CONTENT, msg);
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            WeChatUtil.sendCustomMsg(replyMap, accessToken);
+        }
     }
 }
