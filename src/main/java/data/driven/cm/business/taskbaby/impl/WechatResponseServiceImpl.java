@@ -287,15 +287,15 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 checkActiveAvailable(actId)) {
             insertWechatUserInfo(wechatEventMap, appid);
             return keyWordReply(wechatEventMap, accessToken);
-        } else{
+        } else {
             Map<String, String> msgReply = new HashMap<>();
             msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
             msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
-            String msg =null;
-            if(activityService.keyWordExist(msgContent, wechatAccount)){
-                msg ="很抱歉，您参加的活动已经结束，请持续关注我们，更多精彩的活动马上就来~";
-            }else{
-                msg="没找到您想要的活动，请持续关注我们，更多活动马上就来~";
+            String msg = null;
+            if (activityService.keyWordExist(msgContent, wechatAccount)) {
+                msg = "很抱歉，您参加的活动已经结束，请持续关注我们，更多精彩的活动马上就来~";
+            } else {
+                msg = "没找到您想要的活动，请持续关注我们，更多活动马上就来~";
             }
             msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg);
             WeChatUtil.sendCustomMsg(msgReply, accessToken);
@@ -342,6 +342,19 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             //老用户
             logger.info("---------------老用户------------");
             actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
+            logger.info("---------------当老用户再次扫码时发送信息------------start");
+            //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
+            Map<String,Integer> helpCountMap = activityTrackerService.getHelpCount(helpId,actId);
+            String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
+            String msg = String.format(msgSuccessTemplate,
+                    Integer.parseInt(helpCountMap.get("help").toString()), Integer.parseInt(helpCountMap.get("remain").toString()));
+            Map<String, String> replyMap = new HashMap<>();
+            replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
+            replyMap.put(KEY_CSMSG_CONTENT, msg);
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            WeChatUtil.sendCustomMsg(replyMap, accessToken);
+            logger.info("---------------当老用户再次扫码时发送信息------------end");
+
         } else {
             //新用户
             logger.info("---------------新用户------------");
@@ -352,7 +365,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             //需要调用生成海报接口
             wechatEventMap.put(ActivityService.KEY_ACT_ID, actId);
             wechatEventMap.put(ActivityService.KEY_PIC_ID, matActivityEntity.getPictureId());
-            activityReply(wechatEventMap, accessToken);
+            activityReply(wechatEventMap, accessToken, helpOpenId);
             String processStatus = trackActive(helpOpenId, actHelpDetailId, actId, accessToken);
         }
         return "";
@@ -523,12 +536,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * 粉丝发关键字，微信公众号发送客服信息
      * 回复活动内容介绍和个性化海报
      *
+     * @param helpOpenId 当已帮A助力成功后，需要给B发送信息，告诉已帮A助力成功
      * @author: Logan
      * @date: 2018/11/17 12:45
      * @params: [wechatEventMap]
      * @return: java.lang.String
      **/
-    private String activityReply(Map<String, String> wechatEventMap, String accessToken) {
+    private String activityReply(Map<String, String> wechatEventMap, String accessToken, String helpOpenId) {
+        String msgSuccessTemplate = "您已经成功为好友%s助力一次~";
         String openId = wechatEventMap.get(WeChatConstant.FROM_USER_NAME);
         String wechatAccount = wechatEventMap.get(WeChatConstant.TO_USER_NAME);
         if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)) {
@@ -582,6 +597,21 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         logger.info("发送海报完成。。。");
         joinActivity(wechatAccount, openId, activityId);
+
+        logger.info("发送帮A助力成功。。。start");
+        /**
+         * 得到被助力者的用户信息
+         */
+        userPersonalInfoMap = WeChatUtil.getUserInfo(helpOpenId, accessToken);
+        String msg = String.format(msgSuccessTemplate,
+                userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME).toString());
+        replyMap = new HashMap<>();
+        replyMap.put(KEY_CSMSG_TOUSER, openId);
+        replyMap.put(KEY_CSMSG_CONTENT, msg);
+        replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+        WeChatUtil.sendCustomMsg(replyMap, accessToken);
+        logger.info("发送帮A助力成功。。。end");
+
         return "success";
     }
 
@@ -635,7 +665,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                     if (StringUtils.isNotEmpty(rewardInfo)) {
                         msg = String.format(msgSuccessTemplate,
                                 trackResult.get(WeChatConstant.KEY_NICKNAME).toString(),
-                                activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", touser).replace("actId",activityId));
+                                activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", touser).replace("actId", activityId));
                     }
                 } else {
                     processStatus = ACTIVITY_HELP_PROCESS_EXCEEDS;
