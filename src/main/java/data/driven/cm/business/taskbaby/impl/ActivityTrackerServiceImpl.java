@@ -57,7 +57,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         }
         result.put(KEY_HELP_REQUIRE,require);
         result.put(KEY_HELP_HELP,help);
-        result.put(KEY_HELP_REMAIN,help > require ? 0 : require-help);
+        result.put(KEY_HELP_REMAIN,require-help);
        return result;
     }
 
