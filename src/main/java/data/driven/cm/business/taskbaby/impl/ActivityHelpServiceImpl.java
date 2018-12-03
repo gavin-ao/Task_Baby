@@ -101,4 +101,17 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
             return null;
         }
     }
+
+    /**
+     * @description 当A用户完成任务后修改助力状态
+     * @author lxl
+     * @date 2018-12-03 09:50
+     * @param fansId 用户OpenID
+     * @return
+     */
+    @Override
+    public void updateHelpSuccessStatus(String fansId) {
+        String sql = "UPDATE act_help set help_success_status = 1 where fans_id = ?";
+        jdbcBaseDao.executeUpdate(sql,fansId);
+    }
 }

@@ -55,6 +55,15 @@ public interface ActivityHelpService {
      **/
     public String getHelpId(String helpOpenId,String activityId);
 
+    /**
+     * @description 当A用户完成任务后修改助力状态
+     * @author lxl
+     * @date 2018-12-03 09:50
+     * @param fansId 用户OpenID
+     * @return
+     */
+    void updateHelpSuccessStatus(String fansId);
+
 
 
 
