@@ -45,6 +45,11 @@ public class ActHelpEntity {
      */
     private Integer helpNumber;
 
+    /**
+     *助力渠道 0 关键词 1 扫码
+     */
+    private Integer subscribeScene;
+
     public String getHelpId() {
         return helpId;
     }
