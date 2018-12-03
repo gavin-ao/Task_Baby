@@ -3,10 +3,12 @@ package data.driven.cm.business.taskbaby.impl;
 import data.driven.cm.business.taskbaby.WechatUserInfoService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
+import data.driven.cm.util.DateFormatUtil;
 import data.driven.cm.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -112,4 +114,173 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
         }
         return null;
     }
+
+    /**
+     * @description 通过本次活动带来的新粉丝人数
+     * @author lxl
+     * @date 2018-12-03 15:26
+     * @param actId 活动 id
+     * @return activityAddNumber 活动拉新人数
+     */
+    @Override
+    public Integer getActivityAddNumber(String actId) {
+        String sql = "select count(1) from wechat_user_info where act_id = ?" ;
+        Integer activityAddNumber = dao.getCount(sql,actId);
+        return activityAddNumber;
+    }
+
+    /**
+     * @description 参加本次活动活动后取关的人数 subscribe 为 0
+     * @author lxl
+     * @date 2018-12-03 15:43
+     * @param actId 活动id
+     * @return activityTakeOffNumber 活动取关人数
+     */
+    @Override
+    public Integer getActivityTakeOffNumber(String actId) {
+        String sql = "select count(1) from wechat_user_info where act_id = ? and subscribe = 0";
+        Integer activityTakeOffNumber = dao.getCount(sql,actId);
+        return activityTakeOffNumber;
+    }
+
+    /**
+     * @description 净增人数= 拉新人数-取关人数,subscribe 为 1
+     * @author lxl
+     * @date 2018-12-03 15:49
+     * @param actId 活动id
+     * @return  activityNetIncreaseNumber 净增人数
+     */
+    @Override
+    public Integer getActivityNetIncreaseNumber(String actId) {
+        String sql = "select count(1) from wechat_user_info where act_id = ? and subscribe = 1";
+        Integer activityNetIncreaseNumber = dao.getCount(sql,actId);
+        return activityNetIncreaseNumber;
+    }
+
+    /**
+     * @description 今日新拉新人数，开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 16:00
+     * @param wechatAccount 公众号原始 id
+     * @return  todayAddActivityNumber 今日拉新人数
+     */
+    @Override
+    public Integer getTodayAddActivityNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at >= ? and create_at <= ?";
+        Integer todayAddActivityNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
+                sdf.format(DateFormatUtil.getEndTime(0)));
+        return todayAddActivityNumber;
+    }
+
+    /**
+     * @description 今日取消关注活动人数 subscribe 为 0 ，开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:03
+     * @param wechatAccount 公众号原始 id
+     * @return todayActivityTakeOffNumber 取消关注人数
+     */
+    @Override
+    public Integer getTodayActivityTakeOffNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 0 and create_at >= ? and create_at <= ?";
+        Integer todayActivityTakeOffNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
+                sdf.format(DateFormatUtil.getEndTime(0)));
+        return todayActivityTakeOffNumber;
+    }
+
+    /**
+     * @description 今日净增人数= 拉新人数-取关人数,subscribe 为 1,开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:17
+     * @param wechatAccount 公众号原始 id
+     * @return  todayActivityNetIncreaseNumber 今日净增人数
+     */
+    @Override
+    public Integer getTodayActivityNetIncreaseNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 1 and create_at >= ? and create_at <= ?";
+        Integer todayActivityNetIncreaseNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
+                sdf.format(DateFormatUtil.getEndTime(0)));
+        return todayActivityNetIncreaseNumber;
+    }
+
+    /**
+     * @description 活动累计关注数,活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
+     * @param wechatAccount 公众号原始 id
+     * @return totalFollowNumber 活动累计关注总数
+     */
+    @Override
+    public Integer getTotalFollowNumber(String wechatAccount) {
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? ";
+        Integer totalFollowNumber = dao.getCount(sql,wechatAccount);
+        return totalFollowNumber;
+    }
+
+    /**
+     * @description 昨日新拉新人数，昨天开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 16:00
+     * @param wechatAccount 公众号原始 id
+     * @return  yesterdayddActivityNumber 今日拉新人数
+     */
+    @Override
+    public Integer getYesterdayAddActivityNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at >= ? and create_at <= ?";
+        Integer yesterdayAddActivityNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
+                sdf.format(DateFormatUtil.getEndTime(-1)));
+        return yesterdayAddActivityNumber;
+    }
+
+    /**
+     * @description 昨日取消关注活动人数 subscribe 为 0 ，昨天开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:03
+     * @param wechatAccount 公众号原始 id
+     * @return yesterdayActivityTakeOffNumber 昨日取消关注人数
+     */
+    @Override
+    public Integer getYesterdayActivityTakeOffNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 0 and create_at >= ? and create_at <= ?";
+        Integer yesterdayActivityTakeOffNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
+                sdf.format(DateFormatUtil.getEndTime(-1)));
+        return yesterdayActivityTakeOffNumber;
+    }
+
+    /**
+     * @description 昨日净增人数= 昨日拉新人数-昨日取关人数,subscribe 为 1,昨日开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:17
+     * @param wechatAccount 公众号原始 id
+     * @return  yesterdayActivityNetIncreaseNumber 昨日净增人数
+     */
+    @Override
+    public Integer getYesterdayActivityNetIncreaseNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 1 and create_at >= ? and create_at <= ?";
+        Integer yesterdayActivityNetIncreaseNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
+                sdf.format(DateFormatUtil.getEndTime(-1)));
+        return yesterdayActivityNetIncreaseNumber;
+    }
+
+    /**
+     * @description 昨天活动累计关注数,活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
+     * @param wechatAccount 公众号原始 id
+     * @return yesterdayTotalFollowNumber 昨天活动累计关注总数
+     */
+    @Override
+    public Integer getYesterdayTotalFollowNumber(String wechatAccount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at < ?";
+        Integer yesterdaytotalFollowNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)));
+        return yesterdaytotalFollowNumber;
+    }
+
+
 }

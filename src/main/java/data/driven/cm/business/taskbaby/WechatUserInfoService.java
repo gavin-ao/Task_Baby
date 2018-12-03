@@ -1,11 +1,11 @@
 package data.driven.cm.business.taskbaby;
 
 /**
- * @author: lxl
- * @program: Task_Baby
- * @description: 从数据库里面获取微信粉丝的服务
- * @create: 2018-11-15 11:49
- **/
+ * @Author: lxl
+ * @describe 微信用户Service
+ * @Date: 2018/11/12 16:51
+ * @Version 1.0
+ */
 public interface WechatUserInfoService {
 
     /**
@@ -44,5 +44,104 @@ public interface WechatUserInfoService {
      * @return wechatUserId
      */
     String updateSubscribe(String wechatAccount, String openId, Integer subscribe);
+
+    /**
+     * @description 通过本次活动带来的新粉丝人数,其实可以从act_help表中求数
+     * @author lxl
+     * @date 2018-12-03 15:26
+     * @param actId 活动 id
+     * @return activityAddNumber 活动拉新人数
+     */
+    Integer getActivityAddNumber(String actId);
+    
+    /**
+     * @description 参加本次活动活动后取关的人数
+     * @author lxl
+     * @date 2018-12-03 15:43
+     * @param actId 活动id
+     * @return activityTakeOffNumber 活动取关人数
+     */
+    Integer getActivityTakeOffNumber(String actId);
+    
+    /**
+     * @description 净增人数= 拉新人数-取关人数,subscribe 为 1
+     * @author lxl
+     * @date 2018-12-03 15:49
+     * @param actId 活动id
+     * @return  activityNetIncreaseNumber 净增人数
+     */
+    Integer getActivityNetIncreaseNumber(String actId);
+
+    /**
+     * @description 今日新拉新人数，开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 16:00
+     * @param wechatAccount 公众号原始 id
+     * @return  todayAddActivityNumber 今日拉新人数
+     */
+    Integer getTodayAddActivityNumber(String wechatAccount);
+    
+    /**
+     * @description 今日取消关注活动人数 subscribe 为 0 ，开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:03
+     * @param wechatAccount 公众号原始 id
+     * @return todayActivityTakeOffNumber 取消关注人数
+     */
+    Integer getTodayActivityTakeOffNumber(String wechatAccount);
+
+    /**
+     * @description 今日净增人数= 拉新人数-取关人数,subscribe 为 1,开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:17
+     * @param wechatAccount 公众号原始 id
+     * @return  todayActivityNetIncreaseNumber 今日净增人数
+     */
+    Integer getTodayActivityNetIncreaseNumber(String wechatAccount);
+
+    /**
+     * @description 累计关注数,活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
+     * @param wechatAccount 公众号原始 id
+     * @return totalFollowNumber 累计关注总数
+     */
+    Integer getTotalFollowNumber(String wechatAccount);
+
+    /**
+     * @description 昨日新拉新人数，昨天开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 16:00
+     * @param wechatAccount 公众号原始 id
+     * @return  yesterdayddActivityNumber 今日拉新人数
+     */
+    Integer getYesterdayAddActivityNumber(String wechatAccount);
+
+    /**
+     * @description 昨日取消关注活动人数 subscribe 为 0 ，昨天开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:03
+     * @param wechatAccount 公众号原始 id
+     * @return yesterdayActivityTakeOffNumber 昨日取消关注人数
+     */
+    Integer getYesterdayActivityTakeOffNumber(String wechatAccount);
+
+    /**
+     * @description 昨日净增人数= 昨日拉新人数-昨日取关人数,subscribe 为 1,昨日开始和结束时间
+     * @author lxl
+     * @date 2018-12-03 17:17
+     * @param wechatAccount 公众号原始 id
+     * @return  yesterdayActivityNetIncreaseNumber 昨日净增人数
+     */
+    Integer getYesterdayActivityNetIncreaseNumber(String wechatAccount);
+
+    /**
+     * @description 昨天活动累计关注数,活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
+     * @param wechatAccount 公众号原始 id
+     * @return yesterdayTotalFollowNumber 昨天活动累计关注总数
+     */
+    Integer getYesterdayTotalFollowNumber(String wechatAccount);
 
 }

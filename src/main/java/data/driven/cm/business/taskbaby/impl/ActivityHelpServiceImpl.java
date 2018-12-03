@@ -116,4 +116,46 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         String sql = "UPDATE act_help set help_success_status = 1 where fans_id = ?";
         jdbcBaseDao.executeUpdate(sql,fansId);
     }
+
+    /**
+     * @description 通过活动id得到所有参加活动的总人数
+     * @author lxl
+     * @date 2018-12-03 15:02
+     * @param actId 活动 Id
+     * @return activityTotalNumber 活动参加人数
+     */
+    @Override
+    public Integer getActivityTotalNumber(String actId) {
+        String sql = "select count(1) from act_help where act_id = ?";
+        Integer activityTotalNumber = jdbcBaseDao.getCount(sql,actId);
+        return activityTotalNumber;
+    }
+
+    /**
+     * @description 通过活动关键词主动参加活动的人，非传播带来的人,subscribe_scene 为 0
+     * @author lxl
+     * @date 2018-12-03 15:07
+     * @param actId 活动 Id
+     * @return activityPromotionNumber 任务推广人数
+     */
+    @Override
+    public Integer getActivityPromotionNumber(String actId) {
+        String sql = "select count(1) from act_help where act_id = ? and subscribe_scene = 0 ";
+        Integer activityPromotionNumber = jdbcBaseDao.getCount(sql,actId);
+        return activityPromotionNumber;
+    }
+
+    /**
+     * @description 达到活动助力门槛人数
+     * @author lxl
+     * @date 2018-12-03 15:14
+     * @param actId 活动id
+     * @return activityCompletionNumber 任务完成人数
+     */
+    @Override
+    public Integer getActivityCompletionNumber(String actId) {
+        String sql = "select count(1) from act_help where act_id = ? and help_success_status = 1";
+        Integer activityCompletionNumber = jdbcBaseDao.getCount(sql,actId);
+        return activityCompletionNumber;
+    }
 }

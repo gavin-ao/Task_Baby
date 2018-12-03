@@ -65,6 +65,33 @@ public interface ActivityHelpService {
      */
     void updateHelpSuccessStatus(String fansId);
 
+    /**
+     * @description 通过活动id得到所有参加活动的总人数
+     * @author lxl
+     * @date 2018-12-03 15:02
+     * @param actId 活动 Id
+     * @return activityTotalNumber 活动参加人数
+     */
+    Integer getActivityTotalNumber(String actId);
+
+    /**
+     * @description 通过活动关键词主动参加活动的人，非传播带来的人,subscribe_scene 为 0
+     * @author lxl
+     * @date 2018-12-03 15:07
+     * @param actId 活动 Id
+     * @return activityPromotionNumber 任务推广人数
+     */
+    Integer getActivityPromotionNumber(String actId);
+
+    /**
+     * @description 达到活动助力门槛人数
+     * @author lxl
+     * @date 2018-12-03 15:14
+     * @param actId 活动id
+     * @return activityCompletionNumber 任务完成人数
+     */
+    Integer getActivityCompletionNumber(String actId);
+
 
 
 
