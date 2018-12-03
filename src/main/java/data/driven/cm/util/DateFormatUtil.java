@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 日期格式化工具类
@@ -21,29 +18,30 @@ public class DateFormatUtil {
 
     public static final String normalPattern = "yyyy-MM-dd";
 
-    public static final ThreadLocal<Map<String,SimpleDateFormat>> local = new ThreadLocal<Map<String,SimpleDateFormat>>();
+    public static final ThreadLocal<Map<String, SimpleDateFormat>> local = new ThreadLocal<Map<String, SimpleDateFormat>>();
 
     /**
      * 移除线程本地变量
      */
-    public static void removeLocal(){
+    public static void removeLocal() {
         local.remove();
     }
 
     /**
      * 如果本地线程没有获取到日期格式化类，那么就新建一个并且放入到本地线程
+     *
      * @param pattern
      * @return
      */
-    public static SimpleDateFormat getLocal(String pattern){
+    public static SimpleDateFormat getLocal(String pattern) {
         Map<String, SimpleDateFormat> map = local.get();
-        if(map==null){
+        if (map == null) {
             map = new HashMap<String, SimpleDateFormat>();
             local.set(map);
         }
         SimpleDateFormat sdf = map.get(pattern);
-        if(sdf==null){
-            if(pattern == null){
+        if (sdf == null) {
+            if (pattern == null) {
                 pattern = normalPattern;
             }
             sdf = new SimpleDateFormat(pattern);
@@ -54,35 +52,37 @@ public class DateFormatUtil {
 
     /**
      * 如果本地线程没有获取到日期格式化类，那么就新建一个并且放入到本地线程
-     *   默认yyyy-MM-dd
+     * 默认yyyy-MM-dd
+     *
      * @return
      */
-    public static SimpleDateFormat getLocal(){
+    public static SimpleDateFormat getLocal() {
         return getLocal(normalPattern);
     }
 
 
     /**
      * 获取年，月，日的数字
+     *
      * @param dateStr
      * @return
      */
-    public static JSONObject getNumTime(String dateStr){
+    public static JSONObject getNumTime(String dateStr) {
         JSONObject jsonObject = new JSONObject();
         SimpleDateFormat sdf = getLocal();
-        try{
+        try {
             Date date = sdf.parse(dateStr);
             Calendar c = Calendar.getInstance();
             c.setTime(date);
             long startTime = c.getTimeInMillis();
-            jsonObject.put(startTimeName,startTime);
-            jsonObject.put(yearName,c.get(Calendar.YEAR));
-            jsonObject.put(monthName,c.get(Calendar.MONTH) + 1);
+            jsonObject.put(startTimeName, startTime);
+            jsonObject.put(yearName, c.get(Calendar.YEAR));
+            jsonObject.put(monthName, c.get(Calendar.MONTH) + 1);
 
-            c.add(Calendar.MONTH,1);
+            c.add(Calendar.MONTH, 1);
             long endTime = c.getTimeInMillis();
-            jsonObject.put(endTimeName,endTime);
-        }catch (Exception e){
+            jsonObject.put(endTimeName, endTime);
+        } catch (Exception e) {
 
         }
         return jsonObject;
@@ -90,11 +90,12 @@ public class DateFormatUtil {
 
     /**
      * 根据字符串返回日期
-     * @param timeformat    日期格式字符串
+     *
+     * @param timeformat 日期格式字符串
      * @param dateStr
      * @return
      */
-    public static Date getTime(String timeformat,String dateStr){
+    public static Date getTime(String timeformat, String dateStr) {
         SimpleDateFormat sdf = getLocal(timeformat);
         try {
             return sdf.parse(dateStr);
@@ -106,42 +107,46 @@ public class DateFormatUtil {
 
     /**
      * 根据字符串返回日期
+     *
      * @param dateStr
      * @return
      */
-    public static Date getTime(String dateStr){
+    public static Date getTime(String dateStr) {
         return getTime(normalPattern, dateStr);
     }
 
     /**
      * 根据传入的格式，处理后返回日期，可以用于清除时分秒等
-     * @param timeformat    日期格式字符串
-     * @param date  日期
+     *
+     * @param timeformat 日期格式字符串
+     * @param date       日期
      * @return
      */
-    public static Date convertDate(String timeformat, Date date){
+    public static Date convertDate(String timeformat, Date date) {
         SimpleDateFormat sdf = getLocal(timeformat);
         return getTime(normalPattern, sdf.format(date));
     }
 
     /**
      * 根据传入的格式，处理后返回日期，可以用于清除时分秒等
+     *
      * @param date
      * @return
      */
-    public static Date convertDate(Date date){
+    public static Date convertDate(Date date) {
         return convertDate(normalPattern, date);
     }
 
     /**
      * 返回时间戳
+     *
      * @param timeformat
      * @param dataStr
      * @return
      */
-    public static Long getTimeMillis(String timeformat, String dataStr){
-        Date date = getTime(timeformat,dataStr);
-        if(date!=null){
+    public static Long getTimeMillis(String timeformat, String dataStr) {
+        Date date = getTime(timeformat, dataStr);
+        if (date != null) {
             return date.getTime();
         }
         return null;
@@ -149,25 +154,26 @@ public class DateFormatUtil {
 
     /**
      * 日期加法
-     * @param date 日期原值
-     * @param type 添加单位 ， 1 - 年， 2 - 月， 3 - 天
+     *
+     * @param date   日期原值
+     * @param type   添加单位 ， 1 - 年， 2 - 月， 3 - 天
      * @param amount 添加的值
      * @return
      */
-    public static Date addDate(Date date, int type, int amount){
-        if(date == null){
+    public static Date addDate(Date date, int type, int amount) {
+        if (date == null) {
             return null;
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int filed = 0;
-        if(type == 1){
+        if (type == 1) {
             filed = Calendar.YEAR;
-        }else if(type == 2){
+        } else if (type == 2) {
             filed = Calendar.MONTH;
-        }else if(type == 3){
+        } else if (type == 3) {
             filed = Calendar.DAY_OF_YEAR;
-        }else{
+        } else {
             return null;
         }
         calendar.add(filed, amount);
@@ -176,10 +182,11 @@ public class DateFormatUtil {
 
     /**
      * 针对于yyyy-MM-dd格式的字符串，拼接23:59:59返回日期
+     *
      * @param endDate
      * @return
      */
-    public static Date toEndDate(String endDate){
+    public static Date toEndDate(String endDate) {
         endDate += " 23:59:59";
         SimpleDateFormat sdf = getLocal("yyyy-MM-dd HH:mm:ss");
         try {
@@ -188,6 +195,66 @@ public class DateFormatUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * @return Date
+     * @description 得到当天开始时间
+     * @author lxl
+     * @date 2018-12-03 16:21
+     */
+    public static Date getStartTime(Integer date) {
+        Calendar todayStart = Calendar.getInstance();
+        todayStart.add(Calendar.DATE,date);
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+        todayStart.set(Calendar.MINUTE, 0);
+        todayStart.set(Calendar.SECOND, 0);
+        todayStart.set(Calendar.MILLISECOND, 0);
+        return todayStart.getTime();
+    }
+
+    /**
+     * @return Date
+     * @description 得到昨天的开始时间
+     * @author lxl
+     * @date 2018-12-03 16:31
+     */
+    public static Date getEndTime(Integer date) {
+        Calendar todayEnd = Calendar.getInstance();
+        todayEnd.add(Calendar.DATE,date);
+        todayEnd.set(Calendar.HOUR_OF_DAY, 23);
+        todayEnd.set(Calendar.MINUTE, 59);
+        todayEnd.set(Calendar.SECOND, 59);
+        todayEnd.set(Calendar.MILLISECOND, 999);
+        return todayEnd.getTime();
+    }
+
+//    public static Date getYesterdayStartTime(){
+//        Calendar todayStart = Calendar.getInstance();
+//        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+//        todayStart.set(Calendar.MINUTE, 0);
+//        todayStart.set(Calendar.SECOND, 0);
+//        todayStart.set(Calendar.MILLISECOND, 0);
+//        return todayStart.getTime();
+//    }
+//
+//    public static Date getYesterdayEndTime(){
+//        Calendar todayStart = Calendar.getInstance();
+//        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+//        todayStart.set(Calendar.MINUTE, 0);
+//        todayStart.set(Calendar.SECOND, 0);
+//        todayStart.set(Calendar.MILLISECOND, 0);
+//        return todayStart.getTime();
+//    }
+
+    public static void main(String[] args) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        System.out.println(sdf.format(getStartTime(-1)));
+        System.out.println(sdf.format(getEndTime(-1)));
+
+
+
     }
 
 }
