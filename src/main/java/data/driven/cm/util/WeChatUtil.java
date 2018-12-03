@@ -54,6 +54,8 @@ public class WeChatUtil {
     private static final String SHOWQR_URL = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=";
     /** 客服接口-发消息 **/
     private static final String CUSTOM_URL = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+    /** 模版接口-发消息 **/
+    private static final String TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=";
 
 
     public static final String QR_TYPE_TEMPORARY ="1";//临时码
@@ -282,6 +284,13 @@ public class WeChatUtil {
         long begin =System.currentTimeMillis();
         HttpUtil.doPost(url, jsonStr);
         WeChatUtil.log(log,begin,"调用微信接口发送图片客服信息");
+    }
+
+    public static void sendTemplateMsg(String jsonStr,String accessToken){
+        String url = TEMPLATE_URL + accessToken;
+        log.info("----------------调用模版接口 start ---------------------");
+        HttpUtil.doPost(url,jsonStr);
+        log.info("----------------调用模版接口 end -----------------------");
     }
 /**
  * 根据Map发送客服消息
