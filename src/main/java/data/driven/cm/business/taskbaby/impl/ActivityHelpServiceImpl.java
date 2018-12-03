@@ -29,14 +29,16 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
      * @param fansOpenId 被助力者ID
      * @param helpSuccessStatus 助力成功状态,0 助力未成功 1 助力成功
      * @param helpNumber 助力人数
+     * @param subscribeScene 助力渠道
      * @return
      */
     @Override
-    public String insertActivityHelpEntity(String actId, String wechatAccount, String fansOpenId, Integer helpSuccessStatus, Integer helpNumber) {
+    public String insertActivityHelpEntity(String actId, String wechatAccount, String fansOpenId, Integer helpSuccessStatus, Integer helpNumber,Integer subscribeScene) {
         Date helpAt = new Date();
         String helpId = UUIDUtil.getUUID();
-        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,fans_id,help_success_status,help_number,help_at) VALUES (?,?,?,?,?,?,?)";
-        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,fansOpenId,helpSuccessStatus,helpNumber,helpAt);
+        String sql = "INSERT INTO act_help (help_id,act_id,wechat_account,fans_id,help_success_status," +
+                "help_number,help_at,subscribe_scene) VALUES (?,?,?,?,?,?,?,?)";
+        jdbcBaseDao.executeUpdate(sql, helpId,actId,wechatAccount,fansOpenId,helpSuccessStatus,helpNumber,helpAt,subscribeScene);
         return helpId;
     }
 

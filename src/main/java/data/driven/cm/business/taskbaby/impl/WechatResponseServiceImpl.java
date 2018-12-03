@@ -521,7 +521,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             WeChatUtil.log(logger, begin, "发送图片全部动作");
         }
         logger.info("--------插入粉丝加入活动的数据---------------");
-        joinActivity(wechatAccount, openId, activityId);
+        joinActivity(wechatAccount, openId, activityId,0);
         return "success";
     }
 
@@ -603,7 +603,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
         logger.info("发送海报完成。。。");
-        joinActivity(wechatAccount, openId, activityId);
+        joinActivity(wechatAccount, openId, activityId,1);
 
         logger.info("发送帮A助力成功。。。start");
         /**
@@ -630,10 +630,10 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @params: [wechatAccount, openId, activityId]
      * @return: void
      **/
-    private void joinActivity(String wechatAccount, String openId, String activityId) {
+    private void joinActivity(String wechatAccount, String openId, String activityId,Integer subscribeScene) {
         if (!activityHelpService.checkFansInActivity(openId, activityId)) {
             activityHelpService.insertActivityHelpEntity(
-                    activityId, wechatAccount, openId, 0, 0);
+                    activityId, wechatAccount, openId, 0, 0,subscribeScene);
         }
     }
 

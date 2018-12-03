@@ -17,9 +17,10 @@ public interface ActivityHelpService {
      * @param fansOpenId 被助力者ID
      * @param helpSuccessStatus 助力成功状态,0 助力未成功 1 助力成功
      * @param helpNumber 助力人数
+     * @param subscribeScene 助力渠道
      * @return
      */
-    public String insertActivityHelpEntity(String actId,String wechatAccount,String fansOpenId,Integer helpSuccessStatus,Integer helpNumber);
+    public String insertActivityHelpEntity(String actId,String wechatAccount,String fansOpenId,Integer helpSuccessStatus,Integer helpNumber,Integer subscribeScene);
 
     /**
      * 得到还差多少人，已经有多少人领取
