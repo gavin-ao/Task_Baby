@@ -166,6 +166,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         //用户取消公众号关注
         if (unsubscribeEvent(wechatEventMap)) {
+            logger.info("原始id "+ getWechatAccount(wechatEventMap));
+            logger.info("openId "+ getFromUserName(wechatEventMap));
+            logger.info(" ----------- 进入 用户取消公众号关注 ");
             wechatUserInfoService.updateSubscribe(
                     getWechatAccount(wechatEventMap),
                     getFromUserName(wechatEventMap), 0);
@@ -242,9 +245,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private boolean subscribeEvent(Map<String, String> wechatEventMap) {
         String msgType = getMsgType(wechatEventMap);
-        String eventKey = getEventKey(wechatEventMap);
-        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(msgType)
-                && StringUtils.isEmpty(eventKey)) {
+        String eventKey = getEvent(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(eventKey)
+                && StringUtils.isNotEmpty(eventKey)) {
             return true;
         } else {
             return false;
@@ -260,9 +263,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private boolean unsubscribeEvent(Map<String, String> wechatEventMap) {
         String msgType = getMsgType(wechatEventMap);
-        String eventKey = getEventKey(wechatEventMap);
-        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(msgType)
-                && StringUtils.isEmpty(eventKey)) {
+        String eventKey = getEvent(wechatEventMap);
+        logger.info("-----------msgType ---------------- "+msgType);
+        logger.info("-----------eventKey ---------------- "+eventKey);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(eventKey)
+                && StringUtils.isNotEmpty(eventKey)) {
             return true;
         } else {
             return false;
@@ -673,6 +678,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                     }
                     //回复信息
                     sendMsg( msg,touser, accessToken);
+                    //当A用户完成任务后修改助力状态
+                    activityHelpService.updateHelpSuccessStatus(touser);
                     JSONObject msgJson = new JSONObject();
 
 //                    //发送模版信息
