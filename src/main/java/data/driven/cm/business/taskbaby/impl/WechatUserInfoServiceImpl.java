@@ -39,18 +39,20 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      * @param city           城市
      * @param qrScene        二维码扫码场景id
      * @param qrSceneStr     二维码扫码场景描述
+     * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
      * @return wechatUserId
      */
     @Override
     public String insertWechatUserInfoEntity(Integer subscribe,String openId, String nickname, Integer sex,
                                              String country, String province, String language, String headimgurl,
                                              String unionid, String remark, String subscribeScene, String wechatAccount,
-                                             Integer subscribeTime, String city, Integer qrScene, String qrSceneStr) {
+                                             Integer subscribeTime, String city, Integer qrScene, String qrSceneStr,
+                                             String actId) {
         Date createUpdateAt = new Date();
         String wechatUserId = getUserInfoById(wechatAccount,openId);
         if(wechatUserId != null){
-            String sql = "update wechat_user_info set subscribe = ? where wechat_user_id = ?";
-            dao.executeUpdate(sql, subscribe,wechatUserId);
+            String sql = "update wechat_user_info set subscribe = ?,act_id = ? where wechat_user_id = ?";
+            dao.executeUpdate(sql, subscribe,actId,wechatUserId);
         }else{
             wechatUserId = UUIDUtil.getUUID();
             WechatUserInfoEntity wechatUserInfoEntity = new WechatUserInfoEntity();
@@ -72,6 +74,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
             wechatUserInfoEntity.setQrScene(qrScene);
             wechatUserInfoEntity.setQrSceneStr(qrSceneStr);
             wechatUserInfoEntity.setOpenid(openId);
+            wechatUserInfoEntity.setActId(actId);
 
             dao.insert(wechatUserInfoEntity, "wechat_user_info");
         }

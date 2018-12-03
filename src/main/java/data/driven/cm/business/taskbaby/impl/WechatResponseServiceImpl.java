@@ -160,7 +160,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //搜索直接关注
         if (subscribeEvent(wechatEventMap)) {
             //新增用户信息
-            insertWechatUserInfo(wechatEventMap, appid);
+            insertWechatUserInfo(wechatEventMap, appid,null);
             wechatEventMap.put(WeChatConstant.CONTENT, "谢谢您的关注！");
             return WeChatUtil.sendTextMsg(wechatEventMap);
         }
@@ -291,7 +291,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //判读活动是否有效
         if (actId != null &&
                 checkActiveAvailable(actId)) {
-            insertWechatUserInfo(wechatEventMap, appid);
+            insertWechatUserInfo(wechatEventMap, appid,actId);
             return keyWordReply(wechatEventMap, accessToken);
         } else {
             Map<String, String> msgReply = new HashMap<>();
@@ -319,8 +319,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String accessToken) {
         logger.info("----------------扫二维码进入------------------------");
-        //新增用户信息
-        insertWechatUserInfo(wechatEventMap, appid);
+
         logger.info("----------------插入新增用户信息------------------------");
         //得到传参的信息
         //事件KEY值，qrscene_为前缀，后面为二维码的参数值
@@ -330,6 +329,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //第一个下划线后面的就是openId
         helpOpenId = helpOpenId.substring(helpOpenId.indexOf("_") + 1);
         String actId = eventKeyValue.split("&&")[1];
+        //新增用户信息
+        insertWechatUserInfo(wechatEventMap, appid,actId);
         String fromUserName = getFromUserName(wechatEventMap);
         if (!checkActiveAvailable(actId)) {
             Map<String, String> msgReply = new HashMap<>();
@@ -414,14 +415,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      *
      * @param wechatEventMap
      */
-    public void insertWechatUserInfo(Map<String, String> wechatEventMap, String appid) {
+    public void insertWechatUserInfo(Map<String, String> wechatEventMap, String appid,String actId) {
         try {
             String accessToken = thirdPartyService.getAuthAccessToken(appid);
             Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FROM_USER_NAME), accessToken);
             wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")), userInfo.get("openid"), userInfo.get("nickname"), Integer.parseInt(userInfo.get("sex")),
                     userInfo.get("country"), userInfo.get("province"), userInfo.get("language"), userInfo.get("headimgurl"), userInfo.get("unionid"), userInfo.get("remark"),
                     userInfo.get("subscribe_scene"), wechatEventMap.get(WeChatConstant.TO_USER_NAME), Integer.parseInt(userInfo.get("subscribe_time")), userInfo.get("city"), Integer.parseInt(userInfo.get("qr_scene")),
-                    userInfo.get("qr_scene_str"));
+                    userInfo.get("qr_scene_str"),actId);
         } catch (Exception e) {
             e.printStackTrace();
         }

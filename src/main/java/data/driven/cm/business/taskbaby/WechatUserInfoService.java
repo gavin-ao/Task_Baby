@@ -27,12 +27,13 @@ public interface WechatUserInfoService {
      * @param city           城市
      * @param qrScene        二维码扫码场景id
      * @param qrSceneStr     二维码扫码场景描述
+     * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
      * @return wechatUserId
      */
     String insertWechatUserInfoEntity(Integer subscribe, String openId, String nickname, Integer sex, String country,
                                       String province, String language, String headimgurl,String unionid, String remark,
                                       String subscribeScene, String wechatAccount, Integer subscribeTime, String city,
-                                      Integer qrScene, String qrSceneStr);
+                                      Integer qrScene, String qrSceneStr,String actId);
 
     /**
      * 微信用户取消关注后需要修改用户 是否订阅公众号状态
