@@ -108,6 +108,19 @@ public class WechatUserInfoEntity {
      */
     private String openid;
 
+    /**
+     * 活动id
+     */
+    private String actId;
+
+    public String getActId() {
+        return actId;
+    }
+
+    public void setActId(String actId) {
+        this.actId = actId;
+    }
+
     public String getWechatUserId() {
         return wechatUserId;
     }
