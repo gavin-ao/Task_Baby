@@ -68,7 +68,7 @@ public class ThirdPartyController {
         return modelAndView;
     }
 
-    @RequestMapping("/authcallback")
+    @RequestMapping(value = "/authcallback",produces = {"application/json;charset=UTF-8"})
     /**
      * 第三个授权回调
      * @author:     Logan
@@ -82,7 +82,7 @@ public class ThirdPartyController {
         logger.info(String.format("-----------响应授权回调,AuthCode:%s----------------",authCode));
 
         thirdPartyService.saveCallbackAuthInfo(authCode);
-        return "success";
+        return "授权成功！";
 
     }
 }
