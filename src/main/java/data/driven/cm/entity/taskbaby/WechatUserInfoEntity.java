@@ -113,6 +113,60 @@ public class WechatUserInfoEntity {
      */
     private String actId;
 
+    /**
+     * 消息类型
+     */
+    private String msgType;
+
+    /**
+     * 事件类型
+     */
+
+    private String event;
+
+    /**
+     * 事件key值
+     */
+    private String eventKey;
+
+    /**
+     * 二维码的ticket
+     */
+    private String ticket;
+
+
+    public String getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
+    public String getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(String ticket) {
+        this.ticket = ticket;
+    }
+
     public String getActId() {
         return actId;
     }
