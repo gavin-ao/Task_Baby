@@ -692,11 +692,11 @@ public class WeChatUtil {
      */
     public static String getPreAuthCode(){
         String key =WeChatConstant.THIRD_PARTY_PRE_AUTH_CODE;
-        String preAuthCode = RedisFactory.get(key);
-        log.info("-----------preAuthCode start ------------- "+preAuthCode + "  end");
-        if (preAuthCode != null && preAuthCode.trim().length() > 0){
-            return preAuthCode;
-        }
+//        String preAuthCode = RedisFactory.get(key);
+//        log.info("-----------preAuthCode start ------------- "+preAuthCode + "  end");
+//        if (preAuthCode != null && preAuthCode.trim().length() > 0){
+//            return preAuthCode;
+//        }
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("component_appid",WeChatConstant.THIRD_PARTY_APPID);
         String thirdPartyAccessToken = getComponentAccessToken();
@@ -707,11 +707,11 @@ public class WeChatUtil {
             return "";
         }
         JSONObject resultJson = parseObject(resultStr);
-        if (resultJson.getString("pre_auth_code") != null &&
-                resultJson.getString("pre_auth_code").trim().length() > 0){
-            log.info("------------------pre_auth_code: "+resultJson.getString("pre_auth_code")+"-----------------");
-            RedisFactory.setString(key,resultJson.getString("pre_auth_code"),WeChatConstant.CATCE_VALUE_EXPIRE_PRE_AUTH_CODE * 1000);
-        }
+//        if (resultJson.getString("pre_auth_code") != null &&
+//                resultJson.getString("pre_auth_code").trim().length() > 0){
+//            log.info("------------------pre_auth_code: "+resultJson.getString("pre_auth_code")+"-----------------");
+//            RedisFactory.setString(key,resultJson.getString("pre_auth_code"),WeChatConstant.CATCE_VALUE_EXPIRE_PRE_AUTH_CODE * 1000);
+//        }
         return resultJson.getString("pre_auth_code");
     }
 
