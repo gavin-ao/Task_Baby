@@ -298,10 +298,6 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
         String encryptType = request.getParameter("encrypt_type");
         String nonce = request.getParameter("nonce");
         String msgSignature = request.getParameter("msg_signature");
-        logger.info("------------------------timestamp " + timestamp + "------------------------");
-        logger.info("------------------------encrypt_type " + encryptType + "------------------------");
-        logger.info("------------------------nonce " + nonce + "------------------------");
-        logger.info("------------------------msg_signature " + msgSignature + "------------------------");
         try {
             String encodingAesKey = WeChatConstant.THIRD_PARTY_ENCODINGAESKEY;
             String appId = WeChatConstant.THIRD_PARTY_APPID;
@@ -317,14 +313,17 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
             switch (infoType){
                 //授权成功
                 case "authorized":
+                    logger.info("AuthorizerAppid: "+ requestMap.get("AuthorizerAppid"));
                     wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),1);
                     break;
                 //取消授权
                 case "unauthorized":
+                    logger.info("AuthorizerAppid: "+ requestMap.get("AuthorizerAppid"));
                     wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),0);
                     break;
                 //更新授权
                 case "updateauthorized":
+                    logger.info("AuthorizerAppid: "+ requestMap.get("AuthorizerAppid"));
                     wechatPublicService.updateWechatPublicEntity(requestMap.get("AuthorizerAppid"),2);
                     break;
                 //得到tickon
@@ -337,10 +336,9 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     //获取 第三方平台 Ticket 并且需保存到redis中
                     String componentAccessToken = WeChatUtil.getComponentAccessToken();
                     //获取预授权码pre_auth_code
-                    String preAuthCode = WeChatUtil.getPreAuthCode();
+//                    String preAuthCode = WeChatUtil.getPreAuthCode();
                     logger.info("-----------------component_verify_ticket : " + componentVerifyiTcket + "----------------------");
                     logger.info("-----------------component_access_token : " + componentAccessToken + "----------------------");
-                    logger.info("-----------------pre_auth_code : " + preAuthCode + "----------------------");
             }
         } catch (Exception e) {
             e.printStackTrace();
