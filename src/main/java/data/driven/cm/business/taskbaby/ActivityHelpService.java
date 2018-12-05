@@ -57,6 +57,19 @@ public interface ActivityHelpService {
     public String getHelpId(String helpOpenId,String activityId);
 
     /**
+     * @description 得到用户的活动id,并且活动状态为 1
+     * @author lxl
+     * @date 2018-12-04 15:51
+     * @param openId 用户id
+     * @return act_id 活动id
+     */
+    String getActIdByOpenId(String openId);
+
+
+
+
+
+    /**
      * @description 当A用户完成任务后修改助力状态
      * @author lxl
      * @date 2018-12-03 09:50

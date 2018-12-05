@@ -5,6 +5,8 @@ import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
 import data.driven.cm.util.DateFormatUtil;
 import data.driven.cm.util.UUIDUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.util.Date;
  **/
 @Service
 public class WechatUserInfoServiceImpl implements WechatUserInfoService {
+    private static final Logger logger = LoggerFactory.getLogger(WechatUserInfoServiceImpl.class);
     @Autowired
     private JDBCBaseDao dao;
 
@@ -42,180 +45,133 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      * @param qrScene        二维码扫码场景id
      * @param qrSceneStr     二维码扫码场景描述
      * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
+     * @param msgType        消息类型
+     * @param event          事件类型
+     * @param eventKey       事件key值
+     * @param ticket         二维码的ticket
      * @return wechatUserId
      */
     @Override
-    public String insertWechatUserInfoEntity(Integer subscribe,String openId, String nickname, Integer sex,
+    public String insertWechatUserInfoEntity(Integer subscribe, String openId, String nickname, Integer sex,
                                              String country, String province, String language, String headimgurl,
                                              String unionid, String remark, String subscribeScene, String wechatAccount,
                                              Integer subscribeTime, String city, Integer qrScene, String qrSceneStr,
-                                             String actId) {
-        Date createUpdateAt = new Date();
-        String wechatUserId = getUserInfoById(wechatAccount,openId);
-        if(wechatUserId != null){
-            String sql = "update wechat_user_info set subscribe = ?,act_id = ? where wechat_user_id = ?";
-            dao.executeUpdate(sql, subscribe,actId,wechatUserId);
-        }else{
-            wechatUserId = UUIDUtil.getUUID();
-            WechatUserInfoEntity wechatUserInfoEntity = new WechatUserInfoEntity();
-            wechatUserInfoEntity.setWechatUserId(wechatUserId);
-            wechatUserInfoEntity.setSubscribe(subscribe);
-            wechatUserInfoEntity.setNickname(nickname);
-            wechatUserInfoEntity.setSex(sex);
-            wechatUserInfoEntity.setCountry(country);
-            wechatUserInfoEntity.setProvince(province);
-            wechatUserInfoEntity.setLanguage(language);
-            wechatUserInfoEntity.setHeadimgurl(headimgurl);
-            wechatUserInfoEntity.setUnionid(unionid);
-            wechatUserInfoEntity.setRemark(remark);
-            wechatUserInfoEntity.setSubscribeScene(subscribeScene);
-            wechatUserInfoEntity.setWechatAccount(wechatAccount);
-            wechatUserInfoEntity.setSubscribeTime(subscribeTime);
-            wechatUserInfoEntity.setCreateAt(createUpdateAt);
-            wechatUserInfoEntity.setCity(city);
-            wechatUserInfoEntity.setQrScene(qrScene);
-            wechatUserInfoEntity.setQrSceneStr(qrSceneStr);
-            wechatUserInfoEntity.setOpenid(openId);
-            wechatUserInfoEntity.setActId(actId);
+                                             String actId, String msgType, String event, String eventKey, String ticket) {
+        logger.info("------------进入  用户新增" );
 
-            dao.insert(wechatUserInfoEntity, "wechat_user_info");
-        }
+        Date createUpdateAt = new Date();
+        String wechatUserId = UUIDUtil.getUUID();
+        String sql = "insert into wechat_user_info (wechat_user_id,subscribe,nick_name,sex,country,province,language," +
+                "headimgurl,union_id,remark,subscribe_scene,wechat_account,subscribe_time,create_at,city,qr_scene," +
+                "qr_scene_str,openid,act_id,msg_type,event,event_key,ticket) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?," +
+                "?,?,?,?,?,?,?)";
+        dao.executeUpdate(sql,wechatUserId,subscribe,nickname,sex,country,province,language,headimgurl,unionid,remark,
+                subscribeScene,wechatAccount,subscribeTime,createUpdateAt,city,qrScene,qrSceneStr,openId,actId,msgType,
+                event,eventKey,ticket);
         return wechatUserId;
     }
 
     /**
-     *  微信用户取消关注后需要修改用户 是否订阅公众号状态
-     * @param wechatAccount 公众号信息表外键原始ID
-     * @param openId 微信用户在公众号中唯一的标示
-     * @param subscribe 是否订阅公众号,1 是 0 否
+     * @description 用户取消关注时新增信息
+     * @author lxl
+     * @date 2018-12-04 17:29
+     * @param openId         微信用户在公众号中唯一的标示
+     * @param wechatAccount  公众号信息表外键原始ID
+     * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
+     * @param msgType        消息类型
+     * @param event          事件类型
+     * @param eventKey       事件key值
+     * @param ticket         二维码的ticket
      * @return wechatUserId
      */
     @Override
-    public String updateSubscribe(String wechatAccount, String openId, Integer subscribe) {
-        String wechatUserId = getUserInfoById(wechatAccount,openId);
-        if(wechatUserId != null){
-            String sql = "update wechat_user_info set subscribe = ? where wechat_user_id = ?";
-            dao.executeUpdate(sql, subscribe,wechatUserId);
-        }
+    public String insertWechatUserInfoEntity(String openId, String wechatAccount, String actId, String msgType, String event, String eventKey, String ticket) {
+        Date createUpdateAt = new Date();
+        String wechatUserId = UUIDUtil.getUUID();
+        String sql = "insert into wechat_user_info (wechat_user_id," +
+                "wechat_account,create_at," +
+                "openid,act_id,msg_type,event,event_key,ticket) VALUES (?,?,?,?,?,?,?,?,?)";
+        dao.executeUpdate(sql,wechatUserId,wechatAccount,createUpdateAt,openId,actId,msgType,
+                event,eventKey,ticket);
         return wechatUserId;
     }
 
     /**
-     * 得到微信用户的 id
-     * @param wechatAccount 公众号原始ID
-     * @param openId 微信用户在公众号中唯一标示
-     * @return wechatUserId 微信用户id
-     */
-    private String getUserInfoById(String wechatAccount, String openId) {
-        String sql = "SELECT wechat_user_id from wechat_user_info where wechat_account = ? and openid = ?";
-        Object wechatUserId = dao.getColumn(sql, wechatAccount,openId);
-        if(wechatUserId != null){
-            return wechatUserId.toString();
-        }
-        return null;
-    }
-
-    /**
+     * @param actId 活动 id
+     * @return activityAddNumber 活动拉新人数
      * @description 通过本次活动带来的新粉丝人数
      * @author lxl
      * @date 2018-12-03 15:26
-     * @param actId 活动 id
-     * @return activityAddNumber 活动拉新人数
      */
     @Override
     public Integer getActivityAddNumber(String actId) {
-        String sql = "select count(1) from wechat_user_info where act_id = ?" ;
-        Integer activityAddNumber = dao.getCount(sql,actId);
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where act_id = ? and  event = ? and event_key is not null";
+        Integer activityAddNumber = dao.getCount(sql, actId,"subscribe");
         return activityAddNumber;
     }
 
     /**
-     * @description 参加本次活动活动后取关的人数 subscribe 为 0
-     * @author lxl
-     * @date 2018-12-03 15:43
      * @param actId 活动id
      * @return activityTakeOffNumber 活动取关人数
+     * @description 参加本次活动活动
+     * @author lxl
+     * @date 2018-12-03 15:43
      */
     @Override
     public Integer getActivityTakeOffNumber(String actId) {
-        String sql = "select count(1) from wechat_user_info where act_id = ? and subscribe = 0";
-        Integer activityTakeOffNumber = dao.getCount(sql,actId);
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where act_id = ? and  event = ? ";
+        Integer activityTakeOffNumber = dao.getCount(sql, actId,"unsubscribe");
         return activityTakeOffNumber;
     }
 
     /**
-     * @description 净增人数= 拉新人数-取关人数,subscribe 为 1
-     * @author lxl
-     * @date 2018-12-03 15:49
-     * @param actId 活动id
-     * @return  activityNetIncreaseNumber 净增人数
-     */
-    @Override
-    public Integer getActivityNetIncreaseNumber(String actId) {
-        String sql = "select count(1) from wechat_user_info where act_id = ? and subscribe = 1";
-        Integer activityNetIncreaseNumber = dao.getCount(sql,actId);
-        return activityNetIncreaseNumber;
-    }
-
-    /**
+     * @param wechatAccount 公众号原始 id
+     * @return todayAddActivityNumber 今日拉新人数
      * @description 今日新拉新人数，开始和结束时间
      * @author lxl
      * @date 2018-12-03 16:00
-     * @param wechatAccount 公众号原始 id
-     * @return  todayAddActivityNumber 今日拉新人数
      */
     @Override
     public Integer getTodayAddActivityNumber(String wechatAccount) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at >= ? and create_at <= ?";
-        Integer todayAddActivityNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where wechat_account = ?  and  event = ? and event_key is not null and create_at >= ? and create_at <= ?";
+        Integer todayAddActivityNumber = dao.getCount(sql, wechatAccount,"subscribe", sdf.format(DateFormatUtil.getStartTime(0)),
                 sdf.format(DateFormatUtil.getEndTime(0)));
         return todayAddActivityNumber;
     }
 
     /**
+     * @param wechatAccount 公众号原始 id
+     * @return todayActivityTakeOffNumber 取消关注人数
      * @description 今日取消关注活动人数 subscribe 为 0 ，开始和结束时间
      * @author lxl
      * @date 2018-12-03 17:03
-     * @param wechatAccount 公众号原始 id
-     * @return todayActivityTakeOffNumber 取消关注人数
      */
     @Override
     public Integer getTodayActivityTakeOffNumber(String wechatAccount) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 0 and create_at >= ? and create_at <= ?";
-        Integer todayActivityTakeOffNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where wechat_account = ? and  event = ? and create_at >= ? and create_at <= ?";
+        Integer todayActivityTakeOffNumber = dao.getCount(sql, wechatAccount,"unsubscribe", sdf.format(DateFormatUtil.getStartTime(0)),
                 sdf.format(DateFormatUtil.getEndTime(0)));
         return todayActivityTakeOffNumber;
     }
-
     /**
-     * @description 今日净增人数= 拉新人数-取关人数,subscribe 为 1,开始和结束时间
-     * @author lxl
-     * @date 2018-12-03 17:17
-     * @param wechatAccount 公众号原始 id
-     * @return  todayActivityNetIncreaseNumber 今日净增人数
-     */
-    @Override
-    public Integer getTodayActivityNetIncreaseNumber(String wechatAccount) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 1 and create_at >= ? and create_at <= ?";
-        Integer todayActivityNetIncreaseNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)),
-                sdf.format(DateFormatUtil.getEndTime(0)));
-        return todayActivityNetIncreaseNumber;
-    }
-
-    /**
-     * @description 活动累计关注数,活动id and 关注状态为(subscribe) 为 1
-     * @author lxl
-     * @date 2018-12-03 17:22
      * @param wechatAccount 公众号原始 id
      * @return totalFollowNumber 活动累计关注总数
+     * @description 活动累计关注数, 活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
      */
     @Override
     public Integer getTotalFollowNumber(String wechatAccount) {
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? ";
-        Integer totalFollowNumber = dao.getCount(sql,wechatAccount);
+        //select subscribeCount - unsubscribeCount from (select count(distinct act_id,openid) as subscribeCount from wechat_user_info where wechat_account = 'gh_520baaa23160' and  event = "subscribe" and event_key is not null) subscribe,
+//        (select count(distinct act_id,openid) as unsubscribeCount from wechat_user_info where wechat_account = 'gh_520baaa23160' and  event = "unsubscribe" ) unsubscribe;
+        String sql = "select subscribeCount - unsubscribeCount from (select count(distinct act_id,openid)" +
+                " as subscribeCount from wechat_user_info where wechat_account = ? and  " +
+                "event = ? and event_key is not null) subscribe,(select count(distinct act_id,openid) " +
+                "as unsubscribeCount from wechat_user_info where wechat_account = ? " +
+                "and  event = ? ) unsubscribe";
+        Integer totalFollowNumber = dao.getCount(sql, wechatAccount,"subscribe",wechatAccount,"unsubscribe");
         return totalFollowNumber;
     }
 
@@ -229,56 +185,44 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
     @Override
     public Integer getYesterdayAddActivityNumber(String wechatAccount) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at >= ? and create_at <= ?";
-        Integer yesterdayAddActivityNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where wechat_account = ?  and  event = ? and event_key is not null and create_at >= ? and create_at <= ?";
+        Integer yesterdayAddActivityNumber = dao.getCount(sql, wechatAccount,"subscribe", sdf.format(DateFormatUtil.getStartTime(-1)),
                 sdf.format(DateFormatUtil.getEndTime(-1)));
         return yesterdayAddActivityNumber;
     }
 
     /**
+     * @param wechatAccount 公众号原始 id
+     * @return yesterdayActivityTakeOffNumber 昨日取消关注人数
      * @description 昨日取消关注活动人数 subscribe 为 0 ，昨天开始和结束时间
      * @author lxl
      * @date 2018-12-03 17:03
-     * @param wechatAccount 公众号原始 id
-     * @return yesterdayActivityTakeOffNumber 昨日取消关注人数
      */
     @Override
     public Integer getYesterdayActivityTakeOffNumber(String wechatAccount) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 0 and create_at >= ? and create_at <= ?";
-        Integer yesterdayActivityTakeOffNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
+        String sql = "select count(distinct act_id,openid) from wechat_user_info where wechat_account = ? and  event = ? and create_at >= ? and create_at <= ?";
+        Integer yesterdayActivityTakeOffNumber = dao.getCount(sql, wechatAccount,"unsubscribe", sdf.format(DateFormatUtil.getStartTime(-1)),
                 sdf.format(DateFormatUtil.getEndTime(-1)));
         return yesterdayActivityTakeOffNumber;
     }
 
     /**
-     * @description 昨日净增人数= 昨日拉新人数-昨日取关人数,subscribe 为 1,昨日开始和结束时间
-     * @author lxl
-     * @date 2018-12-03 17:17
-     * @param wechatAccount 公众号原始 id
-     * @return  yesterdayActivityNetIncreaseNumber 昨日净增人数
-     */
-    @Override
-    public Integer getYesterdayActivityNetIncreaseNumber(String wechatAccount) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and subscribe = 1 and create_at >= ? and create_at <= ?";
-        Integer yesterdayActivityNetIncreaseNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(-1)),
-                sdf.format(DateFormatUtil.getEndTime(-1)));
-        return yesterdayActivityNetIncreaseNumber;
-    }
-
-    /**
-     * @description 昨天活动累计关注数,活动id and 关注状态为(subscribe) 为 1
-     * @author lxl
-     * @date 2018-12-03 17:22
      * @param wechatAccount 公众号原始 id
      * @return yesterdayTotalFollowNumber 昨天活动累计关注总数
+     * @description 昨天活动累计关注数, 活动id and 关注状态为(subscribe) 为 1
+     * @author lxl
+     * @date 2018-12-03 17:22
      */
     @Override
     public Integer getYesterdayTotalFollowNumber(String wechatAccount) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String sql = "select count(1) from wechat_user_info where wechat_account = ? and create_at < ?";
-        Integer yesterdaytotalFollowNumber = dao.getCount(sql,wechatAccount,sdf.format(DateFormatUtil.getStartTime(0)));
+        String sql = "select subscribeCount - unsubscribeCount from (select count(distinct act_id,openid)" +
+                " as subscribeCount from wechat_user_info where wechat_account = ? and  " +
+                "event = ? and event_key is not null and create_at < ? ) subscribe,(select count(distinct act_id,openid) " +
+                "as unsubscribeCount from wechat_user_info where wechat_account = ? " +
+                "and  event = ? and create_at < ?) unsubscribe;";
+        Integer yesterdaytotalFollowNumber = dao.getCount(sql, wechatAccount,"subscribe", sdf.format(DateFormatUtil.getStartTime(0)),wechatAccount,"unsubscribe",sdf.format(DateFormatUtil.getStartTime(0)));
         return yesterdaytotalFollowNumber;
     }
 

@@ -105,6 +105,26 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
     }
 
     /**
+     * @description 得到用户的活动id,并且活动状态为 1
+     * @author lxl
+     * @date 2018-12-04 15:51
+     * @param openId 用户id
+     * @return act_id 活动id
+     */
+    @Override
+    public String getActIdByOpenId(String openId) {
+        String sql = "select mat.act_id from act_help act, mat_activity mat where  act.fans_id= ? and " +
+                "act.act_id = mat.act_id and mat.status = 1  ORDER BY mat.create_at DESC limit 1";
+        Object actId = jdbcBaseDao.getColumn(sql,openId);
+        if (actId != null){
+            return actId.toString();
+        }
+        return null;
+    }
+
+
+
+    /**
      * @description 当A用户完成任务后修改助力状态
      * @author lxl
      * @date 2018-12-03 09:50

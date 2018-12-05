@@ -28,23 +28,32 @@ public interface WechatUserInfoService {
      * @param qrScene        二维码扫码场景id
      * @param qrSceneStr     二维码扫码场景描述
      * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
+     * @param msgType        消息类型
+     * @param event          事件类型
+     * @param eventKey       事件key值
+     * @param ticket         二维码的ticket
      * @return wechatUserId
      */
     String insertWechatUserInfoEntity(Integer subscribe, String openId, String nickname, Integer sex, String country,
                                       String province, String language, String headimgurl,String unionid, String remark,
                                       String subscribeScene, String wechatAccount, Integer subscribeTime, String city,
-                                      Integer qrScene, String qrSceneStr,String actId);
-
+                                      Integer qrScene, String qrSceneStr,String actId,String msgType,String event,
+                                      String eventKey,String ticket);
     /**
-     * 微信用户取消关注后需要修改用户 是否订阅公众号状态
-     *
-     * @param wechatAccount 公众号信息表外键原始ID
-     * @param openId        微信用户在公众号中唯一的标示
-     * @param subscribe     是否订阅公众号,1 是 0 否
+     * @description 用户取消关注时新增信息
+     * @author lxl
+     * @date 2018-12-04 17:29
+     * @param openId         微信用户在公众号中唯一的标示
+     * @param wechatAccount  公众号信息表外键原始ID
+     * @param actId          活动id，新增用户时插入活动id,当没有的时候，设置为空
+     * @param msgType        消息类型
+     * @param event          事件类型
+     * @param eventKey       事件key值
+     * @param ticket         二维码的ticket
      * @return wechatUserId
      */
-    String updateSubscribe(String wechatAccount, String openId, Integer subscribe);
-
+    String insertWechatUserInfoEntity(String openId, String wechatAccount,String actId,String msgType,String event,
+                                      String eventKey,String ticket);
     /**
      * @description 通过本次活动带来的新粉丝人数,其实可以从act_help表中求数
      * @author lxl
@@ -62,15 +71,6 @@ public interface WechatUserInfoService {
      * @return activityTakeOffNumber 活动取关人数
      */
     Integer getActivityTakeOffNumber(String actId);
-    
-    /**
-     * @description 净增人数= 拉新人数-取关人数,subscribe 为 1
-     * @author lxl
-     * @date 2018-12-03 15:49
-     * @param actId 活动id
-     * @return  activityNetIncreaseNumber 净增人数
-     */
-    Integer getActivityNetIncreaseNumber(String actId);
 
     /**
      * @description 今日新拉新人数，开始和结束时间
@@ -89,15 +89,6 @@ public interface WechatUserInfoService {
      * @return todayActivityTakeOffNumber 取消关注人数
      */
     Integer getTodayActivityTakeOffNumber(String wechatAccount);
-
-    /**
-     * @description 今日净增人数= 拉新人数-取关人数,subscribe 为 1,开始和结束时间
-     * @author lxl
-     * @date 2018-12-03 17:17
-     * @param wechatAccount 公众号原始 id
-     * @return  todayActivityNetIncreaseNumber 今日净增人数
-     */
-    Integer getTodayActivityNetIncreaseNumber(String wechatAccount);
 
     /**
      * @description 累计关注数,活动id and 关注状态为(subscribe) 为 1
@@ -125,15 +116,6 @@ public interface WechatUserInfoService {
      * @return yesterdayActivityTakeOffNumber 昨日取消关注人数
      */
     Integer getYesterdayActivityTakeOffNumber(String wechatAccount);
-
-    /**
-     * @description 昨日净增人数= 昨日拉新人数-昨日取关人数,subscribe 为 1,昨日开始和结束时间
-     * @author lxl
-     * @date 2018-12-03 17:17
-     * @param wechatAccount 公众号原始 id
-     * @return  yesterdayActivityNetIncreaseNumber 昨日净增人数
-     */
-    Integer getYesterdayActivityNetIncreaseNumber(String wechatAccount);
 
     /**
      * @description 昨天活动累计关注数,活动id and 关注状态为(subscribe) 为 1
