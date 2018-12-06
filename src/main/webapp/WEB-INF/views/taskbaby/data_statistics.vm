@@ -7,7 +7,10 @@
     <script type="text/javascript" src="/static/plugins/taskbaby/data_atatistics.js"></script>
     <style type="text/css">
         .div-inline {
-            display: inline-block;
+            /*display: inline-block;*/
+            display:inline-block;
+            *zoom:1;
+            *display: inline;
         }
     </style>
 
