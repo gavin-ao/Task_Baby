@@ -20,23 +20,7 @@ public interface ActivityHelpService {
      * @param subscribeScene 助力渠道
      * @return
      */
-    public String insertActivityHelpEntity(String actId,String wechatAccount,String fansOpenId,Integer helpSuccessStatus,Integer helpNumber,Integer subscribeScene);
-
-    /**
-     * 得到还差多少人，已经有多少人领取
-     * @param fansId 被助力者Id
-     * @param actId 活动Id
-     * @return map 1.surplushHelpNumber 还需多少人 2.endTotal 已经有xx人领取 都是Integer
-     */
-    public Map<String,Integer> getTotalNumber(String fansId,String actId);
-
-    /**
-     * 通过任务Id得到当前完成的人数
-     * @param actId 任务ID
-     * @return 返回完成人数
-     */
-    public Integer getEndHelpCount(String actId);
-
+     String insertActivityHelpEntity(String actId,String wechatAccount,String fansOpenId,Integer helpSuccessStatus,Integer helpNumber,Integer subscribeScene);
 
     /**
      * 判断当前粉丝是不是已经参加了活动发起
@@ -45,7 +29,7 @@ public interface ActivityHelpService {
      * @params:     [openId, activityId]
      * @return:     boolean 如果参加了返回true，没参加返回false
      **/
-    public boolean checkFansInActivity(String openId,String activityId);
+     boolean checkFansInActivity(String openId,String activityId);
 
     /**
      * 根据被助力者的openid和activityId，返回HelpId
@@ -54,7 +38,7 @@ public interface ActivityHelpService {
      * @params:     [helpOpenId, activityId]
      * @return:     助力活动主表id
      **/
-    public String getHelpId(String helpOpenId,String activityId);
+     String getHelpId(String helpOpenId,String activityId);
 
     /**
      * @description 得到用户的活动id,并且活动状态为 1
@@ -65,10 +49,6 @@ public interface ActivityHelpService {
      */
     String getActIdByOpenId(String openId);
 
-
-
-
-
     /**
      * @description 当A用户完成任务后修改助力状态
      * @author lxl
@@ -77,6 +57,17 @@ public interface ActivityHelpService {
      * @return
      */
     void updateHelpSuccessStatus(String fansId);
+
+
+    /**
+     * @description 通过活动id得到所有“活动参加人数(activityTotalNumber)”、“任务推广人数(activityPromotionNumber)”
+     * 、“任务完成人数(activityCompletionNumber)”、“任务完成率(activityCompletionRate)”
+     * @author lxl
+     * @date 2018-12-05 17:31
+     * @param actId 活动id
+     * @return activityMap
+     */
+    Map<String,Object> getActivityData(String actId);
 
     /**
      * @description 通过活动id得到所有参加活动的总人数
