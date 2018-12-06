@@ -1,0 +1,85 @@
+<doctype html>
+<html>
+<head>
+    <title>活动统计</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="/static/plugins/taskbaby/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="/static/plugins/taskbaby/data_atatistics.js"></script>
+    <style type="text/css">
+        .div-inline {
+            display: inline-block;
+        }
+    </style>
+
+</head>
+<body>
+<!--主体 -->
+<div id="main" style="width: 100%;height: 100%;text-align: center">
+    <p style="font-size: 2.5em;color: #888;margin-left: 80px;">活动关键数据一览</p>
+    <div style="margin-right: 120px;">
+        <input id="u18_input" type="radio" value="all" name="rd" checked/> 所有数据
+        <input id="u18_input" type="radio" value="0" name="rd"/> 今日
+        <input id="u18_input" type="radio" value="-1" name="rd"/> 昨日
+        <input id="u18_input" type="radio" value="-7" name="rd"/> 近7日
+    </div>
+    <div style="margin-top: 40px;height:180px;margin-left: 20px">
+        <div style="position:relative; left:70px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">活动净增粉丝</p>
+            <p style="font-size: 1.5em; color: #3699FE;" id="activityNetIncreaseNumber">$activityNetIncreaseNumber</p>
+        </div>
+        <div style="padding: 1em ;position:relative; left:100px;bottom:50px;" class="div-inline">
+            <div>
+                <p style="font-size: 1.5em;">活动新粉丝</p>
+                <p style="font-size: 1.5em;color: #3699FE" id="activityAddNumber">$activityAddNumber</p>
+            </div>
+            <div>
+                <p style="font-size: 1.5em;">活动取关粉丝</p>
+                <p style="font-size: 1.5em;color: #3699FE" id="activityTakeOffNumber">$activityTakeOffNumber</p>
+            </div>
+        </div>
+        <div style="padding: 2em ;position:relative; left:130px;bottom:40px;" class="div-inline">
+            <img id="u82_img" class="img " src="/static/service/images/taskbaby/u80.png"/>
+        </div>
+        <div style="padding: 3em ;position:relative; left:80px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">累计新增粉丝</p>
+            <p style="font-size: 1.5em; color: #3699FE;">$totalFollowNumber</p>
+        </div>
+    </div>
+    <p style="font-size: 2.5em;color: #888;margin-left: 80px;">活动进阶数据一览</p>
+    <div style="margin-top: 100px;">
+        <div style="position:relative; left:40px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">活动参与人数</p>
+            <p style="font-size: 2em; color: #3699FE;">$activityTotalNumber</p>
+        </div>
+        <div style="position:relative; left:45px;bottom:90px;" class="div-inline">
+            <img id="u82_img" class="img " src="/static/service/images/taskbaby/u83.png"/>
+        </div>
+        <div style="position:relative; left:50px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">领取活动人数</p>
+            <p style="font-size: 2em; color: #3699FE;">$activityPromotionNumber</p>
+        </div>
+        <div style="position:relative; left:55px;bottom:90px;" class="div-inline">
+            <img id="u82_img" class="img " src="/static/service/images/taskbaby/u83.png"/>
+        </div>
+        <div style="position:relative; left:60px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">任务完成数</p>
+            <p style="font-size: 2em; color: #3699FE;">$activityCompletionNumber</p>
+        </div>
+        <div style="position:relative; left:65px;bottom:90px;" class="div-inline">
+            <img id="u82_img" class="img " src="/static/service/images/taskbaby/u83.png"/>
+        </div>
+        <div style="position:relative; left:70px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">任务完成率</p>
+            <p style="font-size: 2em; color: #3699FE;">$activityCompletionRate</p>
+        </div>
+        <div style="position:relative; left:75px;bottom:90px;" class="div-inline">
+            <img id="u82_img" class="img " src="/static/service/images/taskbaby/u83.png"/>
+        </div>
+        <div style="position:relative; left:80px;bottom:100px;" class="div-inline">
+            <p style="font-size: 1.5em;">活动裂变率</p>
+            <p style="font-size: 2em; color: #3699FE;">$activityFissionRate</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
