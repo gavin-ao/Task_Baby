@@ -47,14 +47,6 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
             log.error("----------活动需要助力数未定义-----------");
             return null;
         }
-        if(help == null){
-            help = 0;
-            result.put(KEY_HELP_REQUIRE,require);
-            result.put(KEY_HELP_HELP,0);
-            result.put(KEY_HELP_REMAIN,require);
-            log.error("--------计算已助力数sql执行结果未空---------");
-            return result;
-        }
         result.put(KEY_HELP_REQUIRE,require);
         result.put(KEY_HELP_HELP,help);
         result.put(KEY_HELP_REMAIN,require-help);
