@@ -349,7 +349,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             return "";
         }
         //2. 通过openId+actId得到当前用户是否已参加助力
-        String helpId = activityHelpService.getHelpId(helpOpenId.toString(), actId);
+        String helpId = activityHelpService.getHelpId(helpOpenId, actId);
         //通过fromUserName+actId得到当前用户是否已参加助力,如果id存在则是老用户否则为新用户
         String fromHelpId = activityHelpService.getHelpId(fromUserName, actId);
         String actHelpDetailId = null;
@@ -366,6 +366,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(fromHelpId, actId);
                 Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
                 String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
+                logger.info("------------remain -------------- "+remain);
                 if (remain > 0){
                     String msg = String.format(msgSuccessTemplate,
                             Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
