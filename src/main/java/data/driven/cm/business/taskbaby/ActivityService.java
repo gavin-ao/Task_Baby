@@ -65,4 +65,14 @@ public interface ActivityService {
     * @return 是否存在关键字活动
     */
      Boolean keyWordExist(String content, String wechatAccount);
+     /**
+     * @description 根据activityId，判断该该活动老粉丝是否能助力
+     * @author Logan
+     * @date 2018-11-30 10:03
+     * @param activityId
+
+     * @return
+     */
+
+     Boolean oldFansCanHelp(String activityId);
 }

@@ -18,6 +18,32 @@ public class MatActivityStatusEntity {
      * 活动关键词
      */
     private String actKeyWord;
+    /**
+     * 活动开始日期
+     */
+    private Date startAt;
+
+    /**
+     * 活动结束日期
+     */
+    private Date endAt;
+
+    /**
+     * 活动状态
+     */
+    private Integer status;
+    /**
+     * 老粉丝是否可以助力
+     */
+    private Integer oldFansCanHelp;
+
+    public Integer getOldFansCanHelp() {
+        return oldFansCanHelp;
+    }
+
+    public void setOldFansCanHelp(Integer oldFansCanHelp) {
+        this.oldFansCanHelp = oldFansCanHelp;
+    }
 
     public String getActId() {
         return actId;
@@ -59,18 +85,6 @@ public class MatActivityStatusEntity {
         this.status = status;
     }
 
-    /**
-     * 活动开始日期
-     */
-    private Date startAt;
 
-    /**
-     * 活动结束日期
-     */
-    private Date endAt;
 
-    /**
-     * 活动状态
-     */
-    private Integer status;
 }

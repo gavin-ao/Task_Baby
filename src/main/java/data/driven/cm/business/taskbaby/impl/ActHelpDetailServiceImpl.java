@@ -30,7 +30,7 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
     @Override
     public String insertActHelpDetailEntity(String helpId, Integer helpStatus, Integer fansStatus, String actId,String helpOpenid) {
         Date createAt = new Date();
-        String actHelpDetailId = getEntityById(helpOpenid,actId);
+        String actHelpDetailId = getHelpDetailId(helpOpenid,actId);
         if(actHelpDetailId == null){
             actHelpDetailId = UUIDUtil.getUUID();
             String sql = "INSERT INTO act_help_detail (act_help_detail_id,help_id,help_status,fans_status,act_id,create_at,help_openid) VALUES (?,?,?,?,?,?,?)";
@@ -53,12 +53,15 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
      * @param actId 活动id
      * @return 返回 活动助力详细id
      */
-    public String getEntityById(String helpOpenId,String actId) {
-        String sql = "select act_help_detail_id from act_help_detail where act_id = ? and help_openid = ?";
+    @Override
+    public String getHelpDetailId(String helpOpenId, String actId) {
+        String sql = "select act_help_detail_id from act_help_detail where help_status = 1 and act_id = ? and help_openid = ?";
         Object id = jdbcBaseDao.getColumn(sql, actId,helpOpenId);
         if(id != null){
             return id.toString();
         }
         return null;
     }
+
+
 }

@@ -30,6 +30,10 @@ public class WeChatConstant {
      */
     public static final String THIRD_PARTY_SECRET = "b10c69ded74b945b7d1cb6c6a03501d1";
     /**
+     * 进度模板消息的模板id
+     */
+    public static final String PROGRESS_TEMPLATE_MSG_TEMPLATE_ID="CoiW6GOy7xeRNXk5PZDJ4OcRMotyL1rfBnchk9inHkU";
+    /**
      * 第三方平台接口调用凭据
      */
     public static final String THIRD_PARTY_TICKET = "third_party_ticket";
@@ -102,6 +106,20 @@ public class WeChatConstant {
     public static final String API_JSON_KEY_BUSINESS_INFO = "business_info";
     public static final String API_JSON_KEY_QRCODE_URL = "qrcode_url";
     public static final String API_JSON_KEY_SERVICE_TYPE_ID = "id";
+
+
+    /**
+     * 消息类微信API常量
+     */
+
+    public static final String API_JSON_KEY_TOUSER = "touser";
+    public static final String API_JSON_KEY_TEMPLATE_ID ="template_id";
+    public static final String API_JSON_KEY_URL = "url";
+    public static final String API_JSON_KEY_DATA = "data";
+    public static final String API_JSON_KEY_FIRST = "first";
+    public static final String API_JSON_KEY_KEYWORD1 = "keyword1";
+    public static final String API_JSON_KEY_KEYWORD2 = "keyword2";
+    public static final String API_JSON_KEY_KEYWORD3 = "keyword3";
 
     /**
      * 使用授权码换取公众号或小程序的接口调用凭据和授权信息

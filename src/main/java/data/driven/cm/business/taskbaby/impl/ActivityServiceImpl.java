@@ -114,4 +114,22 @@ public class ActivityServiceImpl implements ActivityService {
        String sql = "select count(1) from mat_activity where wechat_account=? and act_key_word=?";
        return dao.getCount(sql,wechatAccount,content)>0;
     }
+    /**
+    * @description 根据activityId，判断该活动老粉丝是否能助力
+    * @author Logan
+    * @date 2018-11-30 10:04
+    * @param activityId
+
+    * @return
+    */
+    @Override
+    public Boolean oldFansCanHelp(String activityId) {
+        String sql = "select old_fans_can_help from mat_activity where act_id=?";
+        Object status = dao.getColumn(sql,activityId);
+        if(status !=null && Integer.parseInt(status.toString())==1){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

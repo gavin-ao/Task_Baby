@@ -18,7 +18,7 @@ public interface ActHelpDetailService {
      * @param helpOpenid 助力者openid
      * @return
      */
-    public String insertActHelpDetailEntity(String helpId,Integer helpStatus,Integer fansStatus,String actId,String helpOpenid);
+     String insertActHelpDetailEntity(String helpId,Integer helpStatus,Integer fansStatus,String actId,String helpOpenid);
     /**
      * 更新助力详情表
      * @author:     Logan
@@ -26,5 +26,14 @@ public interface ActHelpDetailService {
      * @params:     [helpDetailId, helpStatus, fansStatus]
      * @return:     int
     **/
-    public int updateActHelpDetailEntity(String helpDetailId,Integer helpStatus,Integer fansStatus);
+     int updateActHelpDetailEntity(String helpDetailId,Integer helpStatus,Integer fansStatus);
+
+
+    /**
+     * 通过helpOpenId  和 活动id 来得到活动助力详细id
+     * @param helpOpenId 助力者OpenId
+     * @param actId 活动id
+     * @return 返回 活动助力详细id
+     */
+     String getHelpDetailId(String helpOpenId, String actId);
 }

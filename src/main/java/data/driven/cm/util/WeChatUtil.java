@@ -733,4 +733,46 @@ public class WeChatUtil {
         JSONObject postObj = JSONObject.parseObject(postStr);
         return HttpUtil.doPost(url,postStr);
     }
+
+    /**
+    * @description  发送未完成情况下的模板消息
+    * @author Logan
+    * @date 2018-11-30 12:25
+    * @param touser  接收者OpenId
+    * @param ServiceStatus 还差几个人助力 ""
+    * @param validPeriod
+    * @param accessToken
+
+    * @return
+    */
+    public static String sendUncompleteProgressTemplateMsg(String touser, String ServiceStatus, String validPeriod,String accessToken ){
+        JSONObject msgParam = new JSONObject();
+        msgParam.put(API_JSON_KEY_TOUSER,touser);
+        msgParam.put(API_JSON_KEY_TEMPLATE_ID,PROGRESS_TEMPLATE_MSG_TEMPLATE_ID);
+//        msgParam.put(API_JSON_KEY_URL,"")  todo:模板消息跳转功能
+        JSONObject first = new JSONObject();
+        first.put("value","亲爱的用户，您还有未完成的活动");
+        first.put("color","#173177");
+        JSONObject keyworkd1 = new JSONObject();
+        keyworkd1.put("value","未完成奖励领");
+        keyworkd1.put("color","#173177");
+        JSONObject keyworkd2 = new JSONObject();
+        keyworkd2.put("value",ServiceStatus);
+        keyworkd2.put("color","#173177");
+        JSONObject keyworkd3 = new JSONObject();
+        keyworkd3.put("value",validPeriod);
+        keyworkd3.put("color","#173177");
+        JSONObject remark = new JSONObject();
+        remark.put("value","请在继续努力完成奖励哦~");
+        remark.put("color","#173177");
+        JSONObject paramData = new JSONObject();
+        paramData.put("keyworkd1",keyworkd1);
+        paramData.put("keyworkd2",keyworkd2);
+        paramData.put("keyworkd3",keyworkd3);
+        paramData.put("remark",remark);
+        msgParam.put("data",paramData);
+        String urlTemplate ="https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
+        String url = String.format(urlTemplate,accessToken);
+        return HttpUtil.doPost(url,msgParam.toJSONString());
+    }
 }
