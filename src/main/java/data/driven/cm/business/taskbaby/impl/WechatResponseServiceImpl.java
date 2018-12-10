@@ -414,15 +414,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         insertWechatUserInfo(wechatEventMap, appid, activityId);
         //得到扫描者的openId
         String openIdWhoScan = getFromUserName(wechatEventMap);
-        //判断活动是否过期
-        if (!checkActiveAvailable(activityId)) {
-            Map<String, String> msgReply = new HashMap<>();
-            msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, openIdWhoScan);
-            msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
-            msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, "对不起，本次活动已结束！");
-            WeChatUtil.sendCustomMsg(msgReply, getAccessToken(appid));
-            return "";
-        }
+
 
         //扫描自己的海报
         if (openIdOfScene.equals(openIdWhoScan)) {
@@ -431,6 +423,15 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             sendMyActivityStatus(wechatEventMap,appid);
         } else {
             //扫描他人的海报
+            //判断活动是否过期
+            if (!checkActiveAvailable(activityId)) {
+                Map<String, String> msgReply = new HashMap<>();
+                msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, openIdWhoScan);
+                msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+                msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, "对不起，本次活动已结束！");
+                WeChatUtil.sendCustomMsg(msgReply, getAccessToken(appid));
+                return "";
+            }
             logger.info("-----------扫描他人海报--------------------");
             if (alreadyHelpSomeone(activityId, openIdWhoScan, appid)) {
                 //如果扫码人已经助力过，则直接返回
