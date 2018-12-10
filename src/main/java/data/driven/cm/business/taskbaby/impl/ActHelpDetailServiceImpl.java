@@ -37,7 +37,7 @@ public class ActHelpDetailServiceImpl implements ActHelpDetailService{
             jdbcBaseDao.executeUpdate(sql, actHelpDetailId,helpId,helpStatus,fansStatus,actId,createAt,helpOpenid);
             return actHelpDetailId;
         }
-        return null;
+        return actHelpDetailId;
     }
 
     @Override

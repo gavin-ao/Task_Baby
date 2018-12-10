@@ -36,6 +36,12 @@ public class ActivityPrizeMappingServiceImpl implements ActivityPrizeMappingServ
         }
         return null;
     }
+    @Override
+    public ActivityPrizeMappingEntity getEntityByPrizeId(String prizeId){
+        String sql = "select prize_id,act_id,token,link_url,token_status,creator,create_at from activity_prize_mapping where prize_id = ?";
+        return  jdbcBaseDao.executeQuery(ActivityPrizeMappingEntity.class,sql,prizeId);
+    }
+
 
     /**
      * 获取所剩的奖品数

@@ -15,12 +15,21 @@ public interface ActivityPrizeMappingService {
      * @param actId 活动Id
      * @return
      */
-    public ActivityPrizeMappingEntity getEntityByActId(String actId);
+     ActivityPrizeMappingEntity getEntityByActId(String actId);
 
     /**
      * 获取所剩的奖品数
      * @param actId 活动Id
      * @return
      */
-    public Integer getRemainderPrize(String actId);
+     Integer getRemainderPrize(String actId);
+     /**
+     * @description 获取获奖详情
+     * @author Logan
+     * @date 2018-12-10 16:45
+     * @param prizeId
+
+     * @return
+     */
+    ActivityPrizeMappingEntity getEntityByPrizeId(String prizeId);
 }

@@ -6,10 +6,10 @@ import data.driven.cm.component.RewardTypeEnum;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
+import data.driven.cm.entity.taskbaby.ActivityRewardEntity;
 import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
 import data.driven.cm.util.WeChatUtil;
-import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +157,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         //二维码关注
         if (scanQrCodeEvent(wechatEventMap)) {
-            return subscribeScanKeyCustomMsg(wechatEventMap, appid, accessToken);
+//            return subscribeScanKeyCustomMsg(wechatEventMap, appid, accessToken);
+            return handleScanQrscene(wechatEventMap, appid);
         }
         //搜索直接关注
         if (subscribeEvent(wechatEventMap)) {
@@ -209,6 +210,43 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         return wechatEventMap.get(WeChatConstant.EVENT);
     }
 
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 扫描带参数二维码时，得到openId参数
+     * @author Logan
+     * @date 2018-12-10 12:10
+     */
+    private String getOpenIdInQrSceneStr(Map<String, String> wechatEventMap) {
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(eventKey)) {
+            String[] keyArr = eventKey.split("&&");
+            if (keyArr.length > 0) {
+                //&&以前，第一个下划线之后的字符串是openId
+                return keyArr[0].substring(keyArr[0].indexOf("_") + 1);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 扫描带参数二维码时，得到activityId参数
+     * @author Logan
+     * @date 2018-12-10 12:10
+     */
+    private String getActivityIdInQrSceneStr(Map<String, String> wechatEventMap) {
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(eventKey)) {
+            String[] keyArr = eventKey.split("&&");
+            if (keyArr.length > 0) {
+                //&&之后的字符串为activityId
+                return keyArr[1];
+            }
+        }
+        return null;
+    }
 
     /**
      * @param wechatEventMap
@@ -254,13 +292,15 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private boolean subscribeEvent(Map<String, String> wechatEventMap) {
         String msgType = getMsgType(wechatEventMap);
         String event = getEvent(wechatEventMap);
-        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(event)
-                && StringUtils.isNotEmpty(event)) {
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
+                StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(event) && StringUtils.isEmpty(eventKey)) {
             return true;
         } else {
             return false;
         }
     }
+
 
     /**
      * @param wechatEventMap
@@ -271,11 +311,48 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private boolean unsubscribeEvent(Map<String, String> wechatEventMap) {
         String msgType = getMsgType(wechatEventMap);
-        String eventKey = getEvent(wechatEventMap);
-        logger.info("-----------msgType ---------------- " + msgType);
-        logger.info("-----------eventKey ---------------- " + eventKey);
-        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(eventKey)
-                && StringUtils.isNotEmpty(eventKey)) {
+        String event = getEvent(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
+                StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(event) && StringUtils.isEmpty(eventKey)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 扫描带参数二维码并关注事件（新粉）
+     * @author Logan
+     * @date 2018-12-10 12:41
+     */
+    private boolean scanQrCodeAndSubscribeEvent(Map<String, String> wechatEventMap) {
+        String msgType = getMsgType(wechatEventMap);
+        String event = getEvent(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
+                StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(event) && StringUtils.isNotEmpty(eventKey)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 老粉丝扫描带参数二维码事件
+     * @author Logan
+     * @date 2018-12-10 12:43
+     */
+    private boolean fansScanQrCodeEvent(Map<String, String> wechatEventMap) {
+        String msgType = getMsgType(wechatEventMap);
+        String event = getEvent(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
+                StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_SCAN.equals(event) && StringUtils.isNotEmpty(eventKey)) {
             return true;
         } else {
             return false;
@@ -300,7 +377,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         if (actId != null &&
                 checkActiveAvailable(actId)) {
             insertWechatUserInfo(wechatEventMap, appid, actId);
-            return keyWordReply(wechatEventMap, accessToken);
+            return keyWordReplyPoster(wechatEventMap, appid);
         } else {
             Map<String, String> msgReply = new HashMap<>();
             msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
@@ -319,13 +396,221 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
     /**
+     * @param wechatEventMap
+     * @param appid
+     * @return
+     * @description 处理扫描带参数的二维码
+     * @author Logan
+     * @date 2018-12-10 11:56
+     */
+    private String handleScanQrscene(Map<String, String> wechatEventMap, String appid) {
+        String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
+        String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+        if (StringUtils.isEmpty(openIdOfScene) || StringUtils.isEmpty(activityId)) {
+            logger.error("扫描带参数二维码出错，没有获取到activityId或者openId");
+            return "";
+        }
+        //新增用户信息
+        insertWechatUserInfo(wechatEventMap, appid, activityId);
+        //得到扫描者的openId
+        String openIdWhoScan = getFromUserName(wechatEventMap);
+        //判断活动是否过期
+        if (!checkActiveAvailable(activityId)) {
+            Map<String, String> msgReply = new HashMap<>();
+            msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, openIdWhoScan);
+            msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+            msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, "对不起，本次活动已结束！");
+            WeChatUtil.sendCustomMsg(msgReply, getAccessToken(appid));
+            return "";
+        }
+
+        //扫描自己的海报
+        if (openIdOfScene.equals(openIdWhoScan)) {
+            logger.info("--------扫描自己的海报-----------");
+            //给扫码者发送活动进度
+            sendMyActivityStatus(wechatEventMap,appid);
+        } else {
+            //扫描他人的海报
+            logger.info("-----------扫描他人海报--------------------");
+            if (alreadyHelpSomeone(activityId, openIdWhoScan, appid)) {
+                //如果扫码人已经助力过，则直接返回
+                return "success";
+            }
+            boolean oldFansCanHelp = activityService.oldFansCanHelp(activityId);
+            if (oldFansCanHelp) {
+                logger.info("----------老粉丝可以助力---------------");
+                if (fansScanQrCodeEvent(wechatEventMap)) {
+                    //老粉助力
+                    oldFansHelp(wechatEventMap, appid);
+                } else {
+                    //新粉助力
+                    newFansHelp(wechatEventMap, appid);
+                }
+            } else {
+                //新粉助力
+                newFansHelp(wechatEventMap, appid);
+            }
+        }
+
+
+        return "";
+    }
+
+    /**
+     * @param activityId
+     * @param openIdWhoScan
+     * @param appId
+     * @return
+     * @description 判断是否已经给他人助力过，如果已经给他人助力则发送提示
+     * @author Logan
+     * @date 2018-12-10 16:05
+     */
+    private boolean alreadyHelpSomeone(String activityId, String openIdWhoScan, String appId) {
+        String helpDetailId = actHelpDetailService.getHelpDetailId(openIdWhoScan, activityId);
+        if (StringUtils.isNotEmpty(helpDetailId)) {
+            logger.info("--------已经助力过他人，不能再次助力-----------------------");
+            //已经助力过他人，不能再次助力
+            Map<String, String> replyMap = new HashMap<>();
+            replyMap.put(KEY_CSMSG_TOUSER, openIdWhoScan);
+            replyMap.put(KEY_CSMSG_CONTENT, "本次活动，您已成功为好友助力过一次，不能再次助力，下次活动再来哦");
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void newFansHelp(Map<String, String> wechatEventMap, String appId) {
+        logger.info("---------收到新粉丝助力------------------");
+        if (scanQrCodeAndSubscribeEvent(wechatEventMap)) {
+            String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+            insertWechatUserInfo(wechatEventMap, appId, activityId);
+            String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
+            String openIdWhoScan = getFromUserName(wechatEventMap);
+            String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
+            String helpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, activityId, openIdWhoScan);
+            helpAction(wechatEventMap, helpDetailId, appId);
+        }
+    }
+
+    private void oldFansHelp(Map<String, String> wechatEventMap, String appId) {
+        logger.info("-------------收到老粉丝助力-----------");
+        if (fansScanQrCodeEvent(wechatEventMap)) {
+            String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+            String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
+            String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
+            //得到扫描者的openId
+            String openIdWhoScan = getFromUserName(wechatEventMap);
+            String helpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 0, activityId, openIdWhoScan);
+            helpAction(wechatEventMap, helpDetailId, appId);
+        }
+    }
+
+    /**
+     * @param openIdOfScene 带参数二维码上的openID，即被助力的openId
+     * @param appId
+     * @return
+     * @description 发送给某人助力成功的提示消息
+     * @author Logan
+     * @date 2018-12-10 15:54
+     */
+    private void sendHelpSuccessMsg(String openIdOfScene, String appId) {
+        Map<String, String> userHelpPersonalInfoMap = WeChatUtil.getUserInfo(openIdOfScene, getAccessToken(appId));
+        String msgHelpTemplate = "您已经成功为好友%s助力一次";
+        String msg = String.format(msgHelpTemplate,
+                userHelpPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME));
+        Map<String, String> replyMap = new HashMap<String, String>();
+        replyMap.put(KEY_CSMSG_TOUSER, openIdOfScene);
+        replyMap.put(KEY_CSMSG_CONTENT, msg);
+        replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+        WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+
+    }
+
+    /**
+     * @param wechatEventMap
+     * @param helpDetailId
+     * @param appId
+     * @return
+     * @description 助力动作，1.发介绍海报，2，扫码者自动加入活动，
+     * 3，跟中助力进度，4.给扫码者发送助力成功提示
+     * @author Logan
+     * @date 2018-12-10 16:03
+     */
+    private void helpAction(Map<String, String> wechatEventMap, String helpDetailId, String appId) {
+        String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
+        String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+        //得到扫描者的openId
+        String openIdWhoScan = getFromUserName(wechatEventMap);
+        //发送活动介绍
+        logger.info("------助力成功，发送活动介绍----------------");
+        introduceActivity(wechatEventMap, appId, activityId);
+
+        String wechatAccount = getWechatAccount(wechatEventMap);
+        //扫码者自动加入活动
+        logger.info("--------助力成功，自动加入活动--------");
+        joinActivity(wechatAccount, openIdWhoScan, activityId, 0);
+        //跟踪活动状态
+        logger.info("--------助力成功，跟踪活动进度--------");
+        trackActive(openIdOfScene, helpDetailId, activityId, getAccessToken(appId));
+        //扫码人自己收到一个助力成功的提示
+        logger.info("--------助力成功，发送给默认助力成功提示--------");
+        sendHelpSuccessMsg(openIdOfScene, appId);
+    }
+
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 发送我的活动进度
+     * @author Logan
+     * @date 2018-12-10 16:11
+     */
+    private void sendMyActivityStatus(Map<String, String> wechatEventMap, String appId) {
+        String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+        String openIdWhoScan = getFromUserName(wechatEventMap);
+        String helpId = activityHelpService.getHelpId(openIdWhoScan,activityId);
+        Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(helpId, activityId);
+        Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
+        String msgUnSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
+        String msgSuccessTemplate = "您已经完成助力任务领取奖励，%s。%s";
+        Map<String, String> replyMap = new HashMap<String, String>();
+        replyMap.put(KEY_CSMSG_TOUSER, openIdWhoScan);
+        replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+        String msg = "";
+        if (remain > 0) {
+            msg = String.format(msgUnSuccessTemplate,
+                    Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
+        } else {
+            ActivityRewardEntity rewardEntity =
+                    activityRewardService.getEntityByActIdAndWechatUserId(activityId, openIdWhoScan);
+            if (rewardEntity != null) {
+                ActivityPrizeMappingEntity prizeMappingEntity =
+                        prizeMappingService.getEntityByPrizeId(rewardEntity.getPrizeId());
+                String rewardInfo = getRewardInfo(prizeMappingEntity);
+                //发送奖品消息
+                if (StringUtils.isNotEmpty(rewardInfo)) {
+                    MatActivityEntity activityEntity =
+                            activityService.getMatActivityEntityByActId(activityId);
+                    msg = String.format(msgSuccessTemplate,
+                            activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", openIdWhoScan).replace("actId", activityId));
+                }
+            }
+        }
+       //回复信息
+        replyMap.put(KEY_CSMSG_CONTENT, msg);
+        WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+    }
+
+    /**
      * @param wechatEventMap 发送过来的Map信息
      * @param appid          公众号appid
      * @param accessToken    公众号accessToken
      * @return 返回的信息
      * @author lxl
      */
-    private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String accessToken) {
+    private String subscribeScanKeyCustomMsg(Map<String, String> wechatEventMap, String appid, String
+            accessToken) {
         logger.info("----------------扫二维码进入------------------------");
 
         logger.info("----------------插入新增用户信息------------------------");
@@ -358,7 +643,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             logger.info("---------------老用户------------");
             actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
             Map<String, String> replyMap = new HashMap<>();
-            if (fromUserName.equals(helpOpenId.toString())){
+            if (fromUserName.equals(helpOpenId)) {
                 logger.info("---------------当老用户再次扫码时发送信息------------start");
                 //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
                 // fromHelpId 以前用的是helpId 此处有问题，先头考虑到用户只扫自己的码，
@@ -366,20 +651,20 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                 Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(fromHelpId, actId);
                 Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
                 String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
-                if (remain > 0){
+                if (remain > 0) {
                     String msg = String.format(msgSuccessTemplate,
                             Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
                     replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
                     replyMap.put(KEY_CSMSG_CONTENT, msg);
                     replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-                }else {
+                } else {
                     replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
                     replyMap.put(KEY_CSMSG_CONTENT, "您已成功领取奖品，无需再次扫码～");
                     replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
                 }
 
                 logger.info("---------------当老用户再次扫码时发送信息------------end");
-            }else{
+            } else {
                 replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
                 replyMap.put(KEY_CSMSG_CONTENT, "本次活动，您已成功为好友助力过一次，不能再次助力，下次活动再来哦");
                 replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
@@ -459,11 +744,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             /**
              * 用户取消关注
              */
-            if (wechatEventMap.containsKey("Event") && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(wechatEventMap.get("Event"))){
+            if (wechatEventMap.containsKey("Event") && WeChatConstant.EVENT_TYPE_UNSUBSCRIBE.equals(wechatEventMap.get("Event"))) {
                 logger.info(" ----------- 进入 取消时增加用户信息");
                 wechatUserInfoService.insertWechatUserInfoEntity(wechatEventMap.get(WeChatConstant.FROM_USER_NAME), wechatEventMap.get(WeChatConstant.TO_USER_NAME), actId, wechatEventMap.get("MsgType"), wechatEventMap.get("Event"),
-                        null,null);
-            }else {
+                        null, null);
+            } else {
                 logger.info(" ----------- 进入 新增用户 EventKey 存在");
                 Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FROM_USER_NAME), accessToken);
                 wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")), userInfo.get("openid"), userInfo.get("nickname"), Integer.parseInt(userInfo.get("sex")),
@@ -492,6 +777,79 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             return activityId;
         }
         return null;
+    }
+
+    /**
+     * @param wechatEventMap
+     * @param appId
+     * @param activityId
+     * @return 返回userPersonalInfoMap
+     * @description
+     * @author Logan
+     * @date 2018-12-10 14:50
+     */
+    private Map<String, String> introduceActivity(Map<String, String> wechatEventMap, String appId, String activityId) {
+        String openId = getFromUserName(wechatEventMap);
+        String wechatAccount = getWechatAccount(wechatEventMap);
+        //获取粉丝个人信息存入到userPersonalInfoMap
+        Map<String, String> userPersonalInfoMap = WeChatUtil.getUserInfo(openId, getAccessToken(appId));
+        //获取带参数的二维码
+        MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(activityId);
+        StringBuilder sceneStrBuilder = new StringBuilder();
+        sceneStrBuilder.append(openId).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        //将活动的原始海报的url放入到userPersonalInfoMap中
+        String picId = matActivityEntity.getPictureId();
+        String posterUrl = sysPictureService.getPictureURL(picId);
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_POSTER_URL, posterUrl);
+        userPersonalInfoMap.put(WeChatConstant.REPLY_TO_USER_NAME, openId);
+        userPersonalInfoMap.put(WeChatConstant.REPLY_FROM_USER_NAME, wechatAccount);
+        //回复信息
+        Map<String, String> replyMap = new HashMap<>();
+        replyMap.put(KEY_CSMSG_TOUSER, openId);
+        Object shareCoppywritting = matActivityEntity.getActShareCopywriting();
+        if (shareCoppywritting != null) {
+            //用客服消息发送活动介绍
+            replyMap.put(KEY_CSMSG_CONTENT, "Hi，" + userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME) + ",欢迎参加活动~\n" + shareCoppywritting.toString());
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+        }
+        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
+                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), getAccessToken(appId));
+        //将二维码url put到userPersonalInfoMap中
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
+
+        //得到合成图片的filePath
+        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+        //发送个性化海报
+        if (customizedPosterPath != null) {
+            replyMap.put(KEY_FILE_PATH, customizedPosterPath);
+            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_IMG);
+            WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+        }
+        return userPersonalInfoMap;
+    }
+
+    /**
+     * @param wechatEventMap
+     * @param appId
+     * @return
+     * @description 根据关键字回复海报
+     * @author Logan
+     * @date 2018-12-10 14:51
+     */
+    private String keyWordReplyPoster(Map<String, String> wechatEventMap, String appId) {
+        String openId = getFromUserName(wechatEventMap);
+        String wechatAccount = getWechatAccount(wechatEventMap);
+        String keyWord = getMsgContent(wechatEventMap);
+        if (StringUtils.isEmpty(openId) || StringUtils.isEmpty(wechatAccount)) {
+            return "";
+        }
+        String activityId = activityService.getMatActivityId(wechatAccount, keyWord);
+        //发送海报
+        introduceActivity(wechatEventMap, appId, activityId);
+        //扫码者自动加入活动
+        joinActivity(wechatAccount, openId, activityId, 1);
+        return "success";
     }
 
     /**
@@ -546,7 +904,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //发送活动介绍
         if (shareCoppywritting != null) {
             logger.info("--------发送活动介绍-----------");
-            replyMap.put(KEY_CSMSG_CONTENT, "Hi，"+userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME)+",欢迎参加活动~\n"+shareCoppywritting.toString());
+            replyMap.put(KEY_CSMSG_CONTENT, "Hi，" + userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME) + ",欢迎参加活动~\n" + shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
             WeChatUtil.log(logger, start, "回复文字信息全部动作");
@@ -640,7 +998,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_SHARECOYPWRITTING);
         //发送活动介绍
         if (shareCoppywritting != null) {
-            replyMap.put(KEY_CSMSG_CONTENT, "Hi，"+userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME)+",欢迎参加活动~\n"+shareCoppywritting.toString());
+            replyMap.put(KEY_CSMSG_CONTENT, "Hi，" + userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME) + ",欢迎参加活动~\n" + shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
@@ -731,10 +1089,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                     //当A用户完成任务后修改助力状态
                     activityHelpService.updateHelpSuccessStatus(touser);
                     JSONObject msgJson = new JSONObject();
-
-//                    //发送模版信息
-//                    WeChatUtil.sendTemplateMsg(,accessToken);
-
                 } else {
                     processStatus = ACTIVITY_HELP_PROCESS_EXCEEDS;
 //                    actHelpDetailService.updateActHelpDetailEntity(helpDetailId, 0, 1); //当超出一助力人数后,在有用户助力的话就没法累加多少人助力，所以先去掉，等王总回来问问。
