@@ -359,7 +359,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
             logger.info("---------------当老用户再次扫码时发送信息------------start");
             //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
-            Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(helpId, actId);
+            // fromUserName 以前用的是helpId 此处有问题，先头考虑到用户只扫自己的码，
+            // 没有考虑到用户会扫别人的码，这样就造成用户扫别人的码后显示是他人的统计信息
+            Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(fromUserName, actId);
             Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
             String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
             String msg = String.format(msgSuccessTemplate,
@@ -531,7 +533,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //发送活动介绍
         if (shareCoppywritting != null) {
             logger.info("--------发送活动介绍-----------");
-            replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
+            replyMap.put(KEY_CSMSG_CONTENT, "Hi，"+userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME)+",欢迎参加活动~\n"+shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
             WeChatUtil.log(logger, start, "回复文字信息全部动作");
@@ -604,6 +606,20 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         userPersonalInfoMap.put(WeChatConstant.REPLY_TO_USER_NAME, openId);
         userPersonalInfoMap.put(WeChatConstant.REPLY_FROM_USER_NAME, wechatAccount);
 
+        logger.info("发送帮A助力成功。。。start");
+        /**
+         * 得到被助力者的用户信息
+         */
+        Map<String, String> replyAMap = new HashMap<>();
+        userPersonalInfoMap = WeChatUtil.getUserInfo(helpOpenId, accessToken);
+        String msg = String.format(msgSuccessTemplate,
+                userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME).toString());
+        replyAMap.put(KEY_CSMSG_TOUSER, openId);
+        replyAMap.put(KEY_CSMSG_CONTENT, msg);
+        replyAMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+        WeChatUtil.sendCustomMsg(replyAMap, accessToken);
+        logger.info("发送帮A助力成功。。。end");
+
         //回复信息
         Map<String, String> replyMap = new HashMap<>();
         logger.info("发送文本中。。。");
@@ -611,7 +627,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         Object shareCoppywritting = wechatEventMap.get(ActivityService.KEY_SHARECOYPWRITTING);
         //发送活动介绍
         if (shareCoppywritting != null) {
-            replyMap.put(KEY_CSMSG_CONTENT, shareCoppywritting.toString());
+            replyMap.put(KEY_CSMSG_CONTENT, "Hi，"+userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME)+",欢迎参加活动~\n"+shareCoppywritting.toString());
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
@@ -640,21 +656,6 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         logger.info("发送海报完成。。。");
         joinActivity(wechatAccount, openId, activityId, 1);
-
-        logger.info("发送帮A助力成功。。。start");
-        /**
-         * 得到被助力者的用户信息
-         */
-        userPersonalInfoMap = WeChatUtil.getUserInfo(helpOpenId, accessToken);
-        String msg = String.format(msgSuccessTemplate,
-                userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME).toString());
-        replyMap = new HashMap<>();
-        replyMap.put(KEY_CSMSG_TOUSER, openId);
-        replyMap.put(KEY_CSMSG_CONTENT, msg);
-        replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
-        WeChatUtil.sendCustomMsg(replyMap, accessToken);
-        logger.info("发送帮A助力成功。。。end");
-
         return "success";
     }
 
@@ -682,7 +683,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String trackActive(String touser, String helpDetailId, String activityId, String accessToken) {
         String processStatus = ACTIVITY_HELP_PROCESS_INPROCESS;
         String msgTemplate = "收到%s的助力，还差%d人完成助力";
-        String msgSuccessTemplate = "收到%s的助力,%s,%s";
+        String msgSuccessTemplate = "收到%s的助力，%s。%s";
         String msg = "";
         Map<String, Object> trackResult = activityTrackerService.getTrackInfo(helpDetailId, activityId, accessToken);
         if (trackResult != null) {
