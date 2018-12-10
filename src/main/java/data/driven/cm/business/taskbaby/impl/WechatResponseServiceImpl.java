@@ -350,28 +350,41 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         }
         //2. 通过openId+actId得到当前用户是否已参加助力
         String helpId = activityHelpService.getHelpId(helpOpenId.toString(), actId);
-        //通过openId+actId得到当前用户是否已参加助力,如果id存在则是老用户否则为新用户
+        //通过fromUserName+actId得到当前用户是否已参加助力,如果id存在则是老用户否则为新用户
         String fromHelpId = activityHelpService.getHelpId(fromUserName, actId);
         String actHelpDetailId = null;
         if (StringUtils.isNotEmpty(fromHelpId)) {
             //老用户
             logger.info("---------------老用户------------");
             actHelpDetailService.insertActHelpDetailEntity(helpId, 0, 0, actId, fromUserName);
-            logger.info("---------------当老用户再次扫码时发送信息------------start");
-            //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
-            // fromUserName 以前用的是helpId 此处有问题，先头考虑到用户只扫自己的码，
-            // 没有考虑到用户会扫别人的码，这样就造成用户扫别人的码后显示是他人的统计信息
-            Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(fromUserName, actId);
-            Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
-            String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
-            String msg = String.format(msgSuccessTemplate,
-                    Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
             Map<String, String> replyMap = new HashMap<>();
-            replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
-            replyMap.put(KEY_CSMSG_CONTENT, msg);
-            replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            if (fromUserName.equals(helpOpenId.toString())){
+                logger.info("---------------当老用户再次扫码时发送信息------------start");
+                //跟踪助力数据统计，一共需要多少助力的(require)，已经助力多少了(help)，还剩下(remain)
+                // fromHelpId 以前用的是helpId 此处有问题，先头考虑到用户只扫自己的码，
+                // 没有考虑到用户会扫别人的码，这样就造成用户扫别人的码后显示是他人的统计信息
+                Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(fromHelpId, actId);
+                Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
+                String msgSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
+                if (remain > 0){
+                    String msg = String.format(msgSuccessTemplate,
+                            Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
+                    replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
+                    replyMap.put(KEY_CSMSG_CONTENT, msg);
+                    replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+                }else {
+                    replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
+                    replyMap.put(KEY_CSMSG_CONTENT, "您已成功领取奖品，无需再次扫码～");
+                    replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+                }
+
+                logger.info("---------------当老用户再次扫码时发送信息------------end");
+            }else{
+                replyMap.put(KEY_CSMSG_TOUSER, fromUserName);
+                replyMap.put(KEY_CSMSG_CONTENT, "本次活动，您已成功为好友助力过一次，不能再次助力，下次活动再来哦");
+                replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+            }
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
-            logger.info("---------------当老用户再次扫码时发送信息------------end");
 
         } else {
             //新用户
@@ -611,9 +624,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
          * 得到被助力者的用户信息
          */
         Map<String, String> replyAMap = new HashMap<>();
-        userPersonalInfoMap = WeChatUtil.getUserInfo(helpOpenId, accessToken);
+        Map<String, String> userHelpPersonalInfoMap = WeChatUtil.getUserInfo(helpOpenId, accessToken);
         String msg = String.format(msgSuccessTemplate,
-                userPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME).toString());
+                userHelpPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME).toString());
         replyAMap.put(KEY_CSMSG_TOUSER, openId);
         replyAMap.put(KEY_CSMSG_CONTENT, msg);
         replyAMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
