@@ -494,15 +494,12 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
     private void newFansHelp(Map<String, String> wechatEventMap, String appId) {
         if (scanQrCodeAndSubscribeEvent(wechatEventMap)) {
-            logger.info("---------收到新粉丝助力------------------");
             String activityId = getActivityIdInQrSceneStr(wechatEventMap);
             insertWechatUserInfo(wechatEventMap, appId, activityId);
             String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
             String openIdWhoScan = getFromUserName(wechatEventMap);
             String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
             logger.info("--------插入助力明细---------");
-            logger.info(String.format("--------HelpId:%s---------",helpId));
-            logger.info(String.format("--------openIdOfScene:%s---------",openIdOfScene));
             String helpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, activityId, openIdWhoScan);
             helpAction(wechatEventMap, helpDetailId, appId);
         }
