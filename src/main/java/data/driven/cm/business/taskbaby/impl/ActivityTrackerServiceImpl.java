@@ -96,6 +96,7 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
         resultMap.put(KEY_HELP_FANS_OPENID,helpEntity.getFansId());
         resultMap.put(KEY_HELP_HELP_OPENID,detailEntity.getHelpOpenId());
         resultMap.put(KEY_HELP_HELP_ID,helpEntity.getHelpId());
+        log.info(String.format("---------------活动助力统计resultMap：%s--------",resultMap));
         return resultMap;
     }
     @Override

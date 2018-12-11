@@ -452,7 +452,7 @@ public class WeChatUtil {
     **/
     public static String getWXPublicQRCode(String codeType,int expireSeconds, String actionName,String sceneStr,String accessToken) {
         String url = QRCODE_URL+"?access_token="+accessToken;
-
+        log.info(String.format("-----------带参数二维码的scenestr:%s-------------",sceneStr));
         Map<String, Object> map = new HashMap<>();
         if ("1".equals(codeType)) { // 临时二维码
             map.put("expire_seconds", expireSeconds);

@@ -219,11 +219,18 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     private String getOpenIdInQrSceneStr(Map<String, String> wechatEventMap) {
         String eventKey = getEventKey(wechatEventMap);
+        String event = getEvent(wechatEventMap);
+        logger.info(String.format("----------EventKey:%s---------",eventKey));
+        logger.info(String.format("----------wechatEventMap:%s---------",wechatEventMap));
         if (StringUtils.isNotEmpty(eventKey)) {
             String[] keyArr = eventKey.split("&&");
             if (keyArr.length > 0) {
-                //&&以前，第一个下划线之后的字符串是openId
-                return keyArr[0].substring(keyArr[0].indexOf("_") + 1);
+                if(event.equals(WeChatConstant.EVENT_TYPE_SCAN)){
+                    return keyArr[0];
+                }else{
+                    return keyArr[0].substring(keyArr[0].indexOf("_") + 1);
+                }
+
             }
         }
         return null;
@@ -414,8 +421,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         insertWechatUserInfo(wechatEventMap, appid, activityId);
         //得到扫描者的openId
         String openIdWhoScan = getFromUserName(wechatEventMap);
-
-
+         logger.info(String.format("---------------openIdOfScene:%s",openIdOfScene));
+        logger.info(String.format("---------------openIdWhoScan:%s",openIdWhoScan));
         //扫描自己的海报
         if (openIdOfScene.equals(openIdWhoScan)) {
             logger.info("--------扫描自己的海报-----------");
@@ -490,6 +497,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
             String openIdWhoScan = getFromUserName(wechatEventMap);
             String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
+            logger.info("--------插入助力明细---------");
+            logger.info(String.format("--------HelpId:%s---------",helpId));
+            logger.info(String.format("--------openIdOfScene:%s---------",openIdOfScene));
             String helpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 1, activityId, openIdWhoScan);
             helpAction(wechatEventMap, helpDetailId, appId);
         }
@@ -503,6 +513,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
             //得到扫描者的openId
             String openIdWhoScan = getFromUserName(wechatEventMap);
+            logger.info("--------插入助力明细---------");
+            logger.info(String.format("--------HelpId:%s---------",helpId));
+            logger.info(String.format("--------openIdOfScene:%s---------",openIdOfScene));
             String helpDetailId = actHelpDetailService.insertActHelpDetailEntity(helpId, 1, 0, activityId, openIdWhoScan);
             helpAction(wechatEventMap, helpDetailId, appId);
         }
@@ -556,8 +569,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         logger.info("--------助力成功，跟踪活动进度--------");
         trackActive(openIdOfScene, helpDetailId, activityId, getAccessToken(appId));
         //扫码人自己收到一个助力成功的提示
-        logger.info("--------助力成功，发送给默认助力成功提示--------");
-        sendHelpSuccessMsg(openIdOfScene, appId);
+        logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
+        sendHelpSuccessMsg(openIdWhoScan, appId);
     }
 
     /**
@@ -839,6 +852,8 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @date 2018-12-10 14:51
      */
     private String keyWordReplyPoster(Map<String, String> wechatEventMap, String appId) {
+        logger.info("---------wechatEventMap----------");
+        logger.info(wechatEventMap.toString());
         String openId = getFromUserName(wechatEventMap);
         String wechatAccount = getWechatAccount(wechatEventMap);
         String keyWord = getMsgContent(wechatEventMap);
@@ -1086,6 +1101,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
                                 activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", touser).replace("actId", activityId));
                     }
                     //回复信息
+                    logger.info(String.format("-----------活动跟踪信息:%s----",msg));
                     sendMsg(msg, touser, accessToken);
                     //当A用户完成任务后修改助力状态
                     activityHelpService.updateHelpSuccessStatus(touser);
