@@ -529,13 +529,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @author Logan
      * @date 2018-12-10 15:54
      */
-    private void sendHelpSuccessMsg(String openIdOfScene, String appId) {
+    private void sendHelpSuccessMsg(String openIdOfScene, String openIdWhoScan,String appId) {
         Map<String, String> userHelpPersonalInfoMap = WeChatUtil.getUserInfo(openIdOfScene, getAccessToken(appId));
         String msgHelpTemplate = "您已经成功为好友%s助力一次";
         String msg = String.format(msgHelpTemplate,
                 userHelpPersonalInfoMap.get(WeChatConstant.KEY_NICKNAME));
         Map<String, String> replyMap = new HashMap<String, String>();
-        replyMap.put(KEY_CSMSG_TOUSER, openIdOfScene);
+
+        replyMap.put(KEY_CSMSG_TOUSER, openIdWhoScan);
         replyMap.put(KEY_CSMSG_CONTENT, msg);
         replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
         WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
@@ -570,7 +571,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         trackActive(openIdOfScene, helpDetailId, activityId, getAccessToken(appId));
         //扫码人自己收到一个助力成功的提示
         logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
-        sendHelpSuccessMsg(openIdWhoScan, appId);
+        sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
     }
 
     /**
