@@ -474,6 +474,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @date 2018-12-10 16:05
      */
     private boolean alreadyHelpSomeone(String activityId, String openIdWhoScan, String appId) {
+        logger.info("---------判断是否已经助力--------");
+        logger.info(String.format(
+                "-------------activityId:%s,openIdWhoScan:%s",activityId,openIdWhoScan));
         String helpDetailId = actHelpDetailService.getHelpDetailId(openIdWhoScan, activityId);
         if (StringUtils.isNotEmpty(helpDetailId)) {
             logger.info("--------已经助力过他人，不能再次助力-----------------------");
