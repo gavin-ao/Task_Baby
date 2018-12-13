@@ -280,10 +280,11 @@ public class WeChatUtil {
     **/
     public static void sendCustomMsgByJsonStr(String jsonStr, String accessToken){
         String url = CUSTOM_URL+accessToken;
-        log.debug("——————————调用微信接口发送图片客服信息——————————");
+        log.debug("——————————调用微信接口发送客服信息——————————");
         long begin =System.currentTimeMillis();
-        HttpUtil.doPost(url, jsonStr);
-        WeChatUtil.log(log,begin,"调用微信接口发送图片客服信息");
+        String result = HttpUtil.doPost(url, jsonStr);
+        log.info(String.format("----------发送客服消息返回值:%s-----------",result));
+        WeChatUtil.log(log,begin,"调用微信接口发送客服信息");
     }
 
     public static void sendTemplateMsg(String jsonStr,String accessToken){
