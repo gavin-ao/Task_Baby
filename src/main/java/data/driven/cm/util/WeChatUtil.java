@@ -781,7 +781,12 @@ public class WeChatUtil {
 
     private static String getAuthWebPageRedirectUrl(String rootUrl){
        StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("/subscribe/authcallback");
-        return redirectUrlBff.toString();
+        try {
+            return URLEncoder.encode(redirectUrlBff.toString(),"UTF-8") ;
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
     public static String getWebPageAuthUrl(String rootUrl, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
         String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
