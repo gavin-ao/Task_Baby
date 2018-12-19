@@ -209,5 +209,37 @@ public class WeChatConstant {
      */
     public static int CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN = 7000;
 
+    /**
+     * 获取微信用户的信息
+     */
+
+    /**
+     * @description 获取用户特殊access_token，openid
+     * @author lxl
+     * @date 2018-12-19 15:56
+     * @param appId 服务号的appid
+     * @param secret 公众号的appsecret(现用第三方的后期不行在换)
+     * @param code code code作为换取access_token的票据
+     * @return
+     */
+    public static String getUserAccessTokenURL(String appId,String secret,String code) {
+        String getUserAccessTokenURL =
+                "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
+        return String.format(getUserAccessTokenURL, appId,secret,code);
+    }
+
+    /**
+     * @description 获取用户
+     * @author lxl
+     * @date 2018-12-19 16:21
+     * @param accessToken 用户的access_token
+     * @param openid 用户openid
+     * @return
+     */
+    public static String getUserInfoURL(String accessToken,String openid) {
+        String getUserInfoURL =
+                "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
+        return String.format(getUserInfoURL,accessToken,openid);
+    }
 
 }
