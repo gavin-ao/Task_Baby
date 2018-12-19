@@ -1,5 +1,6 @@
 package data.driven.cm.business.taskbaby;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface SubscribeWeChatResponseService {
@@ -11,5 +12,5 @@ public interface SubscribeWeChatResponseService {
      * @param appId 公众号appid
      * @return 返回微信发送的消息
      */
-    String notify(Map wechatEventMap, String appId);
+    String notify(HttpServletRequest request, Map wechatEventMap, String appId);
 }
