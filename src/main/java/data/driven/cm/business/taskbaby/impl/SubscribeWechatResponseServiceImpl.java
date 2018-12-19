@@ -1,15 +1,13 @@
 package data.driven.cm.business.taskbaby.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.business.taskbaby.*;
 import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
-import data.driven.cm.util.FileUtil;
-import data.driven.cm.util.QRCodeUtil;
-import data.driven.cm.util.UUIDUtil;
-import data.driven.cm.util.WeChatUtil;
+import data.driven.cm.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.alibaba.fastjson.JSON.parseObject;
 import static data.driven.cm.component.WeChatConstant.*;
 
 /**
@@ -475,5 +474,36 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             activityHelpService.insertActivityHelpEntity(
                     activityId, wechatAccount, openId, 0, 0, subscribeScene);
         }
+    }
+
+    /**
+     * @description 获取用户unionid
+     * @author lxl
+     * @date 2018-12-19 15:43
+     * @param code code作为换取access_token的票据
+     * @param appid 服务号的appid
+     * @return
+     */
+    @Override
+    public String getCodeByUnionid(String code,String appid) {
+        //第一步通过code获取用户的access_token  start
+        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,WeChatConstant.THIRD_PARTY_SECRET,code);
+        String userAccessTokenResultStr = HttpUtil.doGetSSL(getUserAccessTokenURL);
+        JSONObject userAccessTokenResultJson = parseObject(userAccessTokenResultStr);
+        //第一步通过code获取用户的access_token  end
+
+        if (userAccessTokenResultJson.containsKey("errcode")){
+            logger.info("获取用户的access_token失败 "+userAccessTokenResultJson.toString());
+        }else{
+            String getUserInfoURL = WeChatConstant.getUserInfoURL(userAccessTokenResultJson.getString("access_token"),userAccessTokenResultJson.getString("openid"));
+            String userInfoResultStr = HttpUtil.doGetSSL(getUserInfoURL);
+            JSONObject userInfoResultJson = parseObject(userInfoResultStr);
+            if (userInfoResultJson.containsKey("errcode")){
+                logger.info("获取用户的unionid失败 "+userInfoResultJson.toString());
+            }else{
+                return userInfoResultJson.getString("unionid");
+            }
+        }
+        return null;
     }
 }
