@@ -100,4 +100,30 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
        jdbcBaseDao.executeUpdate(sql,nickName,headImg,serviceTypeInfo,verifyTypeInfo,
                userName,principalName,alias,businessInfo,qrcodeUrl, authorizationAppid,funcInfo,wechatPublicId);
     }
+
+    /**
+     * 是否服务号
+     * @author Logan
+     * @date 2018-12-19 15:04
+     * @param appId
+
+     * @return
+     */
+    @Override
+    public Boolean isServiceType(String appId){
+        String sql = "select service_type_info from wechat_public_detail detail " +
+                "join wechat_public master on detail.wechat_public_id = master.wechat_public_id" +
+                " where master.authorization_appid=?";
+        Object result = jdbcBaseDao.getColumn(sql, appId);
+        if (result != null) {
+            String type = result.toString();
+            if (type.equals("2")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return null;
+        }
+    }
 }

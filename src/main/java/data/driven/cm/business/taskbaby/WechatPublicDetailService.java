@@ -57,4 +57,14 @@ public interface WechatPublicDetailService {
     void updateWechatPublicDetail(String wechatPublicId, String nickName, String headImg, String serviceTypeInfo,
                                   String verifyTypeInfo, String userName, String principalName, String alias,
                                   String businessInfo, String qrcodeUrl, String authorizationAppid, String funcInfo);
+
+    /**
+    * 是否服务号
+    * @author Logan
+    * @date 2018-12-19 15:04
+    * @param appId
+
+    * @return
+    */
+   Boolean isServiceType(String appId);
 }

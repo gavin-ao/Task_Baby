@@ -3,6 +3,7 @@ package data.driven.cm.business.taskbaby.impl;
 import data.driven.cm.aes.WXBizMsgCrypt;
 import data.driven.cm.business.taskbaby.SubscribeWeChatResponseService;
 import data.driven.cm.business.taskbaby.WeChatService;
+import data.driven.cm.business.taskbaby.WechatPublicDetailService;
 import data.driven.cm.business.taskbaby.WechatResponseService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
@@ -39,6 +40,8 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Autowired
     private SubscribeWeChatResponseService subscribeWeChatResponseService;
+    @Autowired
+    private WechatPublicDetailService wechatPublicDetailService;
 
     /**
      *  调用核心服务类接收处理请求
@@ -76,10 +79,12 @@ public class WeChatServiceImpl implements WeChatService {
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
                 requestMap = WeChatUtil.parseXml(respXml);
                 Runnable runnable = null;
-                if(subscribeWechat(requestMap)){
-                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
-                }else{
+                Boolean isServiceType;
+                isServiceType = wechatPublicDetailService.isServiceType(appId);
+                if(isServiceType){
                     runnable = new TaskBabyThread(wechatResponseService, requestMap, appId);
+                }else{
+                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
                 }
                 Thread thread = new Thread(runnable);
                 thread.start();
@@ -152,16 +157,9 @@ public class WeChatServiceImpl implements WeChatService {
         MESSAGE_CACHE.add(duplicateRemovalMessage);
     }
 
-    /**
-    * 判断公众号是否为订阅号
-    * @author Logan
-    * @date 2018-12-19 14:54
-    * @param wechatEventMap
 
-    * @return
-    */
-    private boolean subscribeWechat(Map<String,String> wechatEventMap){
-        return false;
+    private String getWechatAccount(Map<String, String> wechatEventMap) {
+        return wechatEventMap.get(WeChatConstant.TO_USER_NAME);
     }
 }
 
