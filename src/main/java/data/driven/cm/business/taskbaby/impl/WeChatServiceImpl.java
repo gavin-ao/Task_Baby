@@ -1,10 +1,12 @@
 package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.aes.WXBizMsgCrypt;
+import data.driven.cm.business.taskbaby.SubscribeWeChatResponseService;
 import data.driven.cm.business.taskbaby.WeChatService;
 import data.driven.cm.business.taskbaby.WechatResponseService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
+import data.driven.cm.thread.SubscribeWechatThread;
 import data.driven.cm.thread.TaskBabyThread;
 import data.driven.cm.util.WeChatUtil;
 import org.slf4j.Logger;
@@ -34,6 +36,9 @@ public class WeChatServiceImpl implements WeChatService {
 
     @Autowired
     private WechatResponseService wechatResponseService;
+
+    @Autowired
+    private SubscribeWeChatResponseService subscribeWeChatResponseService;
 
     /**
      *  调用核心服务类接收处理请求
@@ -70,8 +75,13 @@ public class WeChatServiceImpl implements WeChatService {
                 String fromXML = String.format(format, requestMap.get("Encrypt"));
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
                 requestMap = WeChatUtil.parseXml(respXml);
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appId);
-                Thread thread = new Thread(taskBabyThread);
+                Runnable runnable = null;
+                if(subscribeWechat(requestMap)){
+                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
+                }else{
+                    runnable = new TaskBabyThread(wechatResponseService, requestMap, appId);
+                }
+                Thread thread = new Thread(runnable);
                 thread.start();
 
                 //当不是关键词时返回信息
@@ -140,6 +150,18 @@ public class WeChatServiceImpl implements WeChatService {
             MESSAGE_CACHE.remove(0);
         }
         MESSAGE_CACHE.add(duplicateRemovalMessage);
+    }
+
+    /**
+    * 判断公众号是否为订阅号
+    * @author Logan
+    * @date 2018-12-19 14:54
+    * @param wechatEventMap
+
+    * @return
+    */
+    private boolean subscribeWechat(Map<String,String> wechatEventMap){
+        return false;
     }
 }
 

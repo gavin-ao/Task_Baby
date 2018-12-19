@@ -100,10 +100,11 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      * @param wechatEventMap
      * @param appId          公众号appid
      * @return 返回微信发送的消息
-     * @author lxl
+     * @author lxl Logan
      */
     @Override
     public String notify(Map wechatEventMap, String appId) {
+//        logger.info(String.format("---------接收微信消息，%s----",wechatEventMap));
         return dispatherAndReturn(wechatEventMap, appId);
     }
 
@@ -142,7 +143,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      *
      * @param wechatEventMap 传进来的微信时间消息
      * @return 返回处理后的消息
-     * @author lxl
+     * @author lxl Logan
      */
     private String dispatherAndReturn(Map<String, String> wechatEventMap, String appid) {
         logger.info(" ----------- 消息分发  appid " + appid);

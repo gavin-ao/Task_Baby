@@ -474,6 +474,8 @@ public class WeChatUtil {
         String data = JSON.toJSONString(map);
         // 得到ticket票据,用于换取二维码图片
         String resultStr = HttpUtil.doPost(url, data);
+        log.info(String.format("-------------调用二维码的url:%s, 参数data:%s-------",url,data));
+        log.info(String.format("--------------调用接口换取二维码图片的返回值:%s---------",resultStr));
         JSONObject jsonticket = JSON.parseObject(resultStr);
         String ticket = jsonticket.getString("ticket");
         String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
