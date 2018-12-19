@@ -63,7 +63,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      */
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
-    // TODO: 2018/12/19 autowired
+
+    @Autowired
     private SubscribeServiceMappingService subscribeServiceMappingService;
 
     /**

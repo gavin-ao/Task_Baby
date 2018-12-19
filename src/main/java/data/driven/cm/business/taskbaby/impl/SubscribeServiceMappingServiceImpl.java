@@ -3,6 +3,7 @@ package data.driven.cm.business.taskbaby.impl;
 import data.driven.cm.business.taskbaby.SubscribeServiceMappingService;
 import data.driven.cm.dao.JDBCBaseDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @Author: lxl
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date: 2018/12/19 12:23
  * @Version 1.0
  */
+@Service
 public class SubscribeServiceMappingServiceImpl implements SubscribeServiceMappingService {
 
     @Autowired
