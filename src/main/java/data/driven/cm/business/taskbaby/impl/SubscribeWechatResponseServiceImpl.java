@@ -349,7 +349,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
                 subscribeServiceMappingService.getServiceWechatAppId(subscribeAppId);
         Map<String,String> userInfo = WeChatUtil.getUserInfo(subscribeWechatAccount,getAccessToken(subscribeAppId));
         String unionId = userInfo.get("unionid");
-        String url = WeChatUtil.getWebPageAuthUrl(request,serviceWechatAppId,unionId,actid);
+        String url = WeChatUtil.getWebPageAuthUrl(request,serviceWechatAppId,subscribeWechatAccount,unionId,actid);
         StringBuilder fileNameStrBuilder = new StringBuilder(downloadPath);
         fileNameStrBuilder.append(File.separator).append("temp").append(File.separator);
         File file = new File(fileNameStrBuilder.toString());

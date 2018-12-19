@@ -785,11 +785,11 @@ public class WeChatUtil {
         StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("subscribe/authcallback");
         return redirectUrlBff.toString();
     }
-    public static String getWebPageAuthUrl(HttpServletRequest request, String appId,String fromUnionId,String actId){
+    public static String getWebPageAuthUrl(HttpServletRequest request, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
         String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
                 "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
                 "state=%s#wechat_redirect";
-        String state = String.format("%s@@%s@@%s",appId,actId,fromUnionId);
-        return String.format(urlTemplate,appId,getAuthWebPageRedirectUrl(request),state);
+        String state = String.format("%s@@%s@@%s@@%s",serviceWechatAppId,actId,fromUnionId,subscribeWechatAccount);
+        return String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(request),state);
     }
 }
