@@ -7,4 +7,13 @@ package data.driven.cm.business.taskbaby;
  * @Version 1.0
  */
 public interface SubscribeServiceMappingService {
+    /**
+    * 根据订阅号的原始id获取与他绑定的服务号的appid
+    * @author Logan
+    * @date 2018-12-19 15:55
+    * @param subscribeWechatAccount
+
+    * @return
+    */
+    String getServiceWechatAppId(String subscribeWechatAccount);
 }
