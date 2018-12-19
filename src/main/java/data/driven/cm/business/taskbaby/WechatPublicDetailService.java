@@ -66,5 +66,5 @@ public interface WechatPublicDetailService {
 
     * @return
     */
-   Boolean isServiceType(String appId);
+   boolean isServiceType(String appId);
 }

@@ -2,6 +2,8 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.SubscribeServiceMappingService;
 import data.driven.cm.dao.JDBCBaseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SubscribeServiceMappingServiceImpl implements SubscribeServiceMappingService {
-
+    private static Logger log = LoggerFactory.getLogger(SubscribeServiceMappingServiceImpl.class);
     @Autowired
     private JDBCBaseDao jdbcBaseDao;
 
@@ -28,6 +30,7 @@ public class SubscribeServiceMappingServiceImpl implements SubscribeServiceMappi
     @Override
     public String getServiceWechatAppId(String subscribeWechatAccount) {
         String sql = "select service_appid from subscribe_service_mapping where subscribe_wechat_account = ?";
+        log.info(String.format("-----------subscribeWechatAccount:%s----------- ",subscribeWechatAccount));
         Object serviceAppid = jdbcBaseDao.getColumn(sql,subscribeWechatAccount);
         if (serviceAppid != null){
             return serviceAppid.toString();

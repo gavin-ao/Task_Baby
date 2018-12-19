@@ -779,17 +779,17 @@ public class WeChatUtil {
         return HttpUtil.doPost(url,msgParam.toJSONString());
     }
 
-    private static String getAuthWebPageRedirectUrl(HttpServletRequest request){
-        StringBuffer url = request.getRequestURL();
-        String rootUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/").toString();
-        StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("subscribe/authcallback");
+    private static String getAuthWebPageRedirectUrl(String rootUrl){
+       StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("/subscribe/authcallback");
         return redirectUrlBff.toString();
     }
-    public static String getWebPageAuthUrl(HttpServletRequest request, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
+    public static String getWebPageAuthUrl(String rootUrl, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
         String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
                 "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
                 "state=%s#wechat_redirect";
         String state = String.format("%s@@%s@@%s@@%s",serviceWechatAppId,actId,fromUnionId,subscribeWechatAccount);
-        return String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(request),state);
+        log.info(String.format("--------------------WebPageAuthUrl:%s----------",
+                String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state)));
+        return String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state);
     }
 }

@@ -20,17 +20,16 @@ public class SubscribeWechatThread implements Runnable {
     private Map<String,String> map;
     private String appid;
     private HttpServletRequest request;
-    public SubscribeWechatThread(HttpServletRequest request, SubscribeWeChatResponseService wechatResponseService, Map<String,String> map, String appid){
+    public SubscribeWechatThread(SubscribeWeChatResponseService wechatResponseService, Map<String,String> map, String appid){
         super();
         this.wechatResponseService = wechatResponseService;
         this.map = map;
         this.appid = appid;
-        this.request = request;
     }
     @Override
     public void run(){
         logger.info("-----------------线程调用--------------------");
-        wechatResponseService.notify(request,map,appid);
+        wechatResponseService.notify(map,appid);
         logger.info("-----------------线程调用完成--------------------");
     }
 
