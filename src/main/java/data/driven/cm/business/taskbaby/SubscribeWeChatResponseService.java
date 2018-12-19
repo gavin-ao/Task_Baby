@@ -1,5 +1,6 @@
 package data.driven.cm.business.taskbaby;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface SubscribeWeChatResponseService {
