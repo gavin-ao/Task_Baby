@@ -6,6 +6,7 @@ import data.driven.cm.util.UUIDUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * @Date: 2018/12/19 12:23
  * @Version 1.0
  */
+@Service
 public class UnionidUserMappingServiceImpl implements UnionidUserMappingService {
     private static final Logger logger = LoggerFactory.getLogger(UnionidUserMappingServiceImpl.class);
 
