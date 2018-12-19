@@ -84,7 +84,7 @@ public class WeChatServiceImpl implements WeChatService {
                 if(isServiceType){
                     runnable = new TaskBabyThread(wechatResponseService, requestMap, appId);
                 }else{
-                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
+                    runnable = new SubscribeWechatThread(request,subscribeWeChatResponseService, requestMap, appId);
                 }
                 Thread thread = new Thread(runnable);
                 thread.start();

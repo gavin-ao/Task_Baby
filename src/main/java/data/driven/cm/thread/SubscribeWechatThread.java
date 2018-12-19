@@ -4,6 +4,7 @@ import data.driven.cm.business.taskbaby.SubscribeWeChatResponseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -18,16 +19,18 @@ public class SubscribeWechatThread implements Runnable {
     private SubscribeWeChatResponseService wechatResponseService;
     private Map<String,String> map;
     private String appid;
-    public SubscribeWechatThread(SubscribeWeChatResponseService wechatResponseService, Map<String,String> map, String appid){
+    private HttpServletRequest request;
+    public SubscribeWechatThread(HttpServletRequest request, SubscribeWeChatResponseService wechatResponseService, Map<String,String> map, String appid){
         super();
         this.wechatResponseService = wechatResponseService;
         this.map = map;
         this.appid = appid;
+        this.request = request;
     }
     @Override
     public void run(){
         logger.info("-----------------线程调用--------------------");
-        wechatResponseService.notify(map,appid);
+        wechatResponseService.notify(request,map,appid);
         logger.info("-----------------线程调用完成--------------------");
     }
 
