@@ -1,17 +1,24 @@
 package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.*;
+import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
+import data.driven.cm.util.FileUtil;
+import data.driven.cm.util.QRCodeUtil;
+import data.driven.cm.util.UUIDUtil;
 import data.driven.cm.util.WeChatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,12 +64,16 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      */
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
+    // TODO: 2018/12/19 autowired
+    private SubscribeServiceMappingService subscribeServiceMappingService;
 
     /**
      * 图片信息Service
      */
     @Autowired
     private SysPictureService sysPictureService;
+    @Value("${file.download.path}")
+    private String downloadPath;
     /**
     * 接收微信的消息，然后派发出去
     * @author Logan 
@@ -73,11 +84,11 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     * @return 
     */       
     @Override
-    public String notify(Map wechatEventMap, String appId) {
-        return dispatherAndReturn(wechatEventMap, appId);
+    public String notify(HttpServletRequest request, Map wechatEventMap, String appId) {
+        return dispatherAndReturn(request,wechatEventMap, appId);
     }
 
-    private String dispatherAndReturn(Map<String, String> wechatEventMap, String appid){
+    private String dispatherAndReturn(HttpServletRequest request, Map<String, String> wechatEventMap, String appid){
         logger.info(" ----------- 消息分发  appid " + appid);
         String accessToken = getAccessToken(appid);
         logger.info(" ----------- 消息分发  accessToken " + accessToken);
@@ -86,7 +97,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
         //1.用户发送关键字文本,如果文本是活动关键字，则进行关键字回复
         if (textEvent(wechatEventMap)) {
-            return sendKeyCustomMsg(appid, wechatEventMap, accessToken);
+            return sendKeyCustomMsg(request,appid, wechatEventMap, accessToken);
         }
 
 
@@ -198,16 +209,16 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
 
   * @return
   */
-    private String sendKeyCustomMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+    private String sendKeyCustomMsg(HttpServletRequest request,String appid, Map<String, String> wechatEventMap, String accessToken) {
         String wechatAccount = getWechatAccount(wechatEventMap);
         String msgContent = getMsgContent(wechatEventMap);
         String fromUserName = getFromUserName(wechatEventMap);
         String actId = matchKeyWord(msgContent, wechatAccount);
-        //判读活动是否有效
+        //判断活动是否有效
         if (actId != null &&
                 checkActiveAvailable(actId)) {
             insertWechatUserInfo(wechatEventMap, appid, actId);
-            return keyWordReplyPoster(wechatEventMap, appid);
+            return keyWordReplyPoster(request,wechatEventMap, appid);
         } else {
             Map<String, String> msgReply = new HashMap<>();
             msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
@@ -283,17 +294,6 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             String accessToken = thirdPartyService.getAuthAccessToken(appid);
             logger.info(" ----------- 进入 新增用户 accessToken " + accessToken);
 
-//            String eventKey = null;
-//            String ticket = null;
-//            if (wechatEventMap.containsKey("EventKey") && StringUtils.isNotEmpty(wechatEventMap.get("EventKey").toString())) {
-//                logger.info(" ----------- 进入 新增用户 EventKey 存在");
-//                Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FROM_USER_NAME), accessToken);
-//                wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")), userInfo.get("openid"), userInfo.get("nickname"), Integer.parseInt(userInfo.get("sex")),
-//                        userInfo.get("country"), userInfo.get("province"), userInfo.get("language"), userInfo.get("headimgurl"), userInfo.get("unionid"), userInfo.get("remark"),
-//                        userInfo.get("subscribe_scene"), wechatEventMap.get(WeChatConstant.TO_USER_NAME), Integer.parseInt(userInfo.get("subscribe_time")), userInfo.get("city"), Integer.parseInt(userInfo.get("qr_scene")),
-//                        userInfo.get("qr_scene_str"), actId, wechatEventMap.get("MsgType"), wechatEventMap.get("Event"), wechatEventMap.get("EventKey"), wechatEventMap.get("Ticket"));
-//
-//            }
             /**
              * 用户取消关注
              */
@@ -325,7 +325,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      * @author Logan
      * @date 2018-12-10 14:51
      */
-    private String keyWordReplyPoster(Map<String, String> wechatEventMap, String appId) {
+    private String keyWordReplyPoster(HttpServletRequest request,Map<String, String> wechatEventMap, String appId) {
         logger.info("---------wechatEventMap----------");
         logger.info(wechatEventMap.toString());
         String openId = getFromUserName(wechatEventMap);
@@ -336,13 +336,35 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
         String activityId = activityService.getMatActivityId(wechatAccount, keyWord);
         //发送海报
-        introduceActivity(wechatEventMap, appId, activityId);
+        introduceActivity(request,wechatEventMap, appId, activityId);
         //扫码者自动加入活动
         joinActivity(wechatAccount, openId, activityId, 1);
         return "success";
     }
 
+    private String createAuthQRCode(HttpServletRequest request,String subscribeAppId,String subscribeWechatAccount,String actid){
 
+        //绑定的服务号appid
+        String serviceWechatAppId =
+                subscribeServiceMappingService.getServiceWechatAppId(subscribeAppId);
+        Map<String,String> userInfo = WeChatUtil.getUserInfo(subscribeWechatAccount,getAccessToken(subscribeAppId));
+        String unionId = userInfo.get("unionid");
+        String url = WeChatUtil.getWebPageAuthUrl(request,serviceWechatAppId,unionId,actid);
+        StringBuilder fileNameStrBuilder = new StringBuilder(downloadPath);
+        fileNameStrBuilder.append(File.separator).append("temp").append(File.separator);
+        File file = new File(fileNameStrBuilder.toString());
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        try {
+            QRCodeUtil.createQRCode(url,
+                    fileNameStrBuilder.append(UUIDUtil.getUUID()).toString());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+        return fileNameStrBuilder.append(".jpg").toString();
+    }
     /**
      * @param wechatEventMap
      * @param appId
@@ -352,7 +374,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      * @author Logan
      * @date 2018-12-10 14:50
      */
-    private Map<String, String> introduceActivity(Map<String, String> wechatEventMap, String appId, String activityId) {
+    private Map<String, String> introduceActivity(HttpServletRequest request, Map<String, String> wechatEventMap, String appId, String activityId) {
         String openId = getFromUserName(wechatEventMap);
         String wechatAccount = getWechatAccount(wechatEventMap);
         //获取粉丝个人信息存入到userPersonalInfoMap
@@ -377,13 +399,16 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
         }
-        String qrCodeUrl = WeChatUtil.getWXPublicQRCode(WeChatUtil.QR_TYPE_TEMPORARY,
-                WeChatUtil.QR_MAX_EXPIREDTIME, WeChatUtil.QR_SCENE_NAME_STR, sceneStrBuilder.toString(), getAccessToken(appId));
+        //生成临时二维码
+        String qrCodeTempFileName = createAuthQRCode(request,appId,wechatAccount,activityId);
         //将二维码url put到userPersonalInfoMap中
-        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeUrl);
+        userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeTempFileName);
 
-        //得到合成图片的filePath
-        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);
+        //得到合 成图片的filePath
+        String customizedPosterPath = getCustomizedPosterPath(userPersonalInfoMap,activityId,openId);
+
+        // 合成海报之后，删除二维码原始图片
+        FileUtil.deleteFile(qrCodeTempFileName);
         //发送个性化海报
         if (customizedPosterPath != null) {
             replyMap.put(KEY_FILE_PATH, customizedPosterPath);
@@ -391,6 +416,49 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
         }
         return userPersonalInfoMap;
+    }
+    /**
+    * 把用户的合成海报的地址放缓存里面，优先从缓存里面取
+    * @author Logan
+    * @date 2018-12-19 17:26
+    * @param userInfoMap
+    * @param activityId
+    * @param openId
+
+    * @return
+    */
+    private String getCustomizedPosterPath(Map<String,String> userInfoMap,String activityId,String openId){
+        String cacheKey = getCustomizedPosterPath(activityId,openId);
+        boolean reCreate = false;
+        String customizedPosterPath = RedisFactory.get(cacheKey);
+        if(StringUtils.isEmpty(customizedPosterPath)){
+            reCreate = true;
+        }else{
+            File file = new File(customizedPosterPath);
+            if(file.exists()){
+                reCreate = false;
+            }else{
+               reCreate = true;
+            }
+        }
+
+        if(reCreate){
+            //得到合 成图片的filePath
+            customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userInfoMap);
+            //缓存个性化海报图片
+            cacheCustomizedPosterPath(activityId,openId,customizedPosterPath);
+        }
+        return customizedPosterPath;
+    }
+    private String getCustomizedPosterPath(String activityId,String openId){
+          return String.format("customizedPosterPath-%s-%s",activityId,openId);
+    }
+
+    private void cacheCustomizedPosterPath(String activityId,String openId,String customizedPosterPath){
+        String key =getCustomizedPosterPath(activityId,openId);
+        //缓存10天
+        long expired = 10*24*60*60*1000;
+        RedisFactory.setString(key,customizedPosterPath,expired);
     }
 
 
