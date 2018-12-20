@@ -29,4 +29,8 @@ public interface PosterService {
      * @return:     java.awt.image.BufferedImage
      **/
      BufferedImage getBufferedImage(String imgAddress);
+
+     boolean combinedCustomizedPosterFilePath(String outputFileName,Map<String,String> personalInfo);
+     boolean combinedCustomizedPosterFilePath(String outputFileName,
+                                              String originPosterUrl,String headImgUrl, String qrCodeUrl, String nickName);
 }

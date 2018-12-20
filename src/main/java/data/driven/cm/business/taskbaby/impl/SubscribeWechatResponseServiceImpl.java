@@ -445,8 +445,11 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
 
         if(reCreate){
-            //得到合 成图片的filePath
-            customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userInfoMap);
+            //得到合 成图片的filePathx
+            StringBuilder  outputFile = new StringBuilder(downloadPath);
+            outputFile.append(File.separator).append("subscribePoster").append(File.separator).append(UUIDUtil.getUUID()).append("jpg");
+            customizedPosterPath = outputFile.toString();
+            posterService.combinedCustomizedPosterFilePath(customizedPosterPath, userInfoMap);
             //缓存个性化海报图片
             cacheCustomizedPosterPath(activityId,openId,customizedPosterPath);
         }

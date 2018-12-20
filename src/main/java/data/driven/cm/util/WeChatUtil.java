@@ -782,6 +782,7 @@ public class WeChatUtil {
     private static String getAuthWebPageRedirectUrl(String rootUrl){
        StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("/subscribe/authcallback");
         try {
+            log.info(String.format("-------原始RedirectUrl:%s----------",redirectUrlBff.toString()));
             return URLEncoder.encode(redirectUrlBff.toString(),"UTF-8") ;
         } catch (UnsupportedEncodingException e) {
             log.error(e.getMessage());
