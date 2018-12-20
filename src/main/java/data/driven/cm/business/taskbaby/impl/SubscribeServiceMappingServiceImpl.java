@@ -34,4 +34,22 @@ public class SubscribeServiceMappingServiceImpl implements SubscribeServiceMappi
         }
         return null;
     }
+
+    /**
+     * @description 获取订阅号的关注的图片地址
+     * @author lxl
+     * @date 2018-12-19 17:38
+     * @param subscribeWechatAccount 订阅号的原始id
+     * @return
+     */
+    @Override
+    public String getQrPicIdBySubscribeWechatAccount(String subscribeWechatAccount) {
+        String sql = "select wpd.qr_pic_id from subscribe_service_mapping ssm, wechat_public_detail wpd where " +
+                "ssm.subscribe_wechat_account = wpd.user_name and ssm.subscribe_wechat_account = ? ";
+        Object qrPicId = jdbcBaseDao.getColumn(sql,subscribeWechatAccount);
+        if (qrPicId != null){
+            return  qrPicId.toString();
+        }
+        return null;
+    }
 }

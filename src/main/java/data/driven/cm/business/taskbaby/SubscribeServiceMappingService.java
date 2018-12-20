@@ -16,4 +16,13 @@ public interface SubscribeServiceMappingService {
     * @return
     */
     String getServiceWechatAppId(String appId);
+
+    /**
+     * @description 获取订阅号的关注的图片地址
+     * @author lxl
+     * @date 2018-12-19 17:38
+     * @param subscribeWechatAccount 订阅号的原始id
+     * @return
+     */
+    String getQrPicIdBySubscribeWechatAccount(String subscribeWechatAccount);
 }
