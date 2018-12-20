@@ -407,7 +407,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeTempFileName);
 
         //得到合 成图片的filePath
-        String customizedPosterPath = posterService.getCombinedCustomiedPosterFilePath(userPersonalInfoMap);;
+        String customizedPosterPath = getCustomizedPosterPath(userPersonalInfoMap,activityId,openId);
 
         // 合成海报之后，删除二维码原始图片
         FileUtil.deleteFile(qrCodeTempFileName);
@@ -430,7 +430,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     * @return
     */
     private String getCustomizedPosterPath(Map<String,String> userInfoMap,String activityId,String openId){
-        String cacheKey = getCustomizedPosterPath(activityId,openId);
+        String cacheKey = getCustomizedPosterPathKey(activityId,openId);
         boolean reCreate = false;
         String customizedPosterPath = RedisFactory.get(cacheKey);
         if(StringUtils.isEmpty(customizedPosterPath)){
@@ -452,12 +452,12 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
         return customizedPosterPath;
     }
-    private String getCustomizedPosterPath(String activityId,String openId){
+    private String getCustomizedPosterPathKey(String activityId, String openId){
           return String.format("customizedPosterPath-%s-%s",activityId,openId);
     }
 
     private void cacheCustomizedPosterPath(String activityId,String openId,String customizedPosterPath){
-        String key =getCustomizedPosterPath(activityId,openId);
+        String key = getCustomizedPosterPathKey(activityId,openId);
         //缓存60秒
         long expired = 60*1000;
         RedisFactory.setString(key,customizedPosterPath,expired);
