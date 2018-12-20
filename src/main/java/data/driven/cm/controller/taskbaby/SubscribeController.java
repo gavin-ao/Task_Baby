@@ -1,24 +1,17 @@
 package data.driven.cm.controller.taskbaby;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import data.driven.cm.business.taskbaby.SubscribeServiceMappingService;
-import data.driven.cm.business.taskbaby.SubscribeWeChatResponseService;
-import data.driven.cm.business.taskbaby.SysPictureService;
-import data.driven.cm.business.taskbaby.UnionidUserMappingService;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+import data.driven.cm.business.taskbaby.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import com.sun.image.codec.jpeg.*;//sun公司仅提供了jpg图片文件的编码api
-import sun.awt.image.codec.JPEGImageEncoderImpl;
-
-
-import javax.servlet.ServletContext;
+//import com.sun.image.codec.jpeg.*;//sun公司仅提供了jpg图片文件的编码api
+import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,6 +40,8 @@ public class SubscribeController {
 
     @Autowired
     private SubscribeServiceMappingService subscribeServiceMappingService;
+    @Autowired
+    private PosterService posterService;
 
     /**
      * 图片信息Service
@@ -69,6 +64,7 @@ public class SubscribeController {
         logger.info("进入微信用户回调URL");
         String[] strs = state.split("@@");
         //服务号appid
+
         String serviceAppId = strs[0].toString();
         logger.info("服务号appid "+serviceAppId);
         //活动id
@@ -111,18 +107,20 @@ public class SubscribeController {
         response.setContentType(JPG);
         //得到图片的真实路径
         //得到图片的文件流
-        InputStream imageIn = new FileInputStream(new File(imagePath));
-        //得到输入的编码器，将文件流进行jpg格式编码
-        JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(imageIn);
-        //得到编码后的图片对象
-        BufferedImage image = decoder.decodeAsBufferedImage();
-        //得到输出的编码器
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
-        // 对图片进行输出编码
-        encoder.encode(image);
-        //关闭文件流
-        imageIn.close();
-        output.close();
+        BufferedImage bufferedImage = posterService.getBufferedImage(imagePath);
+        ImageIO.write(bufferedImage,imagePath,output);
+//        InputStream imageIn = new FileInputStream(new File(imagePath));
+//        //得到输入的编码器，将文件流进行jpg格式编码
+//        JPEGImageDecoder decoder = JPEGCodec.createJPEGDecoder(imageIn);
+//        //得到编码后的图片对象
+//        BufferedImage image = decoder.decodeAsBufferedImage();
+//        //得到输出的编码器
+//        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(output);
+//        // 对图片进行输出编码
+//        encoder.encode(image);
+//        //关闭文件流
+//        imageIn.close();
+//        output.close();
     }
 }
 

@@ -790,11 +790,15 @@ public class WeChatUtil {
     }
     public static String getWebPageAuthUrl(String rootUrl, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
         String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
-                "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
-                "state=%s#wechat_redirect";
+                "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=%s&" +
+                "component_appid=%s#wechat_redirect";
+//        String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
+//                "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
+//                "state=%s#wechat_redirect";
         String state = String.format("%s@@%s@@%s@@%s",serviceWechatAppId,actId,fromUnionId,subscribeWechatAccount);
-        log.info(String.format("--------------------WebPageAuthUrl:%s----------",
-                String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state)));
-        return String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state);
+        String authUrl = String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state,WeChatConstant.THIRD_PARTY_APPID);
+
+        log.info( String.format("--------------------WebPageAuthUrl:%s----------",authUrl));
+        return authUrl;
     }
 }

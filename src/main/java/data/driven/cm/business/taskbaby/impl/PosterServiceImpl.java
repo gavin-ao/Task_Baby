@@ -122,7 +122,8 @@ public class PosterServiceImpl implements PosterService {
      * @params:     [imgAddress]   支持以http开头的url和本地文件
      * @return:     java.awt.image.BufferedImage
     **/
-    private BufferedImage getBufferedImage(String imgAddress){
+    @Override
+    public BufferedImage getBufferedImage(String imgAddress){
         log.info(String.format("-------根据图片地址加载图片，地址：%s",imgAddress));
         long beign = System.currentTimeMillis();
         //imgAddres是url
