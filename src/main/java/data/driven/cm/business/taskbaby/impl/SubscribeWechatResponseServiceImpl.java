@@ -344,12 +344,12 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         return "success";
     }
 
-    private String createAuthQRCode(String subscribeAppId,String subscribeWechatAccount,String actid){
+    private String createAuthQRCode(String fromOpenId,String subscribeAppId,String subscribeWechatAccount,String actid){
 
         //绑定的服务号appid
         String serviceWechatAppId =
                 subscribeServiceMappingService.getServiceWechatAppId(subscribeWechatAccount);
-        Map<String,String> userInfo = WeChatUtil.getUserInfo(subscribeWechatAccount,getAccessToken(subscribeAppId));
+        Map<String,String> userInfo = WeChatUtil.getUserInfo(fromOpenId,getAccessToken(subscribeAppId));
         String unionId = userInfo.get("unionid");
         String url = WeChatUtil.getWebPageAuthUrl(rootUrl,serviceWechatAppId,subscribeWechatAccount,unionId,actid);
         StringBuilder fileNameStrBuilder = new StringBuilder(downloadPath);
@@ -402,7 +402,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
         }
         //生成临时二维码
-        String qrCodeTempFileName = createAuthQRCode(appId,wechatAccount,activityId);
+        String qrCodeTempFileName = createAuthQRCode(openId,appId,wechatAccount,activityId);
         //将二维码url put到userPersonalInfoMap中
         userPersonalInfoMap.put(TaskBabyConstant.KEY_QRCODE_URL, qrCodeTempFileName);
 
@@ -434,12 +434,15 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         boolean reCreate = false;
         String customizedPosterPath = RedisFactory.get(cacheKey);
         if(StringUtils.isEmpty(customizedPosterPath)){
+            logger.info("--------海报路径缓存没有--------------");
             reCreate = true;
         }else{
             File file = new File(customizedPosterPath);
             if(file.exists()){
+                logger.info("--------海报路径缓存有,并且文件存在--------------");
                 reCreate = false;
             }else{
+                logger.info("--------海报路径缓存有,并且文件不存在--------------");
                reCreate = true;
             }
         }
@@ -449,6 +452,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             StringBuilder  outputFile = new StringBuilder(downloadPath);
             outputFile.append(File.separator).append("subscribePoster").append(File.separator).append(UUIDUtil.getUUID()).append(".jpg");
             customizedPosterPath = outputFile.toString();
+            logger.info(String.format("--------重新生成海报文件,路径:%s--------------",customizedPosterPath));
             posterService.combinedCustomizedPosterFilePath(customizedPosterPath, userInfoMap);
             //缓存个性化海报图片
             cacheCustomizedPosterPath(activityId,openId,customizedPosterPath);
@@ -493,7 +497,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     @Override
     public String getCodeByUnionid(String code,String appid) {
         //第一步通过code获取用户的access_token  start
-        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,WeChatConstant.THIRD_PARTY_SECRET,code);
+        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,code, WeChatUtil.getComponentAccessToken());
         String userAccessTokenResultStr = HttpUtil.doGetSSL(getUserAccessTokenURL);
         JSONObject userAccessTokenResultJson = parseObject(userAccessTokenResultStr);
         //第一步通过code获取用户的access_token  end

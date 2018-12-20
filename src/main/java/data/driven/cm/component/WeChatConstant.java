@@ -218,14 +218,17 @@ public class WeChatConstant {
      * @author lxl
      * @date 2018-12-19 15:56
      * @param appId 服务号的appid
-     * @param secret 公众号的appsecret(现用第三方的后期不行在换)
-     * @param code code code作为换取access_token的票据
+     * @param  code code作为换取access_token的票据
+     * @Param thirdPartyAccessToken 第三方平台自己的accessToken
      * @return
      */
-    public static String getUserAccessTokenURL(String appId,String secret,String code) {
+    public static String getUserAccessTokenURL(String appId,String code,String thirdPartyAccessToken) {
+        // 应该调用第三方平台制定的接口,而非微信公众平台文档上的接口  Logan 2018-12-20  17:22
         String getUserAccessTokenURL =
-                "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
-        return String.format(getUserAccessTokenURL, appId,secret,code);
+                "https://api.weixin.qq.com/sns/oauth2/component/access_token?" +
+                        "appid=%s&code=%s&grant_type=authorization_code&" +
+                        "component_appid=%s&component_access_token=%s";
+        return String.format(getUserAccessTokenURL, appId,code, WeChatConstant.THIRD_PARTY_APPID,thirdPartyAccessToken);
     }
 
     /**
