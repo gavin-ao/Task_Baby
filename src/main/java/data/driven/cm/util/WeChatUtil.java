@@ -355,7 +355,7 @@ public class WeChatUtil {
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
         if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(accessToken)) {
             try {
-                log.debug("-----------开始上传临时素材--------------");
+                log.info(String.format("-----------开始上传临时素材,素材地址:%s--------------",filePath));
                 long begin=System.currentTimeMillis();
                 //先新增临时素材，返回media_id
                 Map<String, Object> uploadInfoMap = UploadMeida(
