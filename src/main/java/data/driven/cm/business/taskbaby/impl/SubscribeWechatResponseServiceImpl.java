@@ -497,7 +497,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     @Override
     public String getCodeByUnionid(String code,String appid) {
         //第一步通过code获取用户的access_token  start
-        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,WeChatConstant.THIRD_PARTY_SECRET,code);
+        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,code, WeChatUtil.getComponentAccessToken());
         String userAccessTokenResultStr = HttpUtil.doGetSSL(getUserAccessTokenURL);
         JSONObject userAccessTokenResultJson = parseObject(userAccessTokenResultStr);
         //第一步通过code获取用户的access_token  end
