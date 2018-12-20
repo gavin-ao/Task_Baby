@@ -779,17 +779,22 @@ public class WeChatUtil {
         return HttpUtil.doPost(url,msgParam.toJSONString());
     }
 
-    private static String getAuthWebPageRedirectUrl(HttpServletRequest request){
-        StringBuffer url = request.getRequestURL();
-        String rootUrl = url.delete(url.length() - request.getRequestURI().length(), url.length()).append(request.getServletContext().getContextPath()).append("/").toString();
-        StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("subscribe/authcallback");
-        return redirectUrlBff.toString();
+    private static String getAuthWebPageRedirectUrl(String rootUrl){
+       StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("/subscribe/authcallback");
+        try {
+            return URLEncoder.encode(redirectUrlBff.toString(),"UTF-8") ;
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
-    public static String getWebPageAuthUrl(HttpServletRequest request, String appId,String fromUnionId,String actId){
+    public static String getWebPageAuthUrl(String rootUrl, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
         String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
                 "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
                 "state=%s#wechat_redirect";
-        String state = String.format("%s@@%s@@%s",appId,actId,fromUnionId);
-        return String.format(urlTemplate,appId,getAuthWebPageRedirectUrl(request),state);
+        String state = String.format("%s@@%s@@%s@@%s",serviceWechatAppId,actId,fromUnionId,subscribeWechatAccount);
+        log.info(String.format("--------------------WebPageAuthUrl:%s----------",
+                String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state)));
+        return String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state);
     }
 }

@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Service
 public class WeChatServiceImpl implements WeChatService {
-    Logger logger = LoggerFactory.getLogger(WeChatServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(WeChatServiceImpl.class);
     private static final int MESSAGE_CACHE_SIZE = 1000;
     private static List<DuplicateRemovalMessage> MESSAGE_CACHE = new ArrayList<DuplicateRemovalMessage>(MESSAGE_CACHE_SIZE);
 
@@ -79,12 +79,17 @@ public class WeChatServiceImpl implements WeChatService {
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
                 requestMap = WeChatUtil.parseXml(respXml);
                 Runnable runnable = null;
-                Boolean isServiceType;
+
+
+
+                boolean isServiceType;
                 isServiceType = wechatPublicDetailService.isServiceType(appId);
                 if(isServiceType){
+                    logger.info("------------进入服务号---------------");
                     runnable = new TaskBabyThread(wechatResponseService, requestMap, appId);
                 }else{
-                    runnable = new SubscribeWechatThread(request,subscribeWeChatResponseService, requestMap, appId);
+                    logger.info("------------进入订阅号---------------");
+                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
                 }
                 Thread thread = new Thread(runnable);
                 thread.start();
