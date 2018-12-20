@@ -35,6 +35,7 @@ public class SessionFilter implements Filter{
         EXCLUDE_URL_SET.add("/thirdParty");
         //微信用户授权后的回调
         EXCLUDE_URL_SET.add("/subscribe");
+        EXCLUDE_URL_SET.add("/subscribe/ShowPic");
     }
 
     @Override

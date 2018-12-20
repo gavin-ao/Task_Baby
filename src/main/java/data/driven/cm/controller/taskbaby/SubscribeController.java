@@ -94,10 +94,11 @@ public class SubscribeController {
     @ResponseBody
     public void ShowPic(HttpServletRequest request,
                         HttpServletResponse response, @RequestParam(value = "qrPicId") String qrPicId) throws ServletException, IOException {
+        logger.info("进入图片显示");
         FileInputStream fis = null;
         response.setContentType("image/gif");
         String imagePath = sysPictureService.getPictureURL(qrPicId);
-        logger.info("图片地址");
+        logger.info("图片地址" + imagePath);
         try {
             OutputStream out = response.getOutputStream();
             File file = new File(imagePath);
