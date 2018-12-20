@@ -16,7 +16,7 @@
 <div style="width: 100%;height: 100%;text-align: center">
 ##    <p style="font-size: 2.5em;padding: 5em 3em;color: #888;">提示：请公众号管理员扫描二维码，授权新客宝获得相应的开发权限，谢谢~</p>
 ##    <button id="btn" style="font-size:3em; width: 38%;height: 10%;background-color: #3699FE;color: #fff;border-radius: 10px;">点击授权</button>
-    <img id="viewImg2" src="ShowPic?qrPicId=$!{qrPicId}" style="height:344px;width:344px;" >
+    <img id="viewImg2" src="/subscribe/ShowPic?qrPicId=$!{qrPicId}" style="height:344px;width:344px;" >
 </div>
 
 ##<script>
