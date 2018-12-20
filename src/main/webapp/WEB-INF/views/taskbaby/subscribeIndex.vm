@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>订阅号关注页面</title>
+    <script type="text/javascript" src="/static/plugins/taskbaby/jquery-1.7.2.js"></script>
+</head>
+<style>
+    html,body{
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<body>
+##<input type="hidden" id="qrPicId"  value="$!{qrPicId}">
+<div style="width: 100%;height: 100%;text-align: center">
+##    <p style="font-size: 2.5em;padding: 5em 3em;color: #888;">提示：请公众号管理员扫描二维码，授权新客宝获得相应的开发权限，谢谢~</p>
+##    <button id="btn" style="font-size:3em; width: 38%;height: 10%;background-color: #3699FE;color: #fff;border-radius: 10px;">点击授权</button>
+    <img id="viewImg2" src="ShowPic?qrPicId=$!{qrPicId}" style="height:344px;width:344px;" >
+</div>
+
+##<script>
+##    $("#btn").off("click");
+##    $("#btn").on("click",function () {
+##        console.log($("#dataUrl").attr("data-url").trim());
+##        if($("#dataUrl").attr("data-url").trim()){
+##            window.location.href = $("#dataUrl").attr("data-url").trim();
+##//                $.ajax({
+##//                    url:$("#dataUrl").attr("data-url").trim(),
+##//                    success:function (res) {
+##//                        console.log(res);
+##//                    }
+##//                })
+##        }
+##
+##    })
+##</script>
+
+</body>
+</html>
