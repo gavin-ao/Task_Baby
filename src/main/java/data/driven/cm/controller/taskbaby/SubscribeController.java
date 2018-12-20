@@ -97,6 +97,7 @@ public class SubscribeController {
         FileInputStream fis = null;
         response.setContentType("image/gif");
         String imagePath = sysPictureService.getPictureURL(qrPicId);
+        logger.info("图片地址");
         try {
             OutputStream out = response.getOutputStream();
             File file = new File(imagePath);
