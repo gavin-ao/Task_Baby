@@ -40,4 +40,6 @@ public interface UnionidUserMappingService {
     * @return 被助力者(发起者)的unionid列表
     */
     List<String> getFormUnionIdList(String actId,String toUnionId);
+
+
 }

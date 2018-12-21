@@ -106,6 +106,7 @@ public class WeChatConstant {
     public static final String API_JSON_KEY_BUSINESS_INFO = "business_info";
     public static final String API_JSON_KEY_QRCODE_URL = "qrcode_url";
     public static final String API_JSON_KEY_SERVICE_TYPE_ID = "id";
+    public static final String API_JSON_KEY_UNIONID="unionid";
 
 
     /**
