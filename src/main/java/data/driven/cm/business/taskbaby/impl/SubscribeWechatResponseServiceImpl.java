@@ -531,11 +531,12 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     @Override
     public String getCodeByUnionid(String code,String appid) {
         //第一步通过code获取用户的access_token  start
-        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,code, WeChatUtil.getComponentAccessToken());
-        String userAccessTokenResultStr = HttpUtil.doGetSSL(getUserAccessTokenURL);
-        JSONObject userAccessTokenResultJson = parseObject(userAccessTokenResultStr);
+//        String getUserAccessTokenURL = WeChatConstant.getUserAccessTokenURL(appid,code, WeChatUtil.getComponentAccessToken());
+//        String userAccessTokenResultStr = HttpUtil.doGetSSL(getUserAccessTokenURL);
+//        JSONObject userAccessTokenResultJson = parseObject(userAccessTokenResultStr);
+        String getUserAccessToken = WeChatConstant.getUserAccessTokenURL(appid,code, WeChatUtil.getComponentAccessToken());
         //第一步通过code获取用户的access_token  end
-
+        JSONObject userAccessTokenResultJson = parseObject(getUserAccessToken);
         if (userAccessTokenResultJson.containsKey("errcode")){
             logger.info("获取用户的access_token失败 "+userAccessTokenResultJson.toString());
         }else{
@@ -974,5 +975,50 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     */
     private String subscribeAfterHelpScan(Map<String,String> wechatEventMap){
        return null;
+    }
+
+    /**
+     * @description 订阅号用户扫自己的二维码发送我的活动进度
+     * @author lxl
+     * @date 2018-12-21 10:51
+     * @param appId 订阅号的appId
+     * @param activityId 活动id
+     * @param openIdWho 用户在订阅号中的openid
+     * @return
+     */
+    @Override
+    public void subscribeSendMyActivityStatus(String appId,String activityId,String openIdWho) {
+        logger.info("进入给自己发送消息");
+        String helpId = activityHelpService.getHelpId(openIdWho,activityId);
+        Map<String, Integer> helpCountMap = activityTrackerService.getHelpCount(helpId, activityId);
+        Integer remain = Integer.parseInt(helpCountMap.get("remain").toString());
+        String msgUnSuccessTemplate = "已经有%s位好友成功为你助力，还需要%s位好友支持哟~";
+        String msgSuccessTemplate = "您已经完成助力任务领取奖励，%s。%s";
+        Map<String, String> replyMap = new HashMap<String, String>();
+        replyMap.put(KEY_CSMSG_TOUSER, openIdWho);
+        replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
+        String msg = "";
+        if (remain > 0) {
+            msg = String.format(msgUnSuccessTemplate,
+                    Integer.parseInt(helpCountMap.get("help").toString()), remain > 0 ? remain : 0);
+        } else {
+            ActivityRewardEntity rewardEntity =
+                    activityRewardService.getEntityByActIdAndWechatUserId(activityId, openIdWho);
+            if (rewardEntity != null) {
+                ActivityPrizeMappingEntity prizeMappingEntity =
+                        prizeMappingService.getEntityByPrizeId(rewardEntity.getPrizeId());
+                String rewardInfo = getRewardInfo(prizeMappingEntity);
+                //发送奖品消息
+                if (StringUtils.isNotEmpty(rewardInfo)) {
+                    MatActivityEntity activityEntity =
+                            activityService.getMatActivityEntityByActId(activityId);
+                    msg = String.format(msgSuccessTemplate,
+                            activityEntity.getRewardUrl(), rewardInfo.replaceAll("openid", openIdWho).replace("actId", activityId));
+                }
+            }
+        }
+        //回复信息
+        replyMap.put(KEY_CSMSG_CONTENT, msg);
+        WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
     }
 }

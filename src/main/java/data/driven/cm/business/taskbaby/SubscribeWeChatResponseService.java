@@ -22,4 +22,15 @@ public interface SubscribeWeChatResponseService {
      * @return
      */
     String getCodeByUnionid(String code,String appid);
+
+    /**
+     * @description 订阅号用户扫自己的二维码发送我的活动进度
+     * @author lxl
+     * @date 2018-12-21 10:51
+     * @param appId 订阅号的appId
+     * @param activityId 活动id
+     * @param openIdWho 用户在订阅号中的openid
+     * @return
+     */
+    void subscribeSendMyActivityStatus(String appId,String activityId,String openIdWho);
 }
