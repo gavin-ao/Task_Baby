@@ -108,7 +108,20 @@ public interface ActivityHelpService {
 
     * @return
     */
-    ActHelpEntity getHelpEntityOfNoneHelpDetail(String actId,String masterOpenId,String detailOpenId);
+    ActHelpEntity getHelpEntityWithNoneHelpDetail(String actId, String masterOpenId, String detailOpenId);
+    /**
+    * 查找当前微信号下,助力者还未成功助力的 ActHelpEntity
+    * @author Logan
+    * @date 2018-12-21 15:21
+    * @param wechatAccount
+    * @param masterOpenId
+    * @param detailOpenId
+
+    * @return
+    */
+
+    ActHelpEntity queryHelpEntityWithNoneHelpDetail(String wechatAccount,String masterOpenId,String detailOpenId);
+
 
 
 
