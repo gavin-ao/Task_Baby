@@ -1,5 +1,7 @@
 package data.driven.cm.business.taskbaby;
 
+import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
+
 /**
  * @Author: lxl
  * @describe 微信用户Service
@@ -102,4 +104,14 @@ public interface WechatUserInfoService {
      * @return totalFollowNumber 累计关注总数
      */
     Integer getTotalFollowNumber(String wechatAccount);
+
+    /**
+     * @description 获取微信用户信息，通过任务id和用户unionid
+     * @author lxl
+     * @date 2018-12-21 10:14
+     * @param actId 任务id
+     * @param unionid 用户在公众平台下的唯一id
+     * @return
+     */
+    WechatUserInfoEntity getWechatUserInfoEntityByActIdAndUnionid(String actId,String unionid);
 }
