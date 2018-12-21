@@ -31,17 +31,18 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
      * @param actId 活动id
      * @param fromUnionid 被助力者unionid
      * @param toUnionid 助力者unionid
+     * @param subscribeWechatAccount 订阅号的原始id
      * @return
      */
     @Override
-    public String insertUnionidUserMappingEntity(String actId, String fromUnionid, String toUnionid) {
+    public String insertUnionidUserMappingEntity(String actId, String fromUnionid, String toUnionid,String subscribeWechatAccount) {
         Date createAt = new Date();
         String unionidUserMappingId = getUnionidUserMappingId(actId,fromUnionid,toUnionid);
         if(unionidUserMappingId == null){
             try {
                 unionidUserMappingId = UUIDUtil.getUUID();
-                String sql = "INSERT INTO unionid_user_mapping (id,act_id,from_unionid,to_unionid,create_at) VALUES (?,?,?,?,?)";
-                jdbcBaseDao.executeUpdate(sql,unionidUserMappingId,actId,fromUnionid,toUnionid,createAt);
+                String sql = "INSERT INTO unionid_user_mapping (id,act_id,from_unionid,to_unionid,create_at,subscribe_wechat_account) VALUES (?,?,?,?,?,?)";
+                jdbcBaseDao.executeUpdate(sql,unionidUserMappingId,actId,fromUnionid,toUnionid,createAt,subscribeWechatAccount);
                 return unionidUserMappingId;
             }catch (Exception e){
                 logger.info("新增unionid用户关系Entity失败！");

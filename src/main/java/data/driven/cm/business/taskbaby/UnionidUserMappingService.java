@@ -17,9 +17,10 @@ public interface UnionidUserMappingService {
      * @param actId 活动id
      * @param fromUnionid 被助力者unionid
      * @param toUnionid 助力者unionid
+     * @param subscribeWechatAccount 订阅号的原始id
      * @return
      */
-    String insertUnionidUserMappingEntity(String actId,String fromUnionid,String toUnionid);
+    String insertUnionidUserMappingEntity(String actId,String fromUnionid,String toUnionid,String subscribeWechatAccount);
 
     /**
      * 通过活动id、被助力者Unionid、助力者Unionid

@@ -1,6 +1,7 @@
 package data.driven.cm.controller.taskbaby;
 
 import data.driven.cm.business.taskbaby.*;
+import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,14 +38,16 @@ public class SubscribeController {
 
     @Autowired
     private SubscribeServiceMappingService subscribeServiceMappingService;
+
     @Autowired
-    private PosterService posterService;
+    private WechatUserInfoService wechatUserInfoService;
 
     /**
      * 图片信息Service
      */
     @Autowired
     private SysPictureService sysPictureService;
+
 
     /**
      * @param code  code作为换取access_token的票据
@@ -56,31 +60,39 @@ public class SubscribeController {
     @RequestMapping(value = "/authcallback", produces = {"application/json;charset=UTF-8"})
     @ResponseBody
     public ModelAndView authorizeCallback(@RequestParam(value = "code") String code,
-                                          @RequestParam(value = "state") String state) {
+                                    @RequestParam(value = "state") String state) {
         logger.info("进入微信用户回调URL");
         String[] strs = state.split("@@");
         //服务号appid
-
         String serviceAppId = strs[0].toString();
-        logger.info("服务号appid "+serviceAppId);
+        logger.info("服务号appid " + serviceAppId);
         //活动id
         String actId = strs[1].toString();
-        logger.info("活动id "+actId);
+        logger.info("活动id " + actId);
         //被助力者unionid
         String fromUnionid = strs[2].toString();
-        logger.info("被助力者unionid "+fromUnionid);
+        logger.info("被助力者unionid " + fromUnionid);
         //订阅号的原始id
         String subscribeWechatAccount = strs[3].toString();
-        logger.info("订阅号的原始id "+subscribeWechatAccount);
-
+        logger.info("订阅号的原始id " + subscribeWechatAccount);
         String toUnionid = subscribeWeChatResponseService.getCodeByUnionid(code, serviceAppId);
-        unionidUserMappingService.insertUnionidUserMappingEntity(actId, fromUnionid, toUnionid);
+        unionidUserMappingService.insertUnionidUserMappingEntity(actId, fromUnionid, toUnionid,subscribeWechatAccount);
+//        String toUnionid = "oC3bV00BmWXi6LoZcAdKL1ToNO60";
+        logger.info("toUnionid " + toUnionid);
+        //如果用户扫自己的二维码就需要给用户发送统计的信息 start
+        if (fromUnionid.equals(toUnionid)) {
+            //取微信用户信息，通过任务id和用户unionid
+            WechatUserInfoEntity wechatuserInfoEntity = wechatUserInfoService.getWechatUserInfoEntityByActIdAndUnionid(actId, toUnionid);
+            //得到订阅号的appid
+            String subscribeAppId = subscribeServiceMappingService.getAuthorizationAppidBySubscribeWechatAccount(subscribeWechatAccount);
+            subscribeWeChatResponseService.subscribeSendMyActivityStatus(subscribeAppId, actId, wechatuserInfoEntity.getOpenid());
+            //如果用户扫自己的二维码就需要给用户发送统计的信息 end
+        }
         ModelAndView modelAndView = new ModelAndView("/taskbaby/subscribeIndex");
         String qrPicId = subscribeServiceMappingService.getQrPicIdBySubscribeWechatAccount(subscribeWechatAccount);
 //        String qrPicId = subscribeServiceMappingService.getQrPicIdBySubscribeWechatAccount("gh_1b995980b921");
         modelAndView.addObject("qrPicId", qrPicId);
         return modelAndView;
-
     }
 
     /**
