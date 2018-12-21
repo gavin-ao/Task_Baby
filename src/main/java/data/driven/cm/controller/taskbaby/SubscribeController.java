@@ -76,7 +76,7 @@ public class SubscribeController {
         String subscribeWechatAccount = strs[3].toString();
         logger.info("订阅号的原始id " + subscribeWechatAccount);
         String toUnionid = subscribeWeChatResponseService.getCodeByUnionid(code, serviceAppId);
-        unionidUserMappingService.insertUnionidUserMappingEntity(actId, fromUnionid, toUnionid);
+        unionidUserMappingService.insertUnionidUserMappingEntity(actId, fromUnionid, toUnionid,subscribeWechatAccount);
 //        String toUnionid = "oC3bV00BmWXi6LoZcAdKL1ToNO60";
         logger.info("toUnionid " + toUnionid);
         //如果用户扫自己的二维码就需要给用户发送统计的信息 start

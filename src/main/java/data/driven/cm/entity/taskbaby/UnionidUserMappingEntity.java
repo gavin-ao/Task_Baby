@@ -35,6 +35,19 @@ public class UnionidUserMappingEntity {
      */
     private Date createAt;
 
+    /**
+     * 订阅号原始id
+     */
+    private String subscribeWechatAccount;
+
+    public String getSubscribeWechatAccount() {
+        return subscribeWechatAccount;
+    }
+
+    public void setSubscribeWechatAccount(String subscribeWechatAccount) {
+        this.subscribeWechatAccount = subscribeWechatAccount;
+    }
+
     public String getId() {
         return id;
     }
