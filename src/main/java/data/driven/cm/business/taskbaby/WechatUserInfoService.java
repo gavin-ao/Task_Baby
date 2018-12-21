@@ -114,4 +114,15 @@ public interface WechatUserInfoService {
      * @return
      */
     WechatUserInfoEntity getWechatUserInfoEntityByActIdAndUnionid(String actId,String unionid);
+
+    /**
+    * 根据微信原始id和粉丝的unionid获得该粉丝的openid
+    * @author Logan
+    * @date 2018-12-21 15:48
+    * @param wechatAccount
+    * @param unionId
+
+    * @return 粉丝的openId
+    */
+    String getOpenId(String wechatAccount,String unionId);
 }

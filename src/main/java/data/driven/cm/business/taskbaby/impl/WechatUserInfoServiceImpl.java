@@ -220,4 +220,23 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
         }
         return null;
     }
+    /**
+     * 根据微信原始id和粉丝的unionid获得该粉丝的openid
+     * @author Logan
+     * @date 2018-12-21 15:48
+     * @param wechatAccount
+     * @param unionId
+
+     * @return 粉丝的openId
+     */
+    @Override
+    public String getOpenId(String wechatAccount, String unionId) {
+        String sql = "select openid from wechat_user_info where wechat_account=? and union_id=? ";
+        Object result = dao.getColumn(sql,wechatAccount,unionId);
+        if(result != null){
+            return result.toString();
+        }else{
+            return null;
+        }
+    }
 }
