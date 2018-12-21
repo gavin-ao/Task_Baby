@@ -2,6 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.UnionidUserMappingService;
 import data.driven.cm.dao.JDBCBaseDao;
+import data.driven.cm.entity.taskbaby.UnionidUserMappingEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,5 +82,23 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
     public List<String> getFormUnionIdList(String actId, String toUnionId) {
         String sql = "select from_unionid from unionid_user_mapping where act_id =? and to_unionid = ?";
         return jdbcBaseDao.getColumns(String.class,sql,actId,toUnionId);
+    }
+
+    /**
+     * 根据订阅号的原始id,助力者(扫码者)unionId,被助力者(发起者)的unionid,匹配活动id (actId);
+     * @author Logan
+     * @date 2018-12-21 15:28
+     * @param sbuscribeWechatAccount 订阅号的原始id
+     * @param toUnionId
+
+     * @return
+     */
+    @Override
+    public List<UnionidUserMappingEntity> getUnionidUserMappingList(String sbuscribeWechatAccount, String toUnionId) {
+        String sql = "SELECT DISTINCT act.* FROM unionid_user_mapping map "+
+        "JOIN mat_activity act ON act.act_id = map.act_id "+
+        "WHERE act.STATUS = 1  AND subscribe_wechat_account = ? AND to_unionid = ?";
+
+        return jdbcBaseDao.queryList(UnionidUserMappingEntity.class,sql,sbuscribeWechatAccount,toUnionId);
     }
 }

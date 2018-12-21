@@ -1,5 +1,7 @@
 package data.driven.cm.business.taskbaby;
 
+import data.driven.cm.entity.taskbaby.UnionidUserMappingEntity;
+
 import java.util.List;
 
 /**
@@ -33,14 +35,26 @@ public interface UnionidUserMappingService {
 
     /**
     * 根据活动id,助力者(扫码者)unionId,匹配被助力者(发起者)的unionid;
-    * @author Logan
+    * @author Logan备注`
     * @date 2018-12-21 11:29
     * @param actId 活动id
     * @param toUnionId 助力者(扫码者)unionId
 
     * @return 被助力者(发起者)的unionid列表
     */
-    List<String> getFormUnionIdList(String actId,String toUnionId);
+    List<String> getFormUnionIdList(String actId,String toUnionId);  
+    
+    /**
+    * 根据订阅号的原始id,助力者(扫码者)unionId,被助力者(发起者)的unionid,匹配活动id (actId);
+    * @author Logan 
+    * @date 2018-12-21 15:28
+    * @param sbuscribeWechatAccount 订阅号的原始id
+    * @param toUnionId
+    
+    * @return 
+    */
+
+    List<UnionidUserMappingEntity> getUnionidUserMappingList(String sbuscribeWechatAccount, String toUnionId);
 
 
 }
