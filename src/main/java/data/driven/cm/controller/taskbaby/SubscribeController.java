@@ -1,6 +1,7 @@
 package data.driven.cm.controller.taskbaby;
 
 import data.driven.cm.business.taskbaby.*;
+import data.driven.cm.entity.taskbaby.MatActivityEntity;
 import data.driven.cm.entity.taskbaby.WechatUserInfoEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class SubscribeController {
     @Autowired
     private WechatUserInfoService wechatUserInfoService;
 
+    @Autowired
+    private ActivityService activityService;
+
     /**
      * 图片信息Service
      */
@@ -63,18 +67,15 @@ public class SubscribeController {
                                     @RequestParam(value = "state") String state) {
         logger.info("进入微信用户回调URL");
         String[] strs = state.split("@@");
-        //服务号appid
         String serviceAppId = strs[0].toString();
         logger.info("服务号appid " + serviceAppId);
-        //活动id
         String actId = strs[1].toString();
         logger.info("活动id " + actId);
-        //被助力者unionid
         String fromUnionid = strs[2].toString();
         logger.info("被助力者unionid " + fromUnionid);
-        //订阅号的原始id
         String subscribeWechatAccount = strs[3].toString();
         logger.info("订阅号的原始id " + subscribeWechatAccount);
+
         String toUnionid = subscribeWeChatResponseService.getCodeByUnionid(code, serviceAppId);
         unionidUserMappingService.insertUnionidUserMappingEntity(actId, fromUnionid, toUnionid,subscribeWechatAccount);
 //        String toUnionid = "oC3bV00BmWXi6LoZcAdKL1ToNO60";
@@ -90,7 +91,9 @@ public class SubscribeController {
         }
         ModelAndView modelAndView = new ModelAndView("/taskbaby/subscribeIndex");
         String qrPicId = subscribeServiceMappingService.getQrPicIdBySubscribeWechatAccount(subscribeWechatAccount);
+        MatActivityEntity matActivityEntity = activityService.getMatActivityEntityByActId(actId);
 //        String qrPicId = subscribeServiceMappingService.getQrPicIdBySubscribeWechatAccount("gh_1b995980b921");
+        modelAndView.addObject("actKeyWord",matActivityEntity.getActKeyWord());
         modelAndView.addObject("qrPicId", qrPicId);
         return modelAndView;
     }
