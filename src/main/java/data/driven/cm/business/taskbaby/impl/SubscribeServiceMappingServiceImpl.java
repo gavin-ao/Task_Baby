@@ -55,4 +55,22 @@ public class SubscribeServiceMappingServiceImpl implements SubscribeServiceMappi
         }
         return null;
     }
+
+    /**
+     * @description 获取订阅号的appid
+     * @author lxl
+     * @date 2018-12-21 11:05
+     * @param subscribeWechatAccount 订阅号的原始id
+     * @return
+     */
+    @Override
+    public String getAuthorizationAppidBySubscribeWechatAccount(String subscribeWechatAccount) {
+        String sql = "select wpd.authorization_appid from subscribe_service_mapping ssm, wechat_public_detail wpd where" +
+                " ssm.subscribe_wechat_account = wpd.user_name and ssm.subscribe_wechat_account = ?";
+        Object appid = jdbcBaseDao.getColumn(sql,subscribeWechatAccount);
+        if (appid != null) {
+            return appid.toString();
+        }
+        return null;
+    }
 }
