@@ -692,13 +692,16 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      * @date 2018-12-10 12:43
      */
     private boolean fansScanQrCodeEvent(Map<String, String> wechatEventMap) {
+        logger.info(String.format("-----------wechatEventMap:%s----------------------",wechatEventMap.toString()));
         String msgType = getMsgType(wechatEventMap);
         String event = getEvent(wechatEventMap);
         String eventKey = getEventKey(wechatEventMap);
         if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
                 StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_SCAN.equals(event) && StringUtils.isNotEmpty(eventKey)) {
+            logger.info("---------------是老用户扫描二维码事件---------------");
             return true;
         } else {
+            logger.info("---------------不是老用户扫描二维码事件---------------");
             return false;
         }
     }
@@ -995,6 +998,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         String openIdWhoInput = getFromUserName(wechatEventMap);
         String wechatAccount = getWechatAccount(wechatEventMap);
         Map<String,String> userInfoWhoInput = WeChatUtil.getUserInfo(openIdWhoInput,getAccessToken(appId));
+        logger.info(String.format("-----------userInfoWhoInput:%s----------",userInfoWhoInput.toString()));
         String unionIdWhoInput = userInfoWhoInput.get(WeChatConstant.API_JSON_KEY_UNIONID);
         List<String> fromUnionList = unionidUserMappingService.getFormUnionIdList(actId,unionIdWhoInput);
         if(fromUnionList != null && fromUnionList.size()>0){
@@ -1004,6 +1008,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
                 String fromOpenId = wechatUserInfoService.getOpenId(wechatAccount,fromUnionId);
                 helpEntity =
                         activityHelpService.getHelpEntityWithNoneHelpDetail(actId,fromOpenId,openIdWhoInput);
+                logger.info(String.format("------------找到助力主笔记录:helpid:%s,fansId:%s-----------------------",helpEntity.getHelpId(),helpEntity.getFansId()));
                 if(helpEntity != null){
                     break;
                 }
@@ -1069,9 +1074,14 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             return false;
         }
     }
-    private String makeFakeSceneStr(String openIdOfScene,String activityId){
+    private String makeFakeSceneStr(boolean scanEvent,String openIdOfScene,String activityId){
         StringBuilder sceneStrBuilder = new StringBuilder();
-        sceneStrBuilder.append("qrscene_").append(openIdOfScene).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        if(scanEvent) {
+            sceneStrBuilder.append(openIdOfScene).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        }else{
+            sceneStrBuilder.append("qrscene_").append(openIdOfScene).append(TaskBabyConstant.SEPERATOR_QRSCEAN).append(activityId);
+        }
+        logger.info(String.format("----------------sceneStr:%s------------",sceneStrBuilder.toString()));
         return sceneStrBuilder.toString();
     }
     /**
@@ -1085,22 +1095,25 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     * @return
     */
     private  Map<String,String> makeQRCodeScanEvent(Map<String,String>originWechatEventMap, String activityId,String openIdOfScene){
-        String sceneStr = makeFakeSceneStr(openIdOfScene,activityId);
+
+        String sceneStr = makeFakeSceneStr(true,openIdOfScene,activityId);
         Map<String,String> qrCodeScanEventMap = new HashMap<String,String>();
         qrCodeScanEventMap.putAll(originWechatEventMap);
         qrCodeScanEventMap.put(WeChatConstant.EVENT, WeChatConstant.EVENT_TYPE_SCAN);
         qrCodeScanEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.REQ_MESSAGE_TYPE_EVENT);
         qrCodeScanEventMap.put(WeChatConstant.EVENT_KEY,sceneStr);
+        logger.info(String.format("------------qrCodeScanEventMap:%s------------",qrCodeScanEventMap.toString()));
         return qrCodeScanEventMap;
     }
 
     private Map<String,String>makeQRCodeSubscribeEvent(Map<String,String>originWechatEventMap, String activityId,String openIdOfScene){
-        String sceneStr = makeFakeSceneStr(openIdOfScene,activityId);
+        String sceneStr = makeFakeSceneStr(false,openIdOfScene,activityId);
         Map<String,String> qrCodeSubscribeEventMap = new HashMap<String,String>();
         qrCodeSubscribeEventMap.putAll(originWechatEventMap);
         qrCodeSubscribeEventMap.put(WeChatConstant.EVENT, WeChatConstant.EVENT_TYPE_SUBSCRIBE);
         qrCodeSubscribeEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.REQ_MESSAGE_TYPE_EVENT);
         qrCodeSubscribeEventMap.put(WeChatConstant.EVENT_KEY,sceneStr);
+        logger.info(String.format("------------qrCodeSubscribeEventMap:%s------------",qrCodeSubscribeEventMap.toString()));
         return qrCodeSubscribeEventMap;
     }
 
