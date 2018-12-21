@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: lxl
@@ -56,7 +57,7 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
      * @param fromUnionid 活动id
      * @return 返回 unionid用户关系id
      */
-
+    @Override
     public String getUnionidUserMappingId(String actId,String fromUnionid, String toUnionid) {
         String sql = "SELECT id from unionid_user_mapping where act_id = ? and from_unionid = ? and to_unionid = ?";
         Object id = jdbcBaseDao.getColumn(sql, actId,fromUnionid,toUnionid);
@@ -64,5 +65,20 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
             return id.toString();
         }
         return null;
+    }
+
+    /**
+     * 根据活动id,助力者(扫码者)unionId,匹配被助力者(发起者)的unionid;
+     * @author Logan
+     * @date 2018-12-21 11:29
+     * @param actId 活动id
+     * @param toUnionId 助力者(扫码者)unionId
+
+     * @return 被助力者(发起者)的unionid列表
+     */
+    @Override
+    public List<String> getFormUnionIdList(String actId, String toUnionId) {
+        String sql = "select from_unionid from unionid_user_mapping where act_id =? and to_unionid = ?";
+        return jdbcBaseDao.getColumns(String.class,sql,actId,toUnionId);
     }
 }

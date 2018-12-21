@@ -2,6 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.ActivityHelpService;
 import data.driven.cm.dao.JDBCBaseDao;
+import data.driven.cm.entity.taskbaby.ActHelpEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,5 +178,25 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         String sql = "select count(1) from act_help where act_id = ? and help_success_status = 1";
         Integer activityCompletionNumber = jdbcBaseDao.getCount(sql, actId);
         return activityCompletionNumber;
+    }
+    /**
+     * 查找当前活动中,助力者还未成功助力的ActHelpEntity
+     * @author Logan
+     * @date 2018-12-21 12:26
+     * @param actId
+     * @param masterOpenId
+     * @param detailOpenId
+
+     * @return
+     */
+    @Override
+    public ActHelpEntity getHelpEntityOfNoneHelpDetail(String actId, String masterOpenId, String detailOpenId) {
+        String sql = " SELECT MASTER.* FROM act_help "+
+        " MASTER LEFT JOIN ( "+
+        "        SELECT help_id,help_openid FROM act_help_detail WHERE help_openid = ? "+
+        " ) AS detail ON MASTER.help_id = detail.help_id "+
+        " WHERE MASTER.act_id = ? AND MASTER.fans_id = ? "+
+        " HAVING count( MASTER.fans_Id ) > 0  AND count( detail.help_openid ) =0 ";
+        return jdbcBaseDao.executeQuery(ActHelpEntity.class,sql,detailOpenId,actId,masterOpenId);
     }
 }

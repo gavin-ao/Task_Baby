@@ -6,10 +6,7 @@ import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.RewardTypeEnum;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
-import data.driven.cm.entity.taskbaby.ActivityPrizeMappingEntity;
-import data.driven.cm.entity.taskbaby.ActivityRewardEntity;
-import data.driven.cm.entity.taskbaby.MatActivityEntity;
-import data.driven.cm.entity.taskbaby.MatActivityStatusEntity;
+import data.driven.cm.entity.taskbaby.*;
 import data.driven.cm.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -19,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.alibaba.fastjson.JSON.parseObject;
 import static data.driven.cm.component.WeChatConstant.*;
@@ -53,7 +47,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      */
     @Autowired
     private PosterService posterService;
-
+    @Autowired
+    private UnionidUserMappingService unionidUserMappingService;
 
 
     /**
@@ -254,7 +249,15 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         if (actId != null &&
                 checkActiveAvailable(actId)) {
             insertWechatUserInfo(wechatEventMap, appid, actId);
-            return keyWordReplyPoster(wechatEventMap, appid);
+            ActHelpEntity helpEntity = oldFansInputKeyWordAfterHelpScan(wechatEventMap,actId,appid);
+            if(helpEntity != null){
+                //是助力扫码之后的回复关键字
+               helpProcess(wechatEventMap,helpEntity.getFansId(), appid,actId);
+            }else{
+                //单纯的发关键字参加活动
+                return keyWordReplyPoster(wechatEventMap, appid);
+            }
+
         } else {
             Map<String, String> msgReply = new HashMap<>();
             msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
@@ -824,7 +827,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
 
 
     private void newFansHelp(Map<String, String> wechatEventMap, String appId) {
-        if (StringUtils.isNotEmpty(subscribeAfterHelpScan(wechatEventMap))) {
+        ActHelpEntity helpEntity = subscribeAfterHelpScan(wechatEventMap);
+        if (helpEntity != null) {
             String activityId = getActivityIdInQrSceneStr(wechatEventMap);
             insertWechatUserInfo(wechatEventMap, appId, activityId);
             String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
@@ -836,10 +840,19 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
     }
 
+    /**
+    * 助力流程类
+    * @author Logan
+    * @date 2018-12-21 10:58
+    * @param wechatEventMap
+    * @param openIdOfScene 被助力者的openId
+    * @param appid
+    * @param activityId
 
-    private String handleScanQrscene(Map<String, String> wechatEventMap, String appid) {
-        String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
-        String activityId = getActivityIdInQrSceneStr(wechatEventMap);
+    * @return
+    */
+    private String helpProcess(Map<String, String> wechatEventMap,String openIdOfScene, String appid,String activityId) {
+        //活动id
         if (StringUtils.isEmpty(openIdOfScene) || StringUtils.isEmpty(activityId)) {
             logger.error("扫描带参数二维码出错，没有获取到activityId或者openId");
             return "";
@@ -936,28 +949,40 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
 
 
     /**
-    * 扫码后输入关键字助力
-     * 逻辑规则:1.当前是输入文本的事件,并且能匹配到有效的activityId
-     *        2.获取当前粉丝的unionId,
-     *        3.在unionid_user_mapping中,通过当前粉丝的unionid,actvitiId,匹配出被助力者的unioId
-     *        4.拿被助力者的unioinId换成openId
-     *        5.判断当前粉丝是否已经助力成功过,如果没有
+    * 是老粉丝扫码后输入关键字助力
+     * 逻辑规则:1.当前是输入文本的事件,获取当前粉丝的unionId,
+     *        2.在unionid_user_mapping中,通过当前粉丝的unionid,actvitiId,匹配出被助力者的unioId
+     *        3.拿被助力者的unioinId换成openId
+     *        4.判断当前粉丝是否已经助力成功过,如果没有,返回act_Help的主表实体,否则要么是已经是助力过的,返回null
     * @author Logan
     * @date 2018-12-21 10:20
-    * @param wechatEventMap
+    * @param wechatEventMap 微信推过来的消息Map
+    * @param actId 活动id
+    * @param appId 订阅号的appId
 
-    * @return 返回被助力者的openId
+    * @return 活动助力主表记录 act_help的记录
     */
-    private String inputKeyWordAfterHelpScan(Map<String,String> wechatEventMap){
-        if(textEvent(wechatEventMap)){
+    private ActHelpEntity oldFansInputKeyWordAfterHelpScan(Map<String,String> wechatEventMap, String actId, String appId){
+        String openIdWhoInput = getFromUserName(wechatEventMap);
+        Map<String,String> userInfoWhoInput = WeChatUtil.getUserInfo(openIdWhoInput,getAccessToken(appId));
+        String unionIdWhoInput = userInfoWhoInput.get(WeChatConstant.API_JSON_KEY_UNIONID);
+        List<String> fromUnionList = unionidUserMappingService.getFormUnionIdList(actId,unionIdWhoInput);
+        if(fromUnionList != null && fromUnionList.size()>0){
+            //找到了扫码匹配的助力和被助力者unionid的多条记录,接下来匹配act_help
+            ActHelpEntity  helpEntity = null;
+            for(String fromUnionId:fromUnionList){
+                helpEntity =
+                        activityHelpService.getHelpEntityOfNoneHelpDetail(actId,fromUnionId,unionIdWhoInput);
+                if(helpEntity != null){
+                    break;
+                }
+            }
+            return helpEntity;
 
+        }else{
+            return null;
         }
-        String fromOpenId = getFromUserName(wechatEventMap);
 
-        return "";
-    }
-    private String toHelp(String openId,String taskId){
-        return "";
     }
     /**
     * 当前用户是否为给他人助力之后关注进来的
@@ -971,9 +996,9 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     * @date 2018-12-21 10:47
     * @param wechatEventMap
 
-    * @return HelpId
+    * @return 活动助力主表记录 act_help的记录
     */
-    private String subscribeAfterHelpScan(Map<String,String> wechatEventMap){
+    private ActHelpEntity subscribeAfterHelpScan(Map<String,String> wechatEventMap){
        return null;
     }
 
