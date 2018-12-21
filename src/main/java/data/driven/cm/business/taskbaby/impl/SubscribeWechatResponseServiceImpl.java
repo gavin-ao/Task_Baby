@@ -865,7 +865,6 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
     private void newFansHelp(Map<String, String> wechatEventMap, String appId) {
         if (scanQrCodeAndSubscribeEvent(wechatEventMap)) {
             String activityId = getActivityIdInQrSceneStr(wechatEventMap);
-            insertWechatUserInfo(wechatEventMap, appId, activityId);
             String openIdOfScene = getOpenIdInQrSceneStr(wechatEventMap);
             String openIdWhoScan = getFromUserName(wechatEventMap);
             String helpId = activityHelpService.getHelpId(openIdOfScene, activityId);
@@ -1038,21 +1037,27 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         String wechatAccount = getWechatAccount(wechatEventMap);
         Map<String,String> userInfoWhoInput = WeChatUtil.getUserInfo(openIdWhoSubscribe,getAccessToken(appId));
         String unionIdWhoSubscribe = userInfoWhoInput.get(WeChatConstant.API_JSON_KEY_UNIONID);
+        logger.info(String.format("----------userInfoWhoInput:%s-----------------",userInfoWhoInput));
         List<UnionidUserMappingEntity> unionidUserMappingList = unionidUserMappingService.getUnionidUserMappingList(wechatAccount,unionIdWhoSubscribe);
+
         if(unionidUserMappingList != null && unionidUserMappingList.size()>0){
+            logger.info(String.format("----------找到匹配的unionid,size:%d-----------------------",unionidUserMappingList.size()));
             //找到了扫码匹配的助力和被助力者unionid的多条记录,接下来匹配act_help
             ActHelpEntity  helpEntity = null;
             for(UnionidUserMappingEntity unionidUserMapping:unionidUserMappingList){
                 String fromOpenId = wechatUserInfoService.getOpenId(wechatAccount,unionidUserMapping.getFromUnionid());
+                logger.info(String.format("-----------fromOpenId:%s----------------",fromOpenId));
                 helpEntity =
                         activityHelpService.getHelpEntityWithNoneHelpDetail(unionidUserMapping.getActId(),fromOpenId,openIdWhoSubscribe);
                 if(helpEntity != null){
+                    logger.info("----------找到了help主实体-----------");
                     break;
                 }
             }
             return helpEntity;
 
         }else{
+            logger.info("----------没找到help主实体-----------");
             return null;
         }
     }

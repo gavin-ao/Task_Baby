@@ -5,6 +5,8 @@ import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.entity.taskbaby.ActHelpEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.apache.commons.collections.map.HashedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.Map;
  */
 @Service
 public class ActivityHelpServiceImpl implements ActivityHelpService {
+    private static Logger log = LoggerFactory.getLogger(ActivityHelpServiceImpl.class);
+
 
     @Autowired
     JDBCBaseDao jdbcBaseDao;
@@ -197,6 +201,7 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         " ) AS detail ON MASTER.help_id = detail.help_id "+
         " WHERE MASTER.act_id = ? AND MASTER.fans_id = ? "+
         " HAVING count( MASTER.fans_Id ) > 0  AND count( detail.help_openid ) =0 ";
+        log.info(String.format("----------actId:%s,masterOpenId:%s,detailOpenId:%s-------------",actId,masterOpenId,detailOpenId));
         return jdbcBaseDao.executeQuery(ActHelpEntity.class,sql,detailOpenId,actId,masterOpenId);
     }
 

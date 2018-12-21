@@ -95,7 +95,7 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
      */
     @Override
     public List<UnionidUserMappingEntity> getUnionidUserMappingList(String sbuscribeWechatAccount, String toUnionId) {
-        String sql = "SELECT DISTINCT act.* FROM unionid_user_mapping map "+
+        String sql = "SELECT DISTINCT map.* FROM unionid_user_mapping map "+
         "JOIN mat_activity act ON act.act_id = map.act_id "+
         "WHERE act.STATUS = 1  AND subscribe_wechat_account = ? AND to_unionid = ?";
 

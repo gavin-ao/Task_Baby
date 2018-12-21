@@ -231,6 +231,7 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
      */
     @Override
     public String getOpenId(String wechatAccount, String unionId) {
+        logger.info(String.format("-------wechatAccount:%s,unionId:%s--------",wechatAccount,unionId));
         String sql = "select openid from wechat_user_info where wechat_account=? and union_id=? ";
         Object result = dao.getColumn(sql,wechatAccount,unionId);
         if(result != null){
