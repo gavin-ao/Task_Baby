@@ -1089,7 +1089,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         Map<String,String> qrCodeScanEventMap = new HashMap<String,String>();
         qrCodeScanEventMap.putAll(originWechatEventMap);
         qrCodeScanEventMap.put(WeChatConstant.EVENT, WeChatConstant.EVENT_TYPE_SCAN);
-        qrCodeScanEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.EVENT);
+        qrCodeScanEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.REQ_MESSAGE_TYPE_EVENT);
         qrCodeScanEventMap.put(WeChatConstant.EVENT_KEY,sceneStr);
         return qrCodeScanEventMap;
     }
@@ -1099,7 +1099,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         Map<String,String> qrCodeSubscribeEventMap = new HashMap<String,String>();
         qrCodeSubscribeEventMap.putAll(originWechatEventMap);
         qrCodeSubscribeEventMap.put(WeChatConstant.EVENT, WeChatConstant.EVENT_TYPE_SUBSCRIBE);
-        qrCodeSubscribeEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.EVENT);
+        qrCodeSubscribeEventMap.put(WeChatConstant.MSG_TYPE,WeChatConstant.REQ_MESSAGE_TYPE_EVENT);
         qrCodeSubscribeEventMap.put(WeChatConstant.EVENT_KEY,sceneStr);
         return qrCodeSubscribeEventMap;
     }
