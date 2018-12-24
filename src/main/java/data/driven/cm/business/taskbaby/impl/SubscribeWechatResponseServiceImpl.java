@@ -722,7 +722,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
 
         switch (rewardType) {
             case TOKEN:
-                prizeMsg = String.format("口令：%s", prizeMappingEntity.getToken());
+                prizeMsg = prizeMappingEntity.getToken();
                 break;
             case GOODS:
                 prizeMsg = String.format("\n%s", prizeMappingEntity.getLinkUrl());
