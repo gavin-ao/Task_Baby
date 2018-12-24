@@ -829,6 +829,10 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         String activityId = getActivityIdInQrSceneStr(wechatEventMap);
         //得到扫描者的openId
         String openIdWhoScan = getFromUserName(wechatEventMap);
+        //扫码人自己收到一个助力成功的提示
+        logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
+        sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
+
         //发送活动介绍
         logger.info("------助力成功，发送活动介绍----------------");
         introduceActivity(wechatEventMap, appId, activityId);
@@ -840,9 +844,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         //跟踪活动状态
         logger.info("--------助力成功，跟踪活动进度--------");
         trackActive(openIdOfScene, helpDetailId, activityId, getAccessToken(appId));
-        //扫码人自己收到一个助力成功的提示
-        logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
-        sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
+
     }
 
     private void oldFansHelp(Map<String, String> wechatEventMap, String appId) {
@@ -915,6 +917,14 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             logger.info("-----------扫描他人海报--------------------");
             if (alreadyHelpSomeone(activityId, openIdWhoScan, appid)) {
                 //如果扫码人已经助力过，则直接返回
+                //去掉之前的匹配关系
+                //发送活动介绍
+                logger.info("------提示已经助力他人后,发送活动介绍----------------");
+                introduceActivity(wechatEventMap, appid, activityId);
+                String wechatAccount = getWechatAccount(wechatEventMap);
+                //扫码者自动加入活动
+                logger.info("--------提示已经助力他人后,加入活动--------");
+                joinActivity(wechatAccount, openIdWhoScan, activityId, 0);
                 return "success";
             }
             boolean oldFansCanHelp = activityService.oldFansCanHelp(activityId);
