@@ -192,7 +192,7 @@ public class WeChatConstant {
      * 授权码过期时间
      * 比微信平台少预留60s
      */
-    public static int CACHE_VALUE_EXPIRE_AUTH_CODE = 60 * 10 - 60;
+    public static int CACHE_VALUE_EXPIRE_AUTH_CODE = 60 * 10 - 60;//比微信平台少预留60s
     /**
      * access_token 过期时间
      * 比微信平台少预留5分钟时间
@@ -208,6 +208,7 @@ public class WeChatConstant {
      * 比微信平台2小时少200s
      */
     public static int CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN = 7000;
+
 
 
 }
