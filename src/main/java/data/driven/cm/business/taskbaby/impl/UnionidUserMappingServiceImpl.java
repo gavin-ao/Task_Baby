@@ -80,7 +80,7 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
      */
     @Override
     public List<String> getFormUnionIdList(String actId, String toUnionId) {
-        String sql = "select from_unionid from unionid_user_mapping where act_id =? and to_unionid = ?";
+        String sql = "select from_unionid from unionid_user_mapping where status=0 and act_id =? and to_unionid = ?";
         return jdbcBaseDao.getColumns(String.class,sql,actId,toUnionId);
     }
 
@@ -97,7 +97,7 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
     public List<UnionidUserMappingEntity> getUnionidUserMappingList(String sbuscribeWechatAccount, String toUnionId) {
         String sql = "SELECT DISTINCT map.* FROM unionid_user_mapping map "+
         "JOIN mat_activity act ON act.act_id = map.act_id "+
-        "WHERE act.STATUS = 1  AND subscribe_wechat_account = ? AND to_unionid = ?";
+        "WHERE act.STATUS = 1  AND map.status = 0 and subscribe_wechat_account = ? AND to_unionid = ?";
 
         return jdbcBaseDao.queryList(UnionidUserMappingEntity.class,sql,sbuscribeWechatAccount,toUnionId);
     }

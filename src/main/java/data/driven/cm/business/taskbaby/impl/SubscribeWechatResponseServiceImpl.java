@@ -30,6 +30,8 @@ import static data.driven.cm.component.WeChatConstant.*;
 @Service
 public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatResponseService {
     private static final Logger logger = LoggerFactory.getLogger(SubscribeWechatResponseServiceImpl.class);
+    private static final String EVENT_MAP_KEY_MASTER_UNIONID="masterUnionId";
+    private static final String EVENT_MAP_KEY_DETAIL_UNIONID="detailUnionId";
     /**
      * 第三方平台Service
      */
@@ -813,7 +815,35 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
 
     }
+    /**
+    * 助力后,根据助力结果标记助力关系状态,
+     *更新unionid_user_mapping的status [1:助力成功,2:助力失败]
+    * @author Logan
+    * @date 2018-12-24 14:34
+    * @param wechatEventMap
+    * @param actId 活动id
+    * @param masterOpenId 被助力者openId
+    * @param detailOpenId 助力者openId
+    * @param status [0:初始状态,1:助力成功,2:助力失败]
 
+    * @return
+    */
+    private void markRelationShipStatus(Map<String,String> wechatEventMap,String appId,String actId,String masterOpenId,String detailOpenId,int status){
+        logger.info(String.format("------------给助力关系表unionMapping表打上标志:%d--------------",status));
+       String masterUnionId = wechatEventMap.get(EVENT_MAP_KEY_MASTER_UNIONID);
+       String detailUnionId = wechatEventMap.get(EVENT_MAP_KEY_DETAIL_UNIONID);
+       if(StringUtils.isEmpty(masterOpenId)){
+           Map<String,String> masterInfo = WeChatUtil.getUserInfo(masterOpenId,getAccessToken(appId));
+           masterUnionId = masterInfo.get(WeChatConstant.API_JSON_KEY_UNIONID);
+       }
+       if(StringUtils.isEmpty(detailUnionId)){
+           Map<String,String> detailInfo = WeChatUtil.getUserInfo(detailOpenId,getAccessToken(appId));
+           detailUnionId  = detailInfo.get(WeChatConstant.API_JSON_KEY_UNIONID);
+       }
+       if(StringUtils.isNotEmpty(masterUnionId)&&StringUtils.isNotEmpty(detailUnionId)){
+           unionidUserMappingService.updateStatus(status,actId,masterUnionId,detailUnionId);
+       }
+    }
     /**
      * @param wechatEventMap
      * @param helpDetailId
@@ -832,7 +862,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         //扫码人自己收到一个助力成功的提示
         logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
         sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
-
+        //标记助力关系表unionMapping表,已经助力
+        markRelationShipStatus(wechatEventMap,appId,activityId,openIdOfScene,openIdWhoScan,1);
         //发送活动介绍
         logger.info("------助力成功，发送活动介绍----------------");
         introduceActivity(wechatEventMap, appId, activityId);
@@ -925,6 +956,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
                 //扫码者自动加入活动
                 logger.info("--------提示已经助力他人后,加入活动--------");
                 joinActivity(wechatAccount, openIdWhoScan, activityId, 0);
+                //标记助力关系表unionMapping表,助力失败
+                markRelationShipStatus(wechatEventMap,appid,activityId,openIdOfScene,openIdWhoScan,2);
                 return "success";
             }
             boolean oldFansCanHelp = activityService.oldFansCanHelp(activityId);
@@ -1019,6 +1052,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
                         activityHelpService.getHelpEntityWithNoneHelpDetail(actId,fromOpenId,openIdWhoInput);
                 logger.info(String.format("------------找到助力主笔记录:helpid:%s,fansId:%s-----------------------",helpEntity.getHelpId(),helpEntity.getFansId()));
                 if(helpEntity != null){
+                    wechatEventMap.put(EVENT_MAP_KEY_MASTER_UNIONID,fromUnionId);
+                    wechatEventMap.put(EVENT_MAP_KEY_DETAIL_UNIONID,unionIdWhoInput);
                     break;
                 }
             }
@@ -1061,6 +1096,8 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
                         activityHelpService.getHelpEntityWithNoneHelpDetail(unionidUserMapping.getActId(),fromOpenId,openIdWhoSubscribe);
                 if(helpEntity != null){
                     logger.info("----------找到了help主实体-----------");
+                    wechatEventMap.put(EVENT_MAP_KEY_MASTER_UNIONID,unionidUserMapping.getFromUnionid());
+                    wechatEventMap.put(EVENT_MAP_KEY_DETAIL_UNIONID,unionidUserMapping.getToUnionid());
                     break;
                 }
             }

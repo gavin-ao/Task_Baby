@@ -74,6 +74,7 @@ public class WeChatConstant {
     public static final String MEDIA_ID = "MediaId";
     public static final String EVENT_KEY = "EventKey";
 
+
     /**
      * 客服消息常量
      */
