@@ -40,6 +40,19 @@ public class UnionidUserMappingEntity {
      */
     private String subscribeWechatAccount;
 
+    /**
+     *处理状态
+     */
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public String getSubscribeWechatAccount() {
         return subscribeWechatAccount;
     }
