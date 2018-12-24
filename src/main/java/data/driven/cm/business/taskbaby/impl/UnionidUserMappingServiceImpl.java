@@ -101,4 +101,20 @@ public class UnionidUserMappingServiceImpl implements UnionidUserMappingService 
 
         return jdbcBaseDao.queryList(UnionidUserMappingEntity.class,sql,sbuscribeWechatAccount,toUnionId);
     }
+
+    /**
+     * @description 修改状态
+     * @author lxl
+     * @date 2018-12-24 14:33
+     * @param stats 处理状态 0 未处理,1已助力 2 助力失败
+     * @param actId 活动id
+     * @param fromUnionid 被助力者的Unionid
+     * @param toUnionid 助力者的Unionid
+     * @return
+     */
+    @Override
+    public void updateStatus(Integer stats, String actId, String fromUnionid, String toUnionid) {
+        String sql = "UPDATE unionid_user_mapping set status= ? where act_id = ? and from_unionid = ? and to_unionid = ?";
+        jdbcBaseDao.executeUpdate(sql,stats,actId,fromUnionid,toUnionid);
+    }
 }

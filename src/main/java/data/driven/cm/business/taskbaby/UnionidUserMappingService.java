@@ -56,5 +56,17 @@ public interface UnionidUserMappingService {
 
     List<UnionidUserMappingEntity> getUnionidUserMappingList(String sbuscribeWechatAccount, String toUnionId);
 
+    /**
+     * @description 修改状态
+     * @author lxl
+     * @date 2018-12-24 14:33
+     * @param stats 处理状态 0 未处理,1已助力 2 助力失败
+     * @param actId 活动id
+     * @param fromUnionid 被助力者的Unionid
+     * @param toUnionid 助力者的Unionid
+     * @return
+     */
+    void updateStatus(Integer stats,String actId,String fromUnionid,String toUnionid);
+
 
 }
