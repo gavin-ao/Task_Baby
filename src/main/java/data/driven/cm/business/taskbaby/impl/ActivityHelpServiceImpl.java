@@ -2,8 +2,11 @@ package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.business.taskbaby.ActivityHelpService;
 import data.driven.cm.dao.JDBCBaseDao;
+import data.driven.cm.entity.taskbaby.ActHelpEntity;
 import data.driven.cm.util.UUIDUtil;
 import org.apache.commons.collections.map.HashedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ import java.util.Map;
  */
 @Service
 public class ActivityHelpServiceImpl implements ActivityHelpService {
+    private static Logger log = LoggerFactory.getLogger(ActivityHelpServiceImpl.class);
+
 
     @Autowired
     JDBCBaseDao jdbcBaseDao;
@@ -177,5 +182,47 @@ public class ActivityHelpServiceImpl implements ActivityHelpService {
         String sql = "select count(1) from act_help where act_id = ? and help_success_status = 1";
         Integer activityCompletionNumber = jdbcBaseDao.getCount(sql, actId);
         return activityCompletionNumber;
+    }
+    /**
+     * 查找当前活动中,助力者还未成功助力的ActHelpEntity
+     * @author Logan
+     * @date 2018-12-21 12:26
+     * @param actId
+     * @param masterOpenId
+     * @param detailOpenId
+
+     * @return
+     */
+    @Override
+    public ActHelpEntity getHelpEntityWithNoneHelpDetail(String actId, String masterOpenId, String detailOpenId) {
+        String sql = " SELECT MASTER.* FROM act_help "+
+        " MASTER LEFT JOIN ( "+
+        "        SELECT help_id,help_openid FROM act_help_detail WHERE help_openid = ? and help_status = 0 "+
+        " ) AS detail ON MASTER.help_id = detail.help_id "+
+        " WHERE MASTER.act_id = ? AND MASTER.fans_id = ? "+
+        " HAVING count( MASTER.fans_Id ) > 0  AND count( detail.help_openid ) =0 ";
+        log.info(String.format("----------actId:%s,masterOpenId:%s,detailOpenId:%s-------------",actId,masterOpenId,detailOpenId));
+        return jdbcBaseDao.executeQuery(ActHelpEntity.class,sql,detailOpenId,actId,masterOpenId);
+    }
+
+    /**
+     * 查找当前微信号下,助力者还未成功助力的 ActHelpEntity
+     * @author Logan
+     * @date 2018-12-21 15:21
+     * @param wechatAccount
+     * @param masterOpenId
+     * @param detailOpenId
+
+     * @return
+     */
+    @Override
+    public ActHelpEntity queryHelpEntityWithNoneHelpDetail(String wechatAccount, String masterOpenId, String detailOpenId) {
+        String sql = " SELECT MASTER.* FROM act_help "+
+                " MASTER LEFT JOIN ( "+
+                "        SELECT help_id,help_openid FROM act_help_detail WHERE help_openid = ? and help_status = 0 "+
+                " ) AS detail ON MASTER.help_id = detail.help_id "+
+                " WHERE MASTER.wechat_account = ? AND MASTER.fans_id = ? "+
+                " HAVING count( MASTER.fans_Id ) > 0  AND count( detail.help_openid ) =0 ";
+        return jdbcBaseDao.executeQuery(ActHelpEntity.class,sql,detailOpenId,wechatAccount,masterOpenId);
     }
 }

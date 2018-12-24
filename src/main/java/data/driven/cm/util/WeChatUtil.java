@@ -355,7 +355,7 @@ public class WeChatUtil {
         String touser = requestMap.get(KEY_CSMSG_TOUSER);
         if(StringUtils.isNotEmpty(filePath) && StringUtils.isNotEmpty(accessToken)) {
             try {
-                log.debug("-----------开始上传临时素材--------------");
+                log.info(String.format("-----------开始上传临时素材,素材地址:%s--------------",filePath));
                 long begin=System.currentTimeMillis();
                 //先新增临时素材，返回media_id
                 Map<String, Object> uploadInfoMap = UploadMeida(
@@ -474,6 +474,8 @@ public class WeChatUtil {
         String data = JSON.toJSONString(map);
         // 得到ticket票据,用于换取二维码图片
         String resultStr = HttpUtil.doPost(url, data);
+        log.info(String.format("-------------调用二维码的url:%s, 参数data:%s-------",url,data));
+        log.info(String.format("--------------调用接口换取二维码图片的返回值:%s---------",resultStr));
         JSONObject jsonticket = JSON.parseObject(resultStr);
         String ticket = jsonticket.getString("ticket");
         String showqrUrl = SHOWQR_URL + URLEncoder.encode(ticket);
@@ -775,5 +777,29 @@ public class WeChatUtil {
         String urlTemplate ="https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
         String url = String.format(urlTemplate,accessToken);
         return HttpUtil.doPost(url,msgParam.toJSONString());
+    }
+
+    private static String getAuthWebPageRedirectUrl(String rootUrl){
+       StringBuffer redirectUrlBff = new StringBuffer(rootUrl).append("/subscribe/authcallback");
+        try {
+            log.info(String.format("-------原始RedirectUrl:%s----------",redirectUrlBff.toString()));
+            return URLEncoder.encode(redirectUrlBff.toString(),"UTF-8") ;
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+    public static String getWebPageAuthUrl(String rootUrl, String serviceWechatAppId,String subscribeWechatAccount,String fromUnionId,String actId){
+        String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
+                "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=%s&" +
+                "component_appid=%s#wechat_redirect";
+//        String urlTemplate = "https://open.weixin.qq.com/connect/oauth2/authorize?" +
+//                "appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&" +
+//                "state=%s#wechat_redirect";
+        String state = String.format("%s@@%s@@%s@@%s",serviceWechatAppId,actId,fromUnionId,subscribeWechatAccount);
+        String authUrl = String.format(urlTemplate,serviceWechatAppId,getAuthWebPageRedirectUrl(rootUrl),state,WeChatConstant.THIRD_PARTY_APPID);
+
+        log.info( String.format("--------------------WebPageAuthUrl:%s----------",authUrl));
+        return authUrl;
     }
 }

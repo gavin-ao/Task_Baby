@@ -1,10 +1,13 @@
 package data.driven.cm.business.taskbaby.impl;
 
 import data.driven.cm.aes.WXBizMsgCrypt;
+import data.driven.cm.business.taskbaby.SubscribeWeChatResponseService;
 import data.driven.cm.business.taskbaby.WeChatService;
+import data.driven.cm.business.taskbaby.WechatPublicDetailService;
 import data.driven.cm.business.taskbaby.WechatResponseService;
 import data.driven.cm.component.DuplicateRemovalMessage;
 import data.driven.cm.component.WeChatConstant;
+import data.driven.cm.thread.SubscribeWechatThread;
 import data.driven.cm.thread.TaskBabyThread;
 import data.driven.cm.util.WeChatUtil;
 import org.slf4j.Logger;
@@ -28,12 +31,17 @@ import java.util.Map;
  */
 @Service
 public class WeChatServiceImpl implements WeChatService {
-    Logger logger = LoggerFactory.getLogger(WeChatServiceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(WeChatServiceImpl.class);
     private static final int MESSAGE_CACHE_SIZE = 1000;
     private static List<DuplicateRemovalMessage> MESSAGE_CACHE = new ArrayList<DuplicateRemovalMessage>(MESSAGE_CACHE_SIZE);
 
     @Autowired
     private WechatResponseService wechatResponseService;
+
+    @Autowired
+    private SubscribeWeChatResponseService subscribeWeChatResponseService;
+    @Autowired
+    private WechatPublicDetailService wechatPublicDetailService;
 
     /**
      *  调用核心服务类接收处理请求
@@ -70,8 +78,20 @@ public class WeChatServiceImpl implements WeChatService {
                 String fromXML = String.format(format, requestMap.get("Encrypt"));
                 respXml = pc.decryptMsg(msgSignature, timestamp, nonce, fromXML);
                 requestMap = WeChatUtil.parseXml(respXml);
-                TaskBabyThread taskBabyThread = new TaskBabyThread(wechatResponseService, requestMap, appId);
-                Thread thread = new Thread(taskBabyThread);
+                Runnable runnable = null;
+
+
+
+                boolean isServiceType;
+                isServiceType = wechatPublicDetailService.isServiceType(appId);
+                if(isServiceType){
+                    logger.info("------------进入服务号---------------");
+                    runnable = new TaskBabyThread(wechatResponseService, requestMap, appId);
+                }else{
+                    logger.info("------------进入订阅号---------------");
+                    runnable = new SubscribeWechatThread(subscribeWeChatResponseService, requestMap, appId);
+                }
+                Thread thread = new Thread(runnable);
                 thread.start();
 
                 //当不是关键词时返回信息
@@ -140,6 +160,11 @@ public class WeChatServiceImpl implements WeChatService {
             MESSAGE_CACHE.remove(0);
         }
         MESSAGE_CACHE.add(duplicateRemovalMessage);
+    }
+
+
+    private String getWechatAccount(Map<String, String> wechatEventMap) {
+        return wechatEventMap.get(WeChatConstant.TO_USER_NAME);
     }
 }
 

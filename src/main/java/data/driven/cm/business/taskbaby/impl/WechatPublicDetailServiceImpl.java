@@ -1,5 +1,6 @@
 package data.driven.cm.business.taskbaby.impl;
 
+import data.driven.cm.Exception.NullFieldException;
 import data.driven.cm.business.taskbaby.WechatPublicDetailService;
 import data.driven.cm.dao.JDBCBaseDao;
 import data.driven.cm.util.UUIDUtil;
@@ -18,6 +19,7 @@ import java.util.Date;
  */
 @Service
 public class WechatPublicDetailServiceImpl implements WechatPublicDetailService {
+    private static Logger log = LoggerFactory.getLogger(WechatPublicDetailServiceImpl.class);
     @Autowired
     JDBCBaseDao jdbcBaseDao;
 
@@ -99,5 +101,31 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
 
        jdbcBaseDao.executeUpdate(sql,nickName,headImg,serviceTypeInfo,verifyTypeInfo,
                userName,principalName,alias,businessInfo,qrcodeUrl, authorizationAppid,funcInfo,wechatPublicId);
+    }
+
+    /**
+     * 是否服务号
+     * @author Logan
+     * @date 2018-12-19 15:04
+     * @param appId
+
+     * @return
+     */
+    @Override
+    public boolean isServiceType(String appId){
+        log.info(String.format("------appId:%s-------",appId));
+        String sql = "select service_type_info from wechat_public_detail where authorization_appid=?";
+        Object result = jdbcBaseDao.getColumn(sql, appId);
+        if (result != null) {
+            String type = result.toString();
+            if (type.equals("2")) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            log.error("ServiceType字段为空");
+            throw new NullFieldException("ServiceType字段为空");
+        }
     }
 }

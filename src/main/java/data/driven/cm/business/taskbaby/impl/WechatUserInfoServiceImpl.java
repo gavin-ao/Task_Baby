@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @program: Task_Baby
@@ -198,5 +199,45 @@ public class WechatUserInfoServiceImpl implements WechatUserInfoService {
                 "and  event = ? ) unsubscribe";
         Integer totalFollowNumber = dao.getCount(sql, wechatAccount, "subscribe", wechatAccount, "unsubscribe");
         return totalFollowNumber;
+    }
+
+    /**
+     * @description 获取微信用户信息，通过任务id和用户unionid
+     * @author lxl
+     * @date 2018-12-21 10:14
+     * @param actId 任务id
+     * @param unionid 用户在公众平台下的唯一id
+     * @return
+     */
+    @Override
+    public WechatUserInfoEntity getWechatUserInfoEntityByActIdAndUnionid(String actId, String unionid) {
+        String sql = "select wechat_user_id,subscribe,nick_name,sex,country,province,language,headimgurl,union_id," +
+                "remark,subscribe_scene,wechat_account,subscribe_time,create_at,city,qr_scene,qr_scene_str,openid," +
+                "act_id,msg_type,event,event_key,ticket from wechat_user_info where act_id = ? and union_id = ? limit 1";
+        List<WechatUserInfoEntity> wechatUserInfoEntities = dao.queryList(WechatUserInfoEntity.class,sql,actId,unionid);
+        if (wechatUserInfoEntities != null && wechatUserInfoEntities.size() > 0){
+            return wechatUserInfoEntities.get(0);
+        }
+        return null;
+    }
+    /**
+     * 根据微信原始id和粉丝的unionid获得该粉丝的openid
+     * @author Logan
+     * @date 2018-12-21 15:48
+     * @param wechatAccount
+     * @param unionId
+
+     * @return 粉丝的openId
+     */
+    @Override
+    public String getOpenId(String wechatAccount, String unionId) {
+        logger.info(String.format("-------wechatAccount:%s,unionId:%s--------",wechatAccount,unionId));
+        String sql = "select openid from wechat_user_info where wechat_account=? and union_id=? ";
+        Object result = dao.getColumn(sql,wechatAccount,unionId);
+        if(result != null){
+            return result.toString();
+        }else{
+            return null;
+        }
     }
 }

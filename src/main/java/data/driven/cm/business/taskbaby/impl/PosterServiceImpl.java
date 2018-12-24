@@ -110,7 +110,6 @@ public class PosterServiceImpl implements PosterService {
             }
 
         }
-        //TODO:暂时只返回二维码图片，后面要改成合成后的图片
         return null;
     }
 
@@ -122,7 +121,8 @@ public class PosterServiceImpl implements PosterService {
      * @params:     [imgAddress]   支持以http开头的url和本地文件
      * @return:     java.awt.image.BufferedImage
     **/
-    private BufferedImage getBufferedImage(String imgAddress){
+    @Override
+    public BufferedImage getBufferedImage(String imgAddress){
         log.info(String.format("-------根据图片地址加载图片，地址：%s",imgAddress));
         long beign = System.currentTimeMillis();
         //imgAddres是url
@@ -165,67 +165,6 @@ public class PosterServiceImpl implements PosterService {
         return null;
     }
 
-    /**
-     * 将URL图片存在本地，并返回filepath
-     *
-     * @param imgUrl
-     * @return 图片下载之后在本地的路径
-     */
-
-    private String getTempImgFilePathByUrl(String imgUrl) {
-        URL url = null;
-        OutputStream outPutStream = null;
-        BufferedReader br = null;
-        InputStreamReader inReader = null;
-        try {
-            url = new URL(imgUrl);
-            //生成一个随机的文件名
-            String fileName = UUIDUtil.getUUID();
-            //将download根路径和随机文件名拼接成一个完整的filePath,作为临时文件的路径
-            StringBuilder pathStrBuilder = new StringBuilder();
-            pathStrBuilder.append(downloadPath).append(File.separator).append(fileName);
-            File file = new File(pathStrBuilder.toString());
-            outPutStream = new FileOutputStream(file);
-            URLConnection conn = url.openConnection();
-            inReader = new InputStreamReader(conn.getInputStream());
-            br = new BufferedReader(inReader);
-            String urlString = "";
-            String current;
-            while ((current = br.readLine()) != null) {
-                urlString += current;
-            }
-            outPutStream.write(urlString.getBytes());
-            return pathStrBuilder.toString();
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage());
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        } finally {
-            if (outPutStream != null) {
-                try {
-                    outPutStream.close();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
-            if (inReader != null) {
-                try {
-                    inReader.close();
-                } catch (IOException e) {
-                    log.error(e.getMessage());
-                }
-            }
-
-        }
-        return "";
-    }
 
     public boolean cleanTempflie(String filePath) {
         File file = new File(filePath);
@@ -251,5 +190,68 @@ public class PosterServiceImpl implements PosterService {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         return resizedImage;
+    }
+
+    @Override
+    public boolean combinedCustomizedPosterFilePath(String outputFileName, Map<String, String> personalInfo) {
+        String originPosterUrl = personalInfo.get(TaskBabyConstant.KEY_POSTER_URL);
+        String headImgUrl = personalInfo.get(KEY_HEADIMG_URL);
+        String qrCodeUrl = personalInfo.get(TaskBabyConstant.KEY_QRCODE_URL);
+        String nickName = personalInfo.get(KEY_NICKNAME);
+        return combinedCustomizedPosterFilePath(outputFileName,originPosterUrl, headImgUrl, qrCodeUrl, nickName);
+    }
+
+    @Override
+    public boolean combinedCustomizedPosterFilePath(String outputFileName, String originPosterUrl, String headImgUrl, String qrCodeUrl, String nickName) {
+        if (StringUtils.isNotEmpty(originPosterUrl) && StringUtils.isNotEmpty(headImgUrl) &&
+                StringUtils.isNotEmpty(qrCodeUrl) && StringUtils.isNotEmpty(nickName)) {
+            Font font = new Font("微软雅黑", Font.PLAIN, 50);
+            File outputFile = new File(outputFileName);
+            File outputFilePath = new File(outputFile.getParent());
+            if(!outputFilePath.exists()){
+                outputFilePath.mkdirs();
+            }
+            Graphics2D g = null;
+            try {
+                long begin = System.currentTimeMillis();
+                BufferedImage imgPoster = getBufferedImage(originPosterUrl);
+                float duration = (System.currentTimeMillis()-begin)/1000f;
+                BufferedImage imgQRCode = getBufferedImage(qrCodeUrl);
+                BufferedImage imgHead = getBufferedImage(headImgUrl);
+                //以原始海报作为模板
+                g = imgPoster.createGraphics();
+                // 在模板上添加用户二维码(地址,左边距,上边距,图片宽度,图片高度,未知)
+                begin = System.currentTimeMillis();
+                g.drawImage(imgQRCode, imgPoster.getWidth()-40-300, imgPoster.getHeight()-100-300,
+                        300, 300, null);
+                WeChatUtil.log(log,begin,"重绘二维码");
+                //在模版上添加头像(地址,左边距,上边距,图片宽度,图片高度,未知)
+                begin =System.currentTimeMillis();
+                g.drawImage(imgHead, 60, 60, 100, 100, null);
+                WeChatUtil.log(log,begin,"重绘头像");
+                // 设置文本样式
+                begin =System.currentTimeMillis();
+                g.setFont(font);
+                g.setColor(Color.BLACK);
+                g.drawString(nickName, 60 + 100 + 30, 130);
+                WeChatUtil.log(log,begin,"写入昵称");
+                // 完成模板修改
+                g.dispose();
+                int type = imgPoster.getType() == 0? BufferedImage.TYPE_INT_ARGB : imgPoster.getType();
+                imgPoster = resizeImageWithHint(imgPoster,type);
+                // 获取新文件的地址
+                File outputfile = new File(outputFileName);
+                begin =System.currentTimeMillis();
+                // 生成新的合成过的用户二维码并写入新图片
+                begin =System.currentTimeMillis();
+                ImageIO.write(imgPoster, "png", outputfile);
+                WeChatUtil.log(log,begin,"合成海报保存");
+                return true;
+            } catch (IOException e) {
+                log.error("-----------拼接海报出错：", e.getMessage());
+            }
+
+        }
+        return false;
     }
 }

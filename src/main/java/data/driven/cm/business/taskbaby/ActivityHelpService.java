@@ -1,5 +1,7 @@
 package data.driven.cm.business.taskbaby;
 
+import data.driven.cm.entity.taskbaby.ActHelpEntity;
+
 import java.util.Map;
 
 /**
@@ -95,6 +97,31 @@ public interface ActivityHelpService {
      * @return activityCompletionNumber 任务完成人数
      */
     Integer getActivityCompletionNumber(String actId);
+
+    /**
+    * 查找当前活动中,助力者还未成功助力的ActHelpEntity
+    * @author Logan
+    * @date 2018-12-21 12:26
+    * @param actId
+    * @param masterOpenId
+    * @param detailOpenId
+
+    * @return
+    */
+    ActHelpEntity getHelpEntityWithNoneHelpDetail(String actId, String masterOpenId, String detailOpenId);
+    /**
+    * 查找当前微信号下,助力者还未成功助力的 ActHelpEntity
+    * @author Logan
+    * @date 2018-12-21 15:21
+    * @param wechatAccount
+    * @param masterOpenId
+    * @param detailOpenId
+
+    * @return
+    */
+
+    ActHelpEntity queryHelpEntityWithNoneHelpDetail(String wechatAccount,String masterOpenId,String detailOpenId);
+
 
 
 

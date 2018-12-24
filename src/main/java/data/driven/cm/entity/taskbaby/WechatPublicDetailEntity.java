@@ -85,6 +85,19 @@ public class WechatPublicDetailEntity {
      */
     private Date createAt;
 
+    /**
+     * 二维号图片关联sys_picture表中id
+     */
+    private String qrPicId;
+
+    public String getQrPicId() {
+        return qrPicId;
+    }
+
+    public void setQrPicId(String qrPicId) {
+        this.qrPicId = qrPicId;
+    }
+
     public String getId() {
         return id;
     }

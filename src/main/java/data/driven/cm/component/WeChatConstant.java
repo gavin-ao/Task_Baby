@@ -1,5 +1,14 @@
 package data.driven.cm.component;
 
+import com.alibaba.fastjson.JSONObject;
+import data.driven.cm.common.RedisFactory;
+import data.driven.cm.util.HttpUtil;
+import data.driven.cm.util.WeChatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.alibaba.fastjson.JSON.parseObject;
+
 /**
  * @Author: lxl
  * @describe 微信公众号基础配置
@@ -7,7 +16,7 @@ package data.driven.cm.component;
  * @Version 1.0
  */
 public class WeChatConstant {
-
+    private static final Logger log = LoggerFactory.getLogger(WeChatConstant.class);
     /**
      * 加密类型
      */
@@ -65,6 +74,7 @@ public class WeChatConstant {
     public static final String MEDIA_ID = "MediaId";
     public static final String EVENT_KEY = "EventKey";
 
+
     /**
      * 客服消息常量
      */
@@ -106,6 +116,7 @@ public class WeChatConstant {
     public static final String API_JSON_KEY_BUSINESS_INFO = "business_info";
     public static final String API_JSON_KEY_QRCODE_URL = "qrcode_url";
     public static final String API_JSON_KEY_SERVICE_TYPE_ID = "id";
+    public static final String API_JSON_KEY_UNIONID="unionid";
 
 
     /**
@@ -209,6 +220,85 @@ public class WeChatConstant {
      */
     public static int CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN = 7000;
 
+    /**
+     * 获取微信用户的信息
+     */
+
+    /**
+     * @description 获取用户特殊access_token，openid
+     * @author lxl
+     * @date 2018-12-19 15:56
+     * @param appId 服务号的appid
+     * @param  code code作为换取access_token的票据
+     * @Param thirdPartyAccessToken 第三方平台自己的accessToken
+     * @return
+     */
+    public static String getUserAccessTokenURL(String appId,String code,String thirdPartyAccessToken) {
+        String key = "access_token_"+code+appId;
+        String refreshKey = "refresh_token_"+code+appId;
+        String accessToken = RedisFactory.get(key);
+        String refreshToken = RedisFactory.get(refreshKey);
+        log.info("-----------用户服务号的access_Token ------------- "+accessToken + "  end");
+        log.info("-----------用户服务号的refreshToken ------------- "+refreshToken + "  end");
+        if (accessToken != null && accessToken.trim().length() > 0){
+            return accessToken;
+        }
+        //如果用户刷新access_token存在则重新请求用户的access_token,否则跳过
+        if (refreshToken != null && refreshToken.trim().length() > 0){
+            String getUserRefreshToeknUrl = "https://api.weixin.qq.com/sns/oauth2/component/refresh_token?appid=%s" +
+                    "&grant_type=refresh_token&component_appid=%s&component_access_token=%s&refresh_token=%s";
+            String resultStr = HttpUtil.doGetSSL(String.format(getUserRefreshToeknUrl, appId,
+                    WeChatConstant.THIRD_PARTY_APPID, thirdPartyAccessToken,refreshToken));
+            if(resultStr == null){
+                log.info("------------------获取服务号access_token失败！-----------------");
+                return "";
+            }
+            JSONObject resultJson = parseObject(resultStr);
+            log.info("------------------resultJson -----------------" + resultJson.toString());
+            if (resultJson.getString("access_token") != null &&
+                    resultJson.getString("access_token").trim().length() > 0){
+                log.info("------------------获取服务号access_token: "+resultJson.getString("access_token")+"-----------------");
+                RedisFactory.setString(key,resultStr,WeChatConstant.CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN * 1000);
+                //用户刷新token保存为30天
+                RedisFactory.setString(refreshKey,resultJson.getString("refresh_token"),2591000 * 1000);
+            }
+            return resultStr;
+        }
+        // 应该调用第三方平台制定的接口,而非微信公众平台文档上的接口  Logan 2018-12-20  17:22
+        String getUserAccessTokenURL =
+                "https://api.weixin.qq.com/sns/oauth2/component/access_token?" +
+                        "appid=%s&code=%s&grant_type=authorization_code&" +
+                        "component_appid=%s&component_access_token=%s";
+        String resultStr = HttpUtil.doGetSSL(String.format(getUserAccessTokenURL, appId,code, WeChatConstant.THIRD_PARTY_APPID,thirdPartyAccessToken));
+        if(resultStr == null){
+            log.info("------------------获取服务号access_token失败！-----------------");
+            return "";
+        }
+        JSONObject resultJson = parseObject(resultStr);
+        log.info("------------------resultJson -----------------" + resultJson.toString());
+        if (resultJson.getString("access_token") != null &&
+                resultJson.getString("access_token").trim().length() > 0){
+            log.info("------------------获取服务号access_token: "+resultJson.getString("access_token")+"-----------------");
+            RedisFactory.setString(key,resultStr,WeChatConstant.CATCE_VALUE_EXPIRE_COMPONENT_ACCESS_TOKEN * 1000);
+            //用户刷新token保存为30天
+            RedisFactory.setString(refreshKey,resultJson.getString("refresh_token"),2591000L * 1000);
+        }
+        return resultStr;
+    }
+
+    /**
+     * @description 获取用户
+     * @author lxl
+     * @date 2018-12-19 16:21
+     * @param accessToken 用户的access_token
+     * @param openid 用户openid
+     * @return
+     */
+    public static String getUserInfoURL(String accessToken,String openid) {
+        String getUserInfoURL =
+                "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
+        return String.format(getUserInfoURL,accessToken,openid);
+    }
 
 
 }
