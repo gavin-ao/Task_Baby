@@ -720,7 +720,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         switch (rewardType) {
             case TOKEN:
-                prizeMsg = String.format("口令：%s", prizeMappingEntity.getToken());
+                prizeMsg = prizeMappingEntity.getToken();
                 break;
             case GOODS:
                 prizeMsg = String.format("\n%s", prizeMappingEntity.getLinkUrl());
@@ -1073,7 +1073,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String trackActive(String touser, String helpDetailId, String activityId, String accessToken) {
         String processStatus = ACTIVITY_HELP_PROCESS_INPROCESS;
         String msgTemplate = "收到%s的助力，还差%d人完成助力";
-        String msgSuccessTemplate = "收到%s的助力，%s。%s";
+        String msgSuccessTemplate = "收到%s的助力，%s%s";
         String msg = "";
         Map<String, Object> trackResult = activityTrackerService.getTrackInfo(helpDetailId, activityId, accessToken);
         if (trackResult != null) {
