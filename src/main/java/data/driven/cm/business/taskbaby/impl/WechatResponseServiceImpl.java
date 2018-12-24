@@ -559,6 +559,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         String activityId = getActivityIdInQrSceneStr(wechatEventMap);
         //得到扫描者的openId
         String openIdWhoScan = getFromUserName(wechatEventMap);
+        //扫码人自己收到一个助力成功的提示
+        logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
+        sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
         //发送活动介绍
         logger.info("------助力成功，发送活动介绍----------------");
         introduceActivity(wechatEventMap, appId, activityId);
@@ -570,9 +573,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //跟踪活动状态
         logger.info("--------助力成功，跟踪活动进度--------");
         trackActive(openIdOfScene, helpDetailId, activityId, getAccessToken(appId));
-        //扫码人自己收到一个助力成功的提示
-        logger.info("--------助力成功，扫码人自己收到一个助力成功的提--------");
-        sendHelpSuccessMsg(openIdOfScene, openIdWhoScan,appId);
+
     }
 
     /**
@@ -719,7 +720,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
 
         switch (rewardType) {
             case TOKEN:
-                prizeMsg = String.format("口令：%s", prizeMappingEntity.getToken());
+                prizeMsg = prizeMappingEntity.getToken();
                 break;
             case GOODS:
                 prizeMsg = String.format("\n%s", prizeMappingEntity.getLinkUrl());
@@ -1072,7 +1073,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String trackActive(String touser, String helpDetailId, String activityId, String accessToken) {
         String processStatus = ACTIVITY_HELP_PROCESS_INPROCESS;
         String msgTemplate = "收到%s的助力，还差%d人完成助力";
-        String msgSuccessTemplate = "收到%s的助力，%s。%s";
+        String msgSuccessTemplate = "收到%s的助力，%s%s";
         String msg = "";
         Map<String, Object> trackResult = activityTrackerService.getTrackInfo(helpDetailId, activityId, accessToken);
         if (trackResult != null) {
