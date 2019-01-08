@@ -20,4 +20,8 @@ public interface CustomerConfigureService {
      * @return List<CustomerConfigureEntity>
      */
     List<CustomerConfigureEntity> getCustomerConfigureEntites (String authorizationAppid);
+
+    String getCustomerServiceConfigId(String appId, String keyword);
+
+    List<CustomerConfigureEntity> getChildMenu(String configId);
 }

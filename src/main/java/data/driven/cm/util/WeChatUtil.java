@@ -330,6 +330,39 @@ public class WeChatUtil {
             }
         }
     }
+/**
+* 发送图片客服消息
+* @author Logan
+* @date 2019-01-08 18:20
+* @param touser
+* @param mediaId
+* @param accessToken
+
+* @return
+*/
+    public static void sendCustomImageMsg(String touser, String mediaId, String accessToken){
+        WechatCSImgMsgEntity imgMsgEntity = new WechatCSImgMsgEntity(touser,mediaId);
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String msgJSON = gson.toJson(imgMsgEntity).replace("\\\\r\\\\n","\\r\\n");
+        sendCustomMsgByJsonStr(msgJSON, accessToken);
+    }
+
+    /***
+    * 发送文字客服消息
+    * @author Logan
+    * @date 2019-01-08 18:20
+    * @param touser
+    * @param txtMsg
+    * @param accessToken
+
+    * @return
+    */
+    public static void sendCustomTxtMsg(String touser,String txtMsg,String accessToken){
+        WechatCSTxtMsgEntity txtMsgEntity = new WechatCSTxtMsgEntity(touser,txtMsg);
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String msgJson =  gson.toJson(txtMsgEntity).replace("\\\\r\\\\n","\\r\\n");
+        sendCustomMsgByJsonStr(msgJson, accessToken);
+    }
     /**
      * 将客服文本消息体从map转化成Json
      * @author:     Logan

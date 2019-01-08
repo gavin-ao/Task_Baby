@@ -33,4 +33,24 @@ public class CustomerConfigureServiceImpl implements CustomerConfigureService {
 
         return jdbcBaseDao.queryList(CustomerConfigureEntity.class,sql,authorizationAppid);
     }
+
+    @Override
+    public String getCustomerServiceConfigId(String appId, String keyword) {
+        String sql = "SELECT config.customer_configure_id FROM customer_configure config "+
+                      " JOIN sys_user_info sysUser ON sysUser.user_id = config.sys_user_id"+
+                      " WHERE sysUser.authorization_appid = ？ and config.key_word = ?  ";
+
+        Object result = jdbcBaseDao.getColumn(sql,appId,keyword);
+        if(result != null){
+            return result.toString();
+        }else{
+           return null;
+        }
+    }
+
+    @Override
+    public List<CustomerConfigureEntity> getChildMenu(String configId) {
+        String sql = "SELECT * FROM customer_configure WHERE parent_id=?";
+        return jdbcBaseDao.queryList(CustomerConfigureEntity.class,sql,configId);
+    }
 }
