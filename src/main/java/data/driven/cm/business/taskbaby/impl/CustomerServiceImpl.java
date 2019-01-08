@@ -48,7 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
     public String call(Map<String, String> wechatEventMap,String appId) {
         if(isCustomerServiceMenuClick(wechatEventMap)){
             //当前是客户点击服务菜单，发送服务项清单
-            sendCustomServiceItemList(wechatEventMap,null, appId);
+            List<CustomerConfigureEntity> customerConfigureList =
+                    customerConfigureService.getCustomerConfigureEntites(appId);
+            sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
         }
         String customerConfigId = chooseCustomService(wechatEventMap,appId);
         if(StringUtils.isNotEmpty(customerConfigId)){
@@ -84,7 +86,11 @@ public class CustomerServiceImpl implements CustomerService {
     * @return
     */
     private boolean isCustomerServiceMenuClick(Map<String,String> wechatEventMap){
-        return true;
+        String clickEvent = wechatEventMap.get("EventKey");
+        if(clickEvent != null && clickEvent.equals("Customer_Service_Click")){
+            return true;
+        }
+        return false;
     }
     private String getCustomerServiceMeunMsg(List<CustomerConfigureEntity> customerConfigureList){
         return "";
@@ -107,7 +113,7 @@ public class CustomerServiceImpl implements CustomerService {
         WeChatUtil.sendCustomTxtMsg(touser,menuMsg,accessToken);
     }
 
-    private String doCustomerServiceChoose(Map<String,String> wechatEventMap,String customerServiceConfigId,String appId){
+    private void doCustomerServiceChoose(Map<String,String> wechatEventMap,String customerServiceConfigId,String appId){
        List<CustomerConfigureEntity> customerConfigureList = customerConfigureService.getChildMenu(customerServiceConfigId);;
         if(customerConfigureList.size()>0){
             // 如果有子菜单，就发送子菜单的服务项，供客户继续选择  Logan 2019-01-08  16:46
@@ -117,7 +123,6 @@ public class CustomerServiceImpl implements CustomerService {
             String option = getContent(wechatEventMap);
             sendNameCard(wechatEventMap,option,appId);
         }
-        return "";
     }
 
 
