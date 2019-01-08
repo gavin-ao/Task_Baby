@@ -19,5 +19,5 @@ public interface CustomerConfigureService {
      * @param authorizationAppid 公众号appId
      * @return List<CustomerConfigureEntity>
      */
-    List<CustomerConfigureEntity> customerConfigureEntites (String authorizationAppid);
+    List<CustomerConfigureEntity> getCustomerConfigureEntites (String authorizationAppid);
 }

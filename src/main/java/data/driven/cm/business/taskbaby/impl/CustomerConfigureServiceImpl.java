@@ -27,7 +27,7 @@ public class CustomerConfigureServiceImpl implements CustomerConfigureService {
      * @return List<CustomerConfigureEntity>
      */
     @Override
-    public List<CustomerConfigureEntity> customerConfigureEntites(String authorizationAppid) {
+    public List<CustomerConfigureEntity> getCustomerConfigureEntites(String authorizationAppid) {
         String sql = "select ccf.describe,ccf.order from sys_user_info sui, customer_configure ccf " +
                 "where sui.authorization_appid = ? and sui.user_id = ccf.sys_user_id ORDER BY ccf.order ASC";
 
