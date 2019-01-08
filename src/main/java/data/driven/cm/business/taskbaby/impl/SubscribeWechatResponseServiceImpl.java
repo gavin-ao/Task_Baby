@@ -240,7 +240,7 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         String event = getEvent(wechatEventMap);
         String eventKey = getEventKey(wechatEventMap);
         if (StringUtils.isNotEmpty(msgType) && StringUtils.isNotEmpty(eventKey) && "CLICK".equals(event)
-                && "MY_NEWW".equals(eventKey)){
+                && "Customer_Service_Click".equals(eventKey)){
             return true;
         }else{
             return false;
