@@ -58,12 +58,12 @@ public class ThirdPartyController {
         logger.info("----------------------进入得到扫码URL----------------------");
         String componentloginpageURL ="https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=%s&pre_auth_code=%s&redirect_uri=%s&auth_type=3";
         String preAuthCode = WeChatUtil.getPreAuthCode();
-        logger.info("----------------------得到的URL"+String.format(componentloginpageURL, WeChatConstant.THIRD_PARTY_APPID,preAuthCode,"http://easy7share.com/thirdParty/authcallback").toString()+"----------------------");
+        logger.info("----------------------得到的URL"+String.format(componentloginpageURL, WeChatConstant.THIRD_PARTY_APPID,preAuthCode,"http://task.easy7share.com/thirdParty/authcallback").toString()+"----------------------");
         ModelAndView modelAndView = new ModelAndView("/taskbaby/login");
         modelAndView.addObject("url","https://mp.weixin.qq.com/cgi-bin/componentloginpage?"+
                 "component_appid="+WeChatConstant.THIRD_PARTY_APPID +
                 "&pre_auth_code=" + preAuthCode +
-                "&redirect_uri=" +"http://easy7share.com/thirdParty/authcallback"
+                "&redirect_uri=" +"http://task.easy7share.com/thirdParty/authcallback"
         );
         return modelAndView;
     }
