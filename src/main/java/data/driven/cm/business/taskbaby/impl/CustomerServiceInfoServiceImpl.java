@@ -35,6 +35,7 @@ public class CustomerServiceInfoServiceImpl implements CustomerServiceInfoServic
      */
     @Override
     public JSONObject getRandomMediaId(String authorizationAppid, String keyWord) {
+        JSONObject result = new JSONObject();
         String sql= "select csi.name,csi.media_id,csi.qr_code_path from sys_user_info sui, customer_configure ccf," +
                 "customer_service_info csi,customer_configure_mapping ccm where sui.authorization_appid = ? and" +
                 " ccf.key_word = ? and sui.user_id = ccf.sys_user_id and " +
@@ -46,7 +47,10 @@ public class CustomerServiceInfoServiceImpl implements CustomerServiceInfoServic
        if (customerServiceInfoEntities.size() > 0){
            int n = random.nextInt(customerServiceInfoEntities.size());
            CustomerServiceInfoEntity customerServiceInfoEntity = customerServiceInfoEntities.get(n);
-           return JSONUtil.putMsg(true,"200",customerServiceInfoEntity.getMediaId());
+           result.put("success", true);
+           result.put("code", "200");
+           result.put("data",customerServiceInfoEntity.getMediaId());
+           return result;
        }else{
            logger.info("客服信息列表无数据");
            return JSONUtil.putMsg(false,"200","无数据");

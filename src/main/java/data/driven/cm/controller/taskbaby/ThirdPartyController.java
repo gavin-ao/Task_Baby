@@ -30,6 +30,8 @@ public class ThirdPartyController {
     ThirdPartyService thirdPartyService;
 
 
+
+
     /**
      * 微信第三方授权事件的接收
      */
