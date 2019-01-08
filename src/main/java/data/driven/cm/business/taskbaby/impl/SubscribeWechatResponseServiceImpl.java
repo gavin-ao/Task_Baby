@@ -87,6 +87,11 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      */
     @Autowired
     private ActivityRewardService activityRewardService;
+    /**
+     * 客服配置Service
+     */
+    @Autowired
+    private CustomerConfigureService customerConfigureService;
 
 
     @Value("${file.download.path}")
@@ -145,10 +150,15 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
             //新增用户信息
             logger.info(" ----------- 搜索直接关注 ");
             insertWechatUserInfo(wechatEventMap, appid, null);
-            wechatEventMap.put(WeChatConstant.CONTENT, "谢谢您的关注！");
-            return WeChatUtil.sendTextMsg(wechatEventMap);
+            return sendFollowMsg(appid,wechatEventMap,accessToken);
             }
         }
+        //自定义菜单点击事件,必须EventKey等于MY_NEWW
+        if (clickEvent(wechatEventMap)){
+            logger.info("----------接收到自定义菜单事件");
+            return sendFollowMsg(appid,wechatEventMap,accessToken);
+        }
+
         //用户取消公众号关注
         if (unsubscribeEvent(wechatEventMap)) {
             logger.info("原始id " + getWechatAccount(wechatEventMap));
@@ -218,6 +228,24 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         }
     }
 
+    /**
+     * @description 自定义菜单点击事件
+     * @author lxl
+     * @date 2019-01-08 14:47
+     * @param wechatEventMap 微信推送的信息转成map
+     * @return
+     */
+    private boolean clickEvent(Map<String,String> wechatEventMap){
+        String msgType = getMsgType(wechatEventMap);
+        String event = getEvent(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && StringUtils.isNotEmpty(eventKey) && "CLICK".equals(event)
+                && "MY_NEWW".equals(eventKey)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * @param wechatEventMap
@@ -1212,5 +1240,36 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
         //回复信息
         replyMap.put(KEY_CSMSG_CONTENT, msg);
         WeChatUtil.sendCustomMsg(replyMap, getAccessToken(appId));
+    }
+
+    /**
+     * 用户搜索关注后如果存在自定义回复的信息则发送
+     *
+     * @param appid          公众号appid
+     * @param wechatEventMap 发送过来的Map信息
+     * @param accessToken    公众号accessToken
+     * @return 返回的信息
+     * @author lxl
+     */
+    private String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+        logger.info("进入用户搜索关注后发送自定义消息 start");
+        String fromUserName = getFromUserName(wechatEventMap);
+
+        Map<String, String> msgReply = new HashMap<>();
+        msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
+        msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+        List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
+        StringBuffer msg = new StringBuffer();
+        if (customerConfigureEntities.size() > 0 ){
+            for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities){
+                msg.append(customerConfigureEntity.getDescribe()+"\n");
+            }
+        }else{
+            msg.append("欢迎关注~");
+        }
+        msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg.toString());
+        WeChatUtil.sendCustomMsg(msgReply, accessToken);
+        logger.info("进入用户搜索关注后发送自定义消息 end");
+        return "success";
     }
 }
