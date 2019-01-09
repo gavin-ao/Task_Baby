@@ -128,4 +128,23 @@ public class WechatPublicDetailServiceImpl implements WechatPublicDetailService 
             throw new NullFieldException("ServiceType字段为空");
         }
     }
+
+
+    /**
+     * @description 通过AppId 查询公众号昵称
+     * @author lxl
+     * @date 2019-01-09 11:47
+     * @param authorizationAppid 公众号appid
+     * @return nickName 公众号昵称
+     */
+    @Override
+    public String getNickNameByAppId(String authorizationAppid){
+        String sql ="select nick_name from wechat_public_detail where authorization_appid=?";
+        Object nickName = jdbcBaseDao.getColumn(sql,authorizationAppid);
+        if(nickName != null){
+            return nickName.toString();
+        }else{
+            return null;
+        }
+    }
 }

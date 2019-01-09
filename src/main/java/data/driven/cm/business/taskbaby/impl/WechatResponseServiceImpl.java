@@ -2,6 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.business.taskbaby.*;
+import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.RewardTypeEnum;
 import data.driven.cm.component.TaskBabyConstant;
 import data.driven.cm.component.WeChatConstant;
@@ -80,6 +81,18 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     @Autowired
     private CustomerConfigureService customerConfigureService;
+
+    /**
+     * 客户服务
+     */
+    @Autowired
+    private CustomerService customerService;
+
+    /**
+     * 公众号详细信息表Service
+     */
+    @Autowired
+    private WechatPublicDetailService wechatPublicDetailService;
 
     /**
      * 助力刚好成功
@@ -172,7 +185,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         //自定义菜单点击事件,必须EventKey等于MY_NEWW
         if (clickEvent(wechatEventMap)){
             logger.info("----------接收到自定义菜单事件");
-            return sendFollowMsg(appid,wechatEventMap,accessToken);
+            return customerService.call(wechatEventMap,appid);
         }
         //用户取消公众号关注
         if (unsubscribeEvent(wechatEventMap)) {
@@ -410,17 +423,35 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             insertWechatUserInfo(wechatEventMap, appid, actId);
             return keyWordReplyPoster(wechatEventMap, appid);
         } else {
-            Map<String, String> msgReply = new HashMap<>();
-            msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
-            msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
-            String msg = null;
-            if (activityService.keyWordExist(msgContent, wechatAccount)) {
-                msg = "很抱歉，您参加的活动已经结束，请持续关注我们，更多精彩的活动马上就来~";
-            } else {
-                msg = "没找到您想要的活动，请持续关注我们，更多活动马上就来~";
+//            Map<String, String> msgReply = new HashMap<>();
+//            msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
+//            msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+//            String msg = null;
+//            if (activityService.keyWordExist(msgContent, wechatAccount)) {
+//                msg = "很抱歉，您参加的活动已经结束，请持续关注我们，更多精彩的活动马上就来~";
+//            } else {
+//                msg = "没找到您想要的活动，请持续关注我们，更多活动马上就来~";
+//            }
+//            msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg);
+//            WeChatUtil.sendCustomMsg(msgReply, accessToken);
+            //判断微信用户是否已接收到回复消息，一小时内只发一次回复消息
+            String nickName = wechatPublicDetailService.getNickNameByAppId(appid);
+            if (getReceiveCustomerNews(fromUserName,appid)){
+                Map<String, String> msgReply = new HashMap<>();
+                msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
+                msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+                List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
+                StringBuffer msg = new StringBuffer();
+                if (customerConfigureEntities.size() > 0) {
+                    msg.append("欢迎关注"+nickName+"~");
+                    for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities) {
+                        msg.append(customerConfigureEntity.getDescribe() + "\n");
+                    }
+                    msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg.toString());
+                    WeChatUtil.sendCustomMsg(msgReply, accessToken);
+                }
             }
-            msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg);
-            WeChatUtil.sendCustomMsg(msgReply, accessToken);
+            customerService.call(wechatEventMap,appid);
         }
 
         return "success";
@@ -991,6 +1022,26 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     }
 
     /**
+     * @param fromUserName 微信用户openid
+     * @param appid        公众号appid
+     * @return
+     * @description 判断微信用户是否已接收到回复消息，一小时内只发一次回复消息
+     * @author lxl
+     * @date 2019-01-09 11:24
+     */
+    private boolean getReceiveCustomerNews(String fromUserName, String appid) {
+        String key = appid + fromUserName + "Customer";
+        //1.从缓存中取
+        String receiveCustomerNews = RedisFactory.get(key);
+        if (StringUtils.isNotEmpty(receiveCustomerNews)) {
+            return false;
+        } else {
+            RedisFactory.setString( key, "existence", 60 * 60 * 1000);
+            return true;
+        }
+    }
+
+    /**
      * 粉丝发关键字，微信公众号发送客服信息
      * 回复活动内容介绍和个性化海报
      *
@@ -1173,6 +1224,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
     private String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
         logger.info("进入用户搜索关注后发送自定义消息 start");
         String fromUserName = getFromUserName(wechatEventMap);
+        String nickName = wechatPublicDetailService.getNickNameByAppId(appid);
 
         Map<String, String> msgReply = new HashMap<>();
         msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
@@ -1180,11 +1232,12 @@ public class WechatResponseServiceImpl implements WechatResponseService {
         List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
         StringBuffer msg = new StringBuffer();
         if (customerConfigureEntities.size() > 0 ){
+            msg.append("欢迎关注"+nickName+"~");
             for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities){
                 msg.append(customerConfigureEntity.getDescribe()+"\n");
             }
         }else{
-            msg.append("欢迎关注~");
+            msg.append("欢迎关注"+nickName+"~");
         }
         msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg.toString());
         WeChatUtil.sendCustomMsg(msgReply, accessToken);
