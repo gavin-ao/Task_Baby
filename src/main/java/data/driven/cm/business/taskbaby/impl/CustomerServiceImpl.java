@@ -54,8 +54,7 @@ public class CustomerServiceImpl implements CustomerService {
             //当前是客户点击服务菜单，发送服务项清单
             List<CustomerConfigureEntity> customerConfigureList =
                     customerConfigureService.getCustomerConfigureEntites(appId);
-            sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
-            return true;
+            return sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
         }
         if(textEvent(wechatEventMap)) {
             String customerConfigId = chooseCustomService(wechatEventMap, appId);
@@ -125,15 +124,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     * @return
     */
-    private void sendCustomServiceItemList(Map<String,String> wechatEventMap,List<CustomerConfigureEntity> customerConfigureList,String appId){
+    private boolean sendCustomServiceItemList(Map<String,String> wechatEventMap,List<CustomerConfigureEntity> customerConfigureList,String appId){
+        if(customerConfigureList == null || customerConfigureList.size()==0){
+            return false;
+        }
        String touser = getFromUserName(wechatEventMap);
         String menuMsg = getCustomerServiceMeunMsg(customerConfigureList);
         String accessToken = getAccessToken(appId);
         WeChatUtil.sendCustomTxtMsg(touser,menuMsg,accessToken);
+        return true;
     }
 
     private void doCustomerServiceChoose(Map<String,String> wechatEventMap,String customerServiceConfigId,String appId){
-       List<CustomerConfigureEntity> customerConfigureList = customerConfigureService.getChildMenu(customerServiceConfigId);;
+       List<CustomerConfigureEntity> customerConfigureList = customerConfigureService.getChildMenu(customerServiceConfigId);
         if(customerConfigureList.size()>0){
             // 如果有子菜单，就发送子菜单的服务项，供客户继续选择  Logan 2019-01-08  16:46
             sendCustomServiceItemList(wechatEventMap,customerConfigureList,appId);
@@ -283,5 +286,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     private String getEventKey(Map<String, String> wechatEventMap) {
         return wechatEventMap.get(WeChatConstant.EVENT_KEY);
+    }
+
+    @Override
+    public String sendCustomServiceMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+        return null;
     }
 }

@@ -34,4 +34,16 @@ public interface CustomerService {
      */
     String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken);
 
+    /**
+    * 发送客服菜单消息
+    * @author Logan
+    * @date 2019-01-09 15:21
+    * @param appid
+    * @param wechatEventMap
+    * @param accessToken
+
+    * @return
+    */
+    String sendCustomServiceMsg(String appid, Map<String, String> wechatEventMap, String accessToken);
+
 }
