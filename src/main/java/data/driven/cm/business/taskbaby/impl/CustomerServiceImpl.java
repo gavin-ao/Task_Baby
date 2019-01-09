@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
             List<CustomerConfigureEntity> customerConfigureList =
                     customerConfigureService.getCustomerConfigureEntites(appId);
             sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
-        }
+        } //这里需要区分开，菜单和文本关键词是两个
         String customerConfigId = chooseCustomService(wechatEventMap,appId);
         if(StringUtils.isNotEmpty(customerConfigId)){
             //当前是客户输入客服项关键字
@@ -93,7 +93,15 @@ public class CustomerServiceImpl implements CustomerService {
         return false;
     }
     private String getCustomerServiceMeunMsg(List<CustomerConfigureEntity> customerConfigureList){
-        return "";
+        StringBuffer msg = new StringBuffer();
+        if (customerConfigureList.size() > 0 ){
+            for (CustomerConfigureEntity customerConfigureEntity : customerConfigureList){
+                msg.append(customerConfigureEntity.getDescribe()+"\n");
+            }
+        }else{
+            msg.append("欢迎关注~");
+        }
+        return msg.toString();
     }
     /**
     * 发送客服菜单
