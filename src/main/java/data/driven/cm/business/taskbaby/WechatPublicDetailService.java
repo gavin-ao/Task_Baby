@@ -67,4 +67,13 @@ public interface WechatPublicDetailService {
     * @return
     */
    boolean isServiceType(String appId);
+
+    /**
+     * @description 通过AppId 查询公众号昵称
+     * @author lxl
+     * @date 2019-01-09 11:47
+     * @param authorizationAppid 公众号appid
+     * @return 公众号昵称
+     */
+    String getNickNameByAppId(String authorizationAppid);
 }
