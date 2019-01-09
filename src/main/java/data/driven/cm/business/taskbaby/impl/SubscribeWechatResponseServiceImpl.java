@@ -136,7 +136,15 @@ public class SubscribeWechatResponseServiceImpl implements SubscribeWeChatRespon
      */
     @Override
     public String notify(Map wechatEventMap, String appId) {
-        return dispatherAndReturn(wechatEventMap, appId);
+        boolean isCustomservice = customerService.call(wechatEventMap, appId);
+        if (isCustomservice) {
+            //是处理完的客服
+            logger.info("是客户消息相关");
+            return "";
+        } else {
+            logger.info("进入订阅号的任务宝活动");
+            return dispatherAndReturn(wechatEventMap, appId);
+        }
     }
 
     private String dispatherAndReturn(Map<String, String> wechatEventMap, String appid) {

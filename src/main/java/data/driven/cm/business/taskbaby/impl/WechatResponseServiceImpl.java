@@ -118,8 +118,14 @@ public class WechatResponseServiceImpl implements WechatResponseService {
      */
     @Override
     public String notify(Map wechatEventMap, String appId) {
-//        logger.info(String.format("---------接收微信消息，%s----",wechatEventMap));
-        return dispatherAndReturn(wechatEventMap, appId);
+        boolean isCustomService = customerService.call(wechatEventMap, appId);
+        if (isCustomService) {
+            logger.info("是客服相关消息，已处理");
+            return "";
+        } else {
+            logger.info("进入服务号的任务宝活动");
+            return dispatherAndReturn(wechatEventMap, appId);
+        }
     }
 
     /**

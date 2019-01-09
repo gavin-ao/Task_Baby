@@ -65,6 +65,9 @@ public class CustomerServiceImpl implements CustomerService {
                 return true;
             }
         }
+        if(subscribeEvent(wechatEventMap)){
+            return true;
+        }
         return false;
     }
 
@@ -94,7 +97,7 @@ public class CustomerServiceImpl implements CustomerService {
     * @return
     */
     private boolean isCustomerServiceMenuClick(Map<String,String> wechatEventMap){
-        String clickEvent = wechatEventMap.get("EventKey");
+        String clickEvent = getEventKey(wechatEventMap);
         if(clickEvent != null && clickEvent.equals("Customer_Service_Click")){
             return true;
         }
@@ -251,5 +254,34 @@ public class CustomerServiceImpl implements CustomerService {
         WeChatUtil.sendCustomMsg(msgReply, accessToken);
         logger.info("进入用户搜索关注后发送自定义消息 end");
         return "success";
+    }
+
+
+    /**
+     * @param wechatEventMap
+     * @return
+     * @description 判断是否直接关注事件 区分是否扫码关注的点是eventKey为空
+     * @author Logan
+     * @date 2018-11-27 18:39
+     */
+    private boolean subscribeEvent(Map<String, String> wechatEventMap) {
+        String msgType = getMsgType(wechatEventMap);
+        String event = getEvent(wechatEventMap);
+        String eventKey = getEventKey(wechatEventMap);
+        if (StringUtils.isNotEmpty(msgType) && WeChatConstant.REQ_MESSAGE_TYPE_EVENT.equals(msgType) &&
+                StringUtils.isNotEmpty(event) && WeChatConstant.EVENT_TYPE_SUBSCRIBE.equals(event) && StringUtils.isEmpty(eventKey)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private String getEvent(Map<String, String> wechatEventMap) {
+        return wechatEventMap.get(WeChatConstant.EVENT);
+    }
+
+
+    private String getEventKey(Map<String, String> wechatEventMap) {
+        return wechatEventMap.get(WeChatConstant.EVENT_KEY);
     }
 }
