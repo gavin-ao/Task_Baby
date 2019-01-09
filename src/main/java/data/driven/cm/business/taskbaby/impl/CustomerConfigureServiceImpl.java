@@ -35,6 +35,15 @@ public class CustomerConfigureServiceImpl implements CustomerConfigureService {
         return jdbcBaseDao.queryList(CustomerConfigureEntity.class,sql,authorizationAppid);
     }
 
+    /**
+    * 根据关键字获取客服配置项id
+    * @author Logan
+    * @date 2019-01-09 16:00
+    * @param appId
+    * @param keyword
+
+    * @return
+    */
     @Override
     public String getCustomerServiceConfigId(String appId, String keyword) {
         String sql = "SELECT config.customer_configure_id FROM customer_configure config "+
@@ -49,6 +58,14 @@ public class CustomerConfigureServiceImpl implements CustomerConfigureService {
         }
     }
 
+    /**
+    * 根据客服配置项id获取子配置列表
+    * @author Logan
+    * @date 2019-01-09 16:00
+    * @param configId
+
+    * @return
+    */
     @Override
     public List<CustomerConfigureEntity> getChildMenu(String configId) {
         String sql = "SELECT * FROM customer_configure WHERE parent_id=?";
