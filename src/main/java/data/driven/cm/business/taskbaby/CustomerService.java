@@ -35,15 +35,14 @@ public interface CustomerService {
     String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken);
 
     /**
-    * 发送客服菜单消息
-    * @author Logan
-    * @date 2019-01-09 15:21
-    * @param appid
-    * @param wechatEventMap
-    * @param accessToken
-
-    * @return
-    */
-    String sendCustomServiceMsg(String appid, Map<String, String> wechatEventMap, String accessToken);
+     * @description 被动回复，如果存在发送客服信息，不存在不发送
+     * @author lxl
+     * @date 2019-01-09 15:29
+     * @param fromUserName 微信用户OpenId
+     * @param appid 公众号appid
+     * @param accessToken 公众号的token
+     * @return
+     */
+    String sendCustomServiceMsg(String appid, String fromUserName, String accessToken);
 
 }

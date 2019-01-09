@@ -2,6 +2,7 @@ package data.driven.cm.business.taskbaby.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import data.driven.cm.business.taskbaby.*;
+import data.driven.cm.common.RedisFactory;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.CustomerConfigureEntity;
 import data.driven.cm.util.WeChatUtil;
@@ -64,7 +65,10 @@ public class CustomerServiceImpl implements CustomerService {
                 return true;
             }
         }
+        //搜索关注
         if(subscribeEvent(wechatEventMap)){
+            String accessToken = getAccessToken(appId);
+            sendFollowMsg(appId, wechatEventMap, accessToken);
             return true;
         }
         return false;
@@ -288,8 +292,53 @@ public class CustomerServiceImpl implements CustomerService {
         return wechatEventMap.get(WeChatConstant.EVENT_KEY);
     }
 
+    /**
+     * @description 被动回复，如果存在发送客服信息，不存在不发送
+     * @author lxl
+     * @date 2019-01-09 15:29
+     * @param fromUserName 微信用户OpenId
+     * @param appid 公众号appid
+     * @param accessToken 公众号的token
+     * @return
+     */
     @Override
-    public String sendCustomServiceMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+    public String sendCustomServiceMsg(String appid, String fromUserName, String accessToken) {
+        //判断微信用户是否已接收到回复消息，一小时内只发一次回复消息
+        String nickName = wechatPublicDetailService.getNickNameByAppId(appid);
+        StringBuffer msg = new StringBuffer();
+        if (getReceiveCustomerNews(fromUserName,appid)){
+            List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
+            if (customerConfigureEntities.size() > 0) {
+                msg.append("欢迎关注"+nickName+"~");
+                for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities) {
+                    msg.append(customerConfigureEntity.getDescribe() + "\n");
+                }
+                return msg.toString();
+            }else{
+                msg.append("没找到您想要的活动，请持续关注我们，更多活动马上就来");
+                return msg.toString();
+            }
+        }
         return null;
+    }
+
+    /**
+     * @param fromUserName 微信用户openid
+     * @param appid        公众号appid
+     * @return
+     * @description 判断微信用户是否已接收到回复消息，一小时内只发一次回复消息
+     * @author lxl
+     * @date 2019-01-09 11:24
+     */
+    private boolean getReceiveCustomerNews(String fromUserName, String appid) {
+        String key = appid + fromUserName + "Customer";
+        //1.从缓存中取
+        String receiveCustomerNews = RedisFactory.get(key);
+        if (StringUtils.isNotEmpty(receiveCustomerNews)) {
+            return false;
+        } else {
+            RedisFactory.setString( key, "existence", 60 * 60 * 1000);
+            return true;
+        }
     }
 }
