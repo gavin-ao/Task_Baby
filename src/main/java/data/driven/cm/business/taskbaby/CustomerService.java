@@ -11,6 +11,7 @@ import java.util.Map;
 public interface CustomerService {
     /**
     *  响应客户服务
+     * 如果当前消息是客户服务特有的消息，处理完后返回true，否则返回false
     * @author Logan
     * @date 2019-01-08 16:23
     * @param wechatEventMap
@@ -18,7 +19,7 @@ public interface CustomerService {
 
     * @return
     */
-     String call(Map<String,String> wechatEventMap,String appId);
+     boolean call(Map<String,String> wechatEventMap,String appId);
 
      void sendNameCard(Map<String,String> wechatEventMap,String option,String appId);
 
