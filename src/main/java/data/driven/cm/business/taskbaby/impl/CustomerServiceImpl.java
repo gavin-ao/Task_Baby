@@ -36,7 +36,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     /**
-    * 响应客户服务
+    * 响应客户服务,
+     * 如果当前消息是客户服务特有的消息，处理完后返回true，否则返回false
     * @author Logan
     * @date 2019-01-08 16:24
     * @param wechatEventMap
@@ -45,19 +46,23 @@ public class CustomerServiceImpl implements CustomerService {
     * @return
     */
     @Override
-    public String call(Map<String, String> wechatEventMap,String appId) {
+    public boolean call(Map<String, String> wechatEventMap,String appId) {
         if(isCustomerServiceMenuClick(wechatEventMap)){
             //当前是客户点击服务菜单，发送服务项清单
             List<CustomerConfigureEntity> customerConfigureList =
                     customerConfigureService.getCustomerConfigureEntites(appId);
             sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
-        } //这里需要区分开，菜单和文本关键词是两个
-        String customerConfigId = chooseCustomService(wechatEventMap,appId);
-        if(StringUtils.isNotEmpty(customerConfigId)){
-            //当前是客户输入客服项关键字
-            doCustomerServiceChoose(wechatEventMap,customerConfigId,appId);
+            return true;
         }
-        return null;
+        if(textEvent(wechatEventMap)) {
+            String customerConfigId = chooseCustomService(wechatEventMap, appId);
+            if (StringUtils.isNotEmpty(customerConfigId)) {
+                //当前是客户输入客服项关键字
+                doCustomerServiceChoose(wechatEventMap, customerConfigId, appId);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
