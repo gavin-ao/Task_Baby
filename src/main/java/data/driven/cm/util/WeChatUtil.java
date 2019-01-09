@@ -360,7 +360,7 @@ public class WeChatUtil {
     public static void sendCustomTxtMsg(String touser,String txtMsg,String accessToken){
         WechatCSTxtMsgEntity txtMsgEntity = new WechatCSTxtMsgEntity(touser,txtMsg);
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        String msgJson =  gson.toJson(txtMsgEntity).replace("\\\\r\\\\n","\\r\\n");
+        String msgJson =  gson.toJson(txtMsgEntity).replace("\\\\r","\\r").replace("\\\\n","\\n");
         sendCustomMsgByJsonStr(msgJson, accessToken);
     }
     /**
@@ -376,7 +376,7 @@ public class WeChatUtil {
           if(StringUtils.isNotEmpty(content)){
               WechatCSTxtMsgEntity msgEntity = new WechatCSTxtMsgEntity(touser,content);
               Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-              return  gson.toJson(msgEntity).replace("\\\\r\\\\n","\\r\\n");
+              return  gson.toJson(msgEntity).replace("\\\\r","\\r").replace("\\\\n","\\n");
           }else{
               return null;
           }
