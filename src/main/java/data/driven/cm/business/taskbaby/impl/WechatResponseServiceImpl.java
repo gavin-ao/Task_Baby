@@ -180,7 +180,7 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             //新增用户信息
             logger.info(" ----------- 搜索直接关注 ");
             insertWechatUserInfo(wechatEventMap, appid, null);
-            return sendFollowMsg(appid,wechatEventMap,accessToken);
+            return customerService.sendFollowMsg(appid,wechatEventMap,accessToken);
         }
         //自定义菜单点击事件,必须EventKey等于MY_NEWW
         if (clickEvent(wechatEventMap)){
@@ -1210,38 +1210,5 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             replyMap.put(KEY_CSMSG_TYPE, VALUE_CSMSG_TYPE_TEXT);
             WeChatUtil.sendCustomMsg(replyMap, accessToken);
         }
-    }
-
-    /**
-     * 用户搜索关注后如果存在自定义回复的信息则发送
-     *
-     * @param appid          公众号appid
-     * @param wechatEventMap 发送过来的Map信息
-     * @param accessToken    公众号accessToken
-     * @return 返回的信息
-     * @author lxl
-     */
-    private String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
-        logger.info("进入用户搜索关注后发送自定义消息 start");
-        String fromUserName = getFromUserName(wechatEventMap);
-        String nickName = wechatPublicDetailService.getNickNameByAppId(appid);
-
-        Map<String, String> msgReply = new HashMap<>();
-        msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
-        msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
-        List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
-        StringBuffer msg = new StringBuffer();
-        if (customerConfigureEntities.size() > 0 ){
-            msg.append("欢迎关注"+nickName+"~");
-            for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities){
-                msg.append(customerConfigureEntity.getDescribe()+"\n");
-            }
-        }else{
-            msg.append("欢迎关注"+nickName+"~");
-        }
-        msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg.toString());
-        WeChatUtil.sendCustomMsg(msgReply, accessToken);
-        logger.info("进入用户搜索关注后发送自定义消息 end");
-        return "success";
     }
 }
