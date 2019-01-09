@@ -106,6 +106,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return false;
     }
+
+    /**
+    * 获取客服菜单消息
+    * @author Logan
+    * @date 2019-01-09 16:01
+    * @param customerConfigureList
+
+    * @return
+    */
     private String getCustomerServiceMeunMsg(List<CustomerConfigureEntity> customerConfigureList){
         StringBuffer msg = new StringBuffer();
         if (customerConfigureList.size() > 0 ){
@@ -139,6 +148,16 @@ public class CustomerServiceImpl implements CustomerService {
         return true;
     }
 
+    /**
+    * 处理用户输入客服关键字
+    * @author Logan
+    * @date 2019-01-09 16:02
+    * @param wechatEventMap
+    * @param customerServiceConfigId
+    * @param appId
+
+    * @return
+    */
     private void doCustomerServiceChoose(Map<String,String> wechatEventMap,String customerServiceConfigId,String appId){
        List<CustomerConfigureEntity> customerConfigureList = customerConfigureService.getChildMenu(customerServiceConfigId);
         if(customerConfigureList.size()>0){

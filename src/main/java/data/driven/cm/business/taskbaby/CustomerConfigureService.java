@@ -21,7 +21,24 @@ public interface CustomerConfigureService {
      */
     List<CustomerConfigureEntity> getCustomerConfigureEntites (String authorizationAppid);
 
+    /**
+     * 根据关键字获取客服配置项id
+     * @author Logan
+     * @date 2019-01-09 16:00
+     * @param appId
+     * @param keyword
+
+     * @return
+     */
     String getCustomerServiceConfigId(String appId, String keyword);
 
+    /**
+     * 根据客服配置项id获取子配置列表
+     * @author Logan
+     * @date 2019-01-09 16:00
+     * @param configId
+
+     * @return
+     */
     List<CustomerConfigureEntity> getChildMenu(String configId);
 }
