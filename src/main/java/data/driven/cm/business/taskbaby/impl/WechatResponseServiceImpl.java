@@ -180,12 +180,9 @@ public class WechatResponseServiceImpl implements WechatResponseService {
             //新增用户信息
             logger.info(" ----------- 搜索直接关注 ");
             insertWechatUserInfo(wechatEventMap, appid, null);
-            return customerService.sendFollowMsg(appid,wechatEventMap,accessToken);
-        }
-        //自定义菜单点击事件,必须EventKey等于MY_NEWW
-        if (clickEvent(wechatEventMap)){
-            logger.info("----------接收到自定义菜单事件");
-            return customerService.call(wechatEventMap,appid);
+//            return customerService.sendFollowMsg(appid,wechatEventMap,accessToken);
+            wechatEventMap.put(WeChatConstant.CONTENT, "谢谢您的关注！");
+            return WeChatUtil.sendTextMsg(wechatEventMap);
         }
         //用户取消公众号关注
         if (unsubscribeEvent(wechatEventMap)) {
