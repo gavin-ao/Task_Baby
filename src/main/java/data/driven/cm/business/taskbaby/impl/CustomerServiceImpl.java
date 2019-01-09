@@ -1,10 +1,7 @@
 package data.driven.cm.business.taskbaby.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import data.driven.cm.business.taskbaby.CustomerConfigureService;
-import data.driven.cm.business.taskbaby.CustomerService;
-import data.driven.cm.business.taskbaby.CustomerServiceInfoService;
-import data.driven.cm.business.taskbaby.ThirdPartyService;
+import data.driven.cm.business.taskbaby.*;
 import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.CustomerConfigureEntity;
 import data.driven.cm.util.WeChatUtil;
@@ -14,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +31,11 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerConfigureService customerConfigureService;
     @Autowired
     private ThirdPartyService thirdPartyService;
+    /**
+     * 公众号详细信息表Service
+     */
+    @Autowired
+    private WechatPublicDetailService wechatPublicDetailService;
 
 
     /**
@@ -209,5 +212,39 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             return false;
         }
+    }
+
+    /**
+     * 用户搜索关注后如果存在自定义回复的信息则发送
+     *
+     * @param appid          公众号appid
+     * @param wechatEventMap 发送过来的Map信息
+     * @param accessToken    公众号accessToken
+     * @return 返回的信息
+     * @author lxl
+     */
+    @Override
+    public String sendFollowMsg(String appid, Map<String, String> wechatEventMap, String accessToken) {
+        logger.info("进入用户搜索关注后发送自定义消息 start");
+        String fromUserName = getFromUserName(wechatEventMap);
+        String nickName = wechatPublicDetailService.getNickNameByAppId(appid);
+
+        Map<String, String> msgReply = new HashMap<>();
+        msgReply.put(WeChatConstant.KEY_CSMSG_TOUSER, fromUserName);
+        msgReply.put(WeChatConstant.KEY_CSMSG_TYPE, WeChatConstant.VALUE_CSMSG_TYPE_TEXT);
+        List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
+        StringBuffer msg = new StringBuffer();
+        if (customerConfigureEntities.size() > 0 ){
+            msg.append("欢迎关注"+nickName+"~");
+            for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities){
+                msg.append(customerConfigureEntity.getDescribe()+"\n");
+            }
+        }else{
+            msg.append("欢迎关注"+nickName+"~");
+        }
+        msgReply.put(WeChatConstant.KEY_CSMSG_CONTENT, msg.toString());
+        WeChatUtil.sendCustomMsg(msgReply, accessToken);
+        logger.info("进入用户搜索关注后发送自定义消息 end");
+        return "success";
     }
 }
