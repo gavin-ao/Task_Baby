@@ -39,7 +39,7 @@ public class CustomerConfigureServiceImpl implements CustomerConfigureService {
     public String getCustomerServiceConfigId(String appId, String keyword) {
         String sql = "SELECT config.customer_configure_id FROM customer_configure config "+
                       " JOIN sys_user_info sysUser ON sysUser.user_id = config.sys_user_id"+
-                      " WHERE sysUser.authorization_appid = ？ and config.key_word = ?  ";
+                      " WHERE sysUser.authorization_appid = ? and config.key_word = ?  ";
 
         Object result = jdbcBaseDao.getColumn(sql,appId,keyword);
         if(result != null){
