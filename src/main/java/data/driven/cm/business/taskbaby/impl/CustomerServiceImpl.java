@@ -334,7 +334,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (getReceiveCustomerNews(fromUserName,appid)){
             List<CustomerConfigureEntity> customerConfigureEntities = customerConfigureService.getCustomerConfigureEntites(appid);
             if (customerConfigureEntities.size() > 0) {
-                msg.append("欢迎关注"+nickName+"~");
+                msg.append("欢迎关注"+nickName+"~\n");
                 for (CustomerConfigureEntity customerConfigureEntity : customerConfigureEntities) {
                     msg.append(customerConfigureEntity.getDescribe() + "\n");
                 }
