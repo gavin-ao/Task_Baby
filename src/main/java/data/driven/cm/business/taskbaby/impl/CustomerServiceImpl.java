@@ -37,6 +37,11 @@ public class CustomerServiceImpl implements CustomerService {
      */
     @Autowired
     private WechatPublicDetailService wechatPublicDetailService;
+    /**
+     * 微信用户Service
+     */
+    @Autowired
+    private WechatUserInfoService wechatUserInfoService;
 
 
     /**
@@ -68,6 +73,7 @@ public class CustomerServiceImpl implements CustomerService {
         //搜索关注
         if(subscribeEvent(wechatEventMap)){
             String accessToken = getAccessToken(appId);
+            insertWechatUserInfo(wechatEventMap, appId);
             sendFollowMsg(appId, wechatEventMap, accessToken);
             return true;
         }
@@ -360,4 +366,27 @@ public class CustomerServiceImpl implements CustomerService {
             return true;
         }
     }
+
+    /**
+     * 新增微信用户方法
+     *
+     * @param wechatEventMap
+     */
+    private void insertWechatUserInfo(Map<String, String> wechatEventMap, String appid) {
+
+        try {
+            logger.info(" ----------- 进入 新增用户 appid " + appid);
+            String accessToken = thirdPartyService.getAuthAccessToken(appid);
+            logger.info(" ----------- 进入 新增用户 accessToken " + accessToken);
+            logger.info(" ----------- 进入 新增用户 EventKey 存在");
+            Map<String, String> userInfo = WeChatUtil.getUserInfo(wechatEventMap.get(WeChatConstant.FROM_USER_NAME), accessToken);
+            wechatUserInfoService.insertWechatUserInfoEntity(Integer.parseInt(userInfo.get("subscribe")), userInfo.get("openid"), userInfo.get("nickname"), Integer.parseInt(userInfo.get("sex")),
+                    userInfo.get("country"), userInfo.get("province"), userInfo.get("language"), userInfo.get("headimgurl"), userInfo.get("unionid"), userInfo.get("remark"),
+                    userInfo.get("subscribe_scene"), wechatEventMap.get(WeChatConstant.TO_USER_NAME), Integer.parseInt(userInfo.get("subscribe_time")), userInfo.get("city"), Integer.parseInt(userInfo.get("qr_scene")),
+                    userInfo.get("qr_scene_str"), null, wechatEventMap.get("MsgType"), wechatEventMap.get("Event"), wechatEventMap.get("EventKey"), wechatEventMap.get("Ticket"));
+        } catch (Exception e) {
+           logger.error(e.getMessage(),e);
+        }
+    }
+
 }
