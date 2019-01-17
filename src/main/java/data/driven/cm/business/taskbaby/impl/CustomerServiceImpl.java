@@ -57,12 +57,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean call(Map<String, String> wechatEventMap,String appId) {
         if(isCustomerServiceMenuClick(wechatEventMap)){
+            logger.info("进入客服点击事件");
             //当前是客户点击服务菜单，发送服务项清单
             List<CustomerConfigureEntity> customerConfigureList =
                     customerConfigureService.getCustomerConfigureEntites(appId);
             return sendCustomServiceItemList(wechatEventMap,customerConfigureList, appId);
         }
         if(textEvent(wechatEventMap)) {
+            logger.info("进入客服文本信息");
             String customerConfigId = chooseCustomService(wechatEventMap, appId);
             if (StringUtils.isNotEmpty(customerConfigId)) {
                 //当前是客户输入客服项关键字
@@ -347,7 +349,7 @@ public class CustomerServiceImpl implements CustomerService {
             }
         }
         return null;
-    }
+}
 
     /**
      * @param fromUserName 微信用户openid
