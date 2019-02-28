@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -416,6 +418,20 @@ public class HttpUtil {
             logger.error(e.getMessage(), e);
         }
         return sslsf;
+    }
+
+    public static String getPostParam(HttpServletRequest request){
+        StringBuffer strBuffer = new StringBuffer();
+        String line = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null){
+                strBuffer.append(line);}
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+        return strBuffer.toString();
     }
 
 }

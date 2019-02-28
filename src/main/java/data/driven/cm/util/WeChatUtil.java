@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -25,6 +26,7 @@ import data.driven.cm.component.WeChatConstant;
 import data.driven.cm.entity.taskbaby.ArticleItem;
 import data.driven.cm.entity.wechat.WechatCSImgMsgEntity;
 import data.driven.cm.entity.wechat.WechatCSTxtMsgEntity;
+import data.driven.cm.util.wx.WXXmlUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -32,6 +34,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -183,26 +187,8 @@ public class WeChatUtil {
      */
     @SuppressWarnings({ "unchecked"})
     public static Map<String,String> parseRequest(HttpServletRequest request) throws Exception {
-        // 将解析结果存储在HashMap中
-        Map<String,String> map = new HashMap<>();
-
-        // 从request中取得输入流
-        InputStream inputStream = request.getInputStream();
-        // 读取输入流
-        SAXReader reader = new SAXReader();
-        Document document = reader.read(inputStream);
-        // 得到xml根元素
-        Element root = document.getRootElement();
-        // 得到根元素的所有子节点
-        List<Element> elementList = root.elements();
-        // 遍历所有子节点
-        for (Element e : elementList){
-            map.put(e.getName(), e.getText());
-        }
-
-        // 释放资源
-        inputStream.close();
-        return map;
+        String postData = HttpUtil.getPostParam(request);
+        return xmlToMap(postData);
     }
     /**
      * 组装 xml
@@ -249,6 +235,42 @@ public class WeChatUtil {
 
             }
 
+        }
+    }
+
+
+    /**
+    * xml转Map,规避XXE漏洞
+    * @author Logan
+    * @date 2019-02-28 18:20
+    * @param xmlStr
+
+    * @return
+    */
+    public static Map xmlToMap(String xmlStr) throws Exception{
+        try {
+            Map<String, String> data = new HashMap<String, String>();
+            DocumentBuilder documentBuilder = WXXmlUtil.newDocumentBuilder();
+            InputStream stream = new ByteArrayInputStream(xmlStr.getBytes("UTF-8"));
+            org.w3c.dom.Document doc = documentBuilder.parse(stream);
+            doc.getDocumentElement().normalize();
+            NodeList nodeList = doc.getDocumentElement().getChildNodes();
+            for (int idx = 0; idx < nodeList.getLength(); ++idx) {
+                Node node = nodeList.item(idx);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                    data.put(element.getNodeName(), element.getTextContent());
+                }
+            }
+            try {
+                stream.close();
+            } catch (Exception ex) {
+                // do nothing
+            }
+            return data;
+        } catch (Exception ex) {
+            log.warn("Invalid XML, can not convert to map. Error message: {}. XML content: {}", ex.getMessage(), xmlStr);
+            throw ex;
         }
     }
     /**
