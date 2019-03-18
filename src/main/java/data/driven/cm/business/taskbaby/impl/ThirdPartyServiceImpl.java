@@ -341,7 +341,7 @@ public class ThirdPartyServiceImpl implements ThirdPartyService {
                     logger.info("-----------------component_access_token : " + componentAccessToken + "----------------------");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
     }
 }
