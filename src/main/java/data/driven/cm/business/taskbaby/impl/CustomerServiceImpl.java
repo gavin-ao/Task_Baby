@@ -205,13 +205,15 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
     public void sendNameCard(Map<String,String> wechatEventMap,String option,String appId){
       String mediaId = getMediaId(option, appId);
+      String fromUserName = getFromUserName(wechatEventMap);
+      String accessToken = getAccessToken(appId);
       if (StringUtils.isNotEmpty(mediaId)) {
-          String fromUserName = getFromUserName(wechatEventMap);
-          String accessToken = getAccessToken(appId);
           WeChatUtil.sendCustomImageMsg(fromUserName, mediaId, accessToken);
+          WeChatUtil.sendCustomTxtMsg(fromUserName, "请扫码，添加您的专属客服", accessToken);
           logger.info("发送名片成功");
       }else{
           logger.info("没有发送名片，可能当前客服选项没有配置名片");
+          WeChatUtil.sendCustomTxtMsg(fromUserName,"客服现在在火星，请稍候片刻",accessToken);
       }
     }
 
