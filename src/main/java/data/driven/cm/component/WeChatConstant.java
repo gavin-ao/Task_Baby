@@ -37,7 +37,7 @@ public class WeChatConstant {
     /**
      * 第三方平台AppSecret
      */
-    public static final String THIRD_PARTY_SECRET = "b10c69ded74b945b7d1cb6c6a03501d1";
+    public static final String THIRD_PARTY_SECRET = "80f8c4df7e10573dda6819b3081eb5e7";
     /**
      * 进度模板消息的模板id
      */
